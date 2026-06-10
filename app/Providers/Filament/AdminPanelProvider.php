@@ -32,6 +32,11 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->plugins([
+                \Filament\SpatieLaravelTranslatablePlugin::make()
+                    ->defaultLocales([config('app.locale')]),
+                \LaraZeus\Sky\SkyPlugin::make(),
+            ])
             ->discoverResources(
                 in: app_path('Filament/Resources'),
                 for: 'App\\Filament\\Resources'
