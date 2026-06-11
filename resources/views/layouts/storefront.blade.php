@@ -5,7 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'KELVS Store') }}</title>
+    @php
+        // ── Resolve page-level SEO values with site-level fallbacks ──────────
+        $pageSeoTitle       = $seoTitle       ?? null;
+        $pageSeoDescription = $seoDescription ?? null;
+        $pageSeoKeywords    = $seoKeywords    ?? null;
+        $pageCanonicalUrl   = $canonicalUrl   ?? request()->url();
+        $pageProductUrl     = $productUrl     ?? request()->url();
+        $pageProductName    = $productName    ?? null;
+
+        $resolvedTitle = $pageSeoTitle
+            ?? config('app.name', 'KELVS Skin') . ' — Science-Led Skincare';
+
+        $resolvedDescription = $pageSeoDescription
+            ?? 'KELVS Skin offers dermatologist-inspired skincare formulas. Shop cleansers, serums, moisturisers and SPF made for real results.';
+
+        $siteName = 'KELVS Skin';
+        $isProductPage = isset($seoTitle);
+    @endphp
+
+    {{-- ── Primary SEO Tags ─────────────────────────────────────────────── --}}
+    <title>{{ $resolvedTitle }}</title>
+    <meta name="description" content="{{ $resolvedDescription }}">
+    @if($pageSeoKeywords)
+        <meta name="keywords" content="{{ $pageSeoKeywords }}">
+    @endif
+    <link rel="canonical" href="{{ $pageCanonicalUrl }}">
+    <meta name="robots" content="index, follow">
+
+    {{-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ─────────────────── --}}
+    <meta property="og:type"        content="{{ $isProductPage ? 'product' : 'website' }}">
+    <meta property="og:title"       content="{{ $resolvedTitle }}">
+    <meta property="og:description" content="{{ $resolvedDescription }}">
+    <meta property="og:url"         content="{{ $pageProductUrl }}">
+    <meta property="og:site_name"   content="{{ $siteName }}">
+    @if($isProductPage)
+        <meta property="og:availability" content="instock">
+    @endif
+
+    {{-- ── Twitter Card ─────────────────────────────────────────────────── --}}
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="{{ $resolvedTitle }}">
+    <meta name="twitter:description" content="{{ $resolvedDescription }}">
+
+    {{-- ── Structured Data: Product (JSON-LD) ─────────────────────────── --}}
+    @if($isProductPage && $pageProductName)
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "{{ addslashes($pageProductName) }}",
+        "description": "{{ addslashes($resolvedDescription) }}",
+        "url": "{{ $pageProductUrl }}",
+        "brand": {
+            "@type": "Brand",
+            "name": "{{ $siteName }}"
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": "{{ $pageProductUrl }}",
+            "priceCurrency": "PKR",
+            "availability": "https://schema.org/InStock",
+            "seller": {
+                "@type": "Organization",
+                "name": "{{ $siteName }}"
+            }
+        }
+    }
+    </script>
+    @endif
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

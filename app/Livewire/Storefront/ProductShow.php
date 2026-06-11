@@ -63,10 +63,42 @@ class ProductShow extends Component
 
     public function render()
     {
+        $product = $this->product;
+
+        // ── Resolve each SEO field with smart fallbacks ─────────────────────
+        $productName = $product->attr('name') ?? '';
+
+        $seoTitle = $product->attr('seo_title')
+            ?? ($productName ? "{$productName} | KELVS Skin" : config('app.name', 'KELVS Skin'));
+
+        $seoDescription = $product->attr('seo_description')
+            ?? strip_tags((string) ($product->attr('description') ?? ''));
+        $seoDescription = mb_strimwidth($seoDescription, 0, 160, '…');
+
+        $seoKeywords = $product->attr('seo_keywords') ?? '';
+
+        // Prefer an explicitly set canonical URL; fall back to the current URL
+        $canonicalUrl = $product->attr('canonical_url')
+            ?? url('/products/' . $this->slug);
+
+        // Product URL for Open Graph
+        $productUrl = url('/products/' . $this->slug);
+
         return view('livewire.storefront.product-show', [
-            'product' => $this->product,
-            'activeVariant' => $this->activeVariant,
-        ])->layout('layouts.storefront');
+            'product'        => $product,
+            'activeVariant'  => $this->activeVariant,
+            'seoTitle'       => $seoTitle,
+            'seoDescription' => $seoDescription,
+            'seoKeywords'    => $seoKeywords,
+            'canonicalUrl'   => $canonicalUrl,
+            'productUrl'     => $productUrl,
+        ])->layout('layouts.storefront', [
+            'seoTitle'       => $seoTitle,
+            'seoDescription' => $seoDescription,
+            'seoKeywords'    => $seoKeywords,
+            'canonicalUrl'   => $canonicalUrl,
+            'productUrl'     => $productUrl,
+            'productName'    => $productName,
+        ]);
     }
 }
-
