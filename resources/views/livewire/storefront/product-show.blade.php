@@ -144,7 +144,7 @@
                         <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">SKU: {{ $activeVariant?->sku ?? 'N/A' }}</p>
                         
                         <!-- Star Rating Summary -->
-                        <div class="flex items-center space-x-1.5">
+                        <div class="flex items-center space-x-2">
                             <div class="flex items-center text-amber-400">
                                 @php
                                     $ratingVal = $this->averageRating;
@@ -153,21 +153,21 @@
                                     $emptyStars = 5 - $fullStars - ($hasHalf ? 1 : 0);
                                 @endphp
                                 @for($i = 0; $i < $fullStars; $i++)
-                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <svg class="w-8 h-8 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                 @endfor
                                 @if($hasHalf)
-                                    <div class="relative w-5 h-5">
-                                        <svg class="absolute text-gray-250 fill-current w-5 h-5" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <div class="relative w-8 h-8">
+                                        <svg class="absolute text-gray-250 fill-current w-8 h-8" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                         <div class="overflow-hidden absolute top-0 left-0 h-full w-[50%]">
-                                            <svg class="text-amber-400 fill-current w-5 h-5" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                            <svg class="text-amber-400 fill-current w-8 h-8" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                         </div>
                                     </div>
                                 @endif
                                 @for($i = 0; $i < $emptyStars; $i++)
-                                    <svg class="w-5 h-5 text-gray-250 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <svg class="w-8 h-8 text-gray-250 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                 @endfor
                             </div>
-                            <a href="#reviews-section" class="text-xs font-bold text-gray-500 hover:text-[#111111] transition underline underline-offset-4 decoration-dotted">
+                            <a href="#reviews-section" class="text-sm font-bold text-gray-500 hover:text-[#111111] transition underline underline-offset-4 decoration-dotted">
                                 {{ $ratingVal > 0 ? $ratingVal : 'No reviews yet' }} ({{ $this->reviews->count() }} {{ \Illuminate\Support\Str::plural('review', $this->reviews->count()) }})
                             </a>
                         </div>
@@ -212,34 +212,15 @@
                     $benefitLines = $shortDesc
                         ? array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', strip_tags((string) $shortDesc))))
                         : [];
+                    // Join all lines into a single flowing sentence for display
+                    $benefitText = implode(' ', $benefitLines);
                 @endphp
 
-                @if(count($benefitLines))
-                <div class="rounded-xl border border-[#e8dcd2] bg-[#fdf9f7] px-5 py-4 space-y-3">
-
-                    <!-- Header -->
-                    <p class="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-[#a07850]">
-                        <!-- Leaf / plant icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 8C8 10 5.9 16.17 3.82 19.34A1 1 0 0 0 4.69 21h.31a1 1 0 0 0 .76-.35C9 17 12 16 17 16V8z"/>
-                            <path d="M17 8v8"/>
-                        </svg>
-                        Details
+                @if($benefitText)
+                <div class="rounded-xl bg-[#f7f7f7] border border-[#ebebeb] px-6 py-5">
+                    <p class="text-[1.05rem] sm:text-lg font-bold text-[#7a7a7a] leading-relaxed tracking-tight">
+                        {{ $benefitText }}
                     </p>
-
-                    <!-- Bullet list — each newline from the admin field becomes its own row -->
-                    <ul class="space-y-2">
-                        @foreach($benefitLines as $line)
-                            <li class="flex items-start gap-2.5 text-sm text-[#3d3530] leading-snug">
-                                <span class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#e8dcd2] flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-[#a07850]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"/>
-                                    </svg>
-                                </span>
-                                <span>{{ $line }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
                 </div>
                 @endif
 

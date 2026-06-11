@@ -27,16 +27,21 @@
                         $product = $variant->product;
                         $sku = $variant->sku;
                         
-                        // Map SKU to generated premium image
-                        $productImage = match($sku) {
-                            'KELVS-CLEAN-01' => '/images/cleanser.png',
-                            'KELVS-NIAC-01' => '/images/niacinamide.png',
-                            'KELVS-BHA-01' => '/images/bha.png',
-                            'KELVS-HYA-01' => '/images/hyaluronic.png',
-                            'KELVS-CER-01' => '/images/ceramide.png',
-                            'KELVS-SPF-01' => '/images/sunshield.png',
-                            default => '/images/hero_lifestyle.png'
-                        };
+                        // Fetch media item from Spatie Media Library
+                        $media = $product->getMedia('images')->first(fn ($media) => $media->getCustomProperty('primary') === true) 
+                            ?? $product->getMedia('images')->first();
+                        
+                        $productImage = $media 
+                            ? parse_url($media->getUrl(), PHP_URL_PATH) 
+                            : match($sku) {
+                                'KELVS-CLEAN-01' => '/images/cleanser.png',
+                                'KELVS-NIAC-01' => '/images/niacinamide.png',
+                                'KELVS-BHA-01' => '/images/bha.png',
+                                'KELVS-HYA-01' => '/images/hyaluronic.png',
+                                'KELVS-CER-01' => '/images/ceramide.png',
+                                'KELVS-SPF-01' => '/images/sunshield.png',
+                                default => '/images/hero_lifestyle.png'
+                            };
 
                         $benefit = match($sku) {
                             'KELVS-CLEAN-01' => 'Purifies & Hydrates Skin',
