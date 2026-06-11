@@ -37,7 +37,7 @@ class CartPage extends Component
     {
         $cart = CartSession::current();
         if ($cart) {
-            $cart->removeLine($lineId);
+            $cart->remove((int) $lineId);
             $this->dispatch('cart-updated');
         }
     }
