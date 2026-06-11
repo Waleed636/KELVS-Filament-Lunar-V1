@@ -131,8 +131,11 @@
                     @foreach($products as $product)
                         @php
                             $variant = $product->variants->first();
-                            $price = $variant?->prices->first();
-                            $formattedPrice = $price ? $price->price->formatted : 'N/A';
+                            $priceRecord = $variant?->prices->first();
+                            $price = $priceRecord?->price;
+                            $comparePrice = $priceRecord?->compare_price;
+                            $hasDiscount = $comparePrice && $comparePrice->value > $price->value;
+                            $formattedPrice = $price ? $price->formatted : 'N/A';
                             $sku = $variant?->sku;
                             
                             // Fetch media item from Spatie Media Library
@@ -174,6 +177,16 @@
                                         Limited Batch
                                     </span>
                                 @endif
+
+                                @if($hasDiscount)
+                                    @php
+                                        $savings = (($comparePrice->value - $price->value) / $comparePrice->value) * 100;
+                                        $discountPercent = round($savings);
+                                    @endphp
+                                    <span class="absolute top-4 right-4 text-[9px] font-extrabold text-red-700 bg-red-50 border border-red-100 rounded px-2.5 py-1 uppercase tracking-widest">
+                                        Save {{ $discountPercent }}%
+                                    </span>
+                                @endif
                             </a>
 
                             <!-- Card details -->
@@ -191,7 +204,14 @@
                                 </div>
 
                                 <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
-                                    <span class="text-lg font-extrabold text-[#111111]">{{ $formattedPrice }}</span>
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="text-lg font-extrabold text-[#111111]">{{ $formattedPrice }}</span>
+                                        @if($hasDiscount)
+                                            <span class="line-through text-gray-400 text-xs font-semibold" style="text-decoration: line-through;">
+                                                {{ $comparePrice->formatted }}
+                                            </span>
+                                        @endif
+                                    </div>
                                     
                                     @if($variant)
                                         <button wire:click="addToCart({{ $variant->id }})" class="px-4 py-2 bg-[#111111] hover:bg-[#222222] text-white text-[11px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200">
