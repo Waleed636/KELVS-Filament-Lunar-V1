@@ -7,12 +7,19 @@ use Livewire\Attributes\Computed;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 use Lunar\Facades\CartSession;
+use App\Models\Review;
 
 class ProductShow extends Component
 {
     public $slug;
     public $variantId;
     public $quantity = 1;
+
+    // Review Form State
+    public $newRating = 5;
+    public $newName = '';
+    public $newTitle = '';
+    public $newComment = '';
 
     public function mount($slug)
     {
@@ -24,6 +31,11 @@ class ProductShow extends Component
         
         // Default to the first variant
         $this->variantId = $product->variants->first()?->id;
+
+        // Autofill name if authenticated
+        if (auth()->check()) {
+            $this->newName = auth()->user()->name;
+        }
     }
 
     #[Computed]
@@ -38,6 +50,80 @@ class ProductShow extends Component
     public function activeVariant()
     {
         return ProductVariant::with(['prices.currency', 'images'])->find($this->variantId);
+    }
+
+    #[Computed]
+    public function reviews()
+    {
+        return Review::where('product_id', $this->product->id)
+            ->where('is_approved', true)
+            ->latest()
+            ->get();
+    }
+
+    #[Computed]
+    public function averageRating()
+    {
+        $avg = Review::where('product_id', $this->product->id)
+            ->where('is_approved', true)
+            ->avg('rating');
+
+        return $avg ? round($avg, 1) : 0;
+    }
+
+    #[Computed]
+    public function ratingDistribution()
+    {
+        $total = $this->reviews->count();
+        $distribution = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+
+        if ($total > 0) {
+            $counts = Review::where('product_id', $this->product->id)
+                ->where('is_approved', true)
+                ->selectRaw('rating, count(*) as count')
+                ->groupBy('rating')
+                ->pluck('count', 'rating');
+
+            foreach ($distribution as $rating => &$percentage) {
+                $count = $counts->get($rating, 0);
+                $percentage = round(($count / $total) * 100);
+            }
+        }
+
+        return $distribution;
+    }
+
+    public function submitReview()
+    {
+        $this->validate([
+            'newName' => 'required|string|max:255',
+            'newRating' => 'required|integer|min:1|max:5',
+            'newTitle' => 'nullable|string|max:255',
+            'newComment' => 'required|string|min:5|max:1000',
+        ], [
+            'newName.required' => 'Please enter your name.',
+            'newRating.required' => 'Please select a star rating.',
+            'newComment.required' => 'Please write a review comment.',
+            'newComment.min' => 'Your review must be at least 5 characters.',
+        ]);
+
+        Review::create([
+            'product_id' => $this->product->id,
+            'customer_name' => $this->newName,
+            'rating' => $this->newRating,
+            'title' => $this->newTitle,
+            'comment' => $this->newComment,
+            'is_approved' => false, // Require admin approval
+        ]);
+
+        session()->flash('review_message', 'Thank you! Your review has been submitted and is pending moderation.');
+
+        $this->reset(['newRating', 'newTitle', 'newComment']);
+        $this->newRating = 5;
+        
+        if (auth()->check()) {
+            $this->newName = auth()->user()->name;
+        }
     }
 
     public function addToCart()
@@ -102,3 +188,4 @@ class ProductShow extends Component
         ]);
     }
 }
+

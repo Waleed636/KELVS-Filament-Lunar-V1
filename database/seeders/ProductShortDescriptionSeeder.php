@@ -38,7 +38,7 @@ class ProductShortDescriptionSeeder extends Seeder
             ],
             [
                 'attribute_group_id' => $group->id,
-                'name'               => ['en' => 'Short Description (Benefits)'],
+                'name'               => ['en' => 'Details'],
                 'type'               => \Lunar\FieldTypes\TranslatedText::class,
                 'required'           => false,
                 'searchable'         => true,

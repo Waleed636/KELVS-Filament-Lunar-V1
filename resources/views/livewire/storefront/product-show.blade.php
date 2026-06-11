@@ -40,7 +40,38 @@
                     <h1 class="text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight leading-tight">
                         {{ $product->attr('name') }}
                     </h1>
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">SKU: {{ $activeVariant?->sku ?? 'N/A' }}</p>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">SKU: {{ $activeVariant?->sku ?? 'N/A' }}</p>
+                        
+                        <!-- Star Rating Summary -->
+                        <div class="flex items-center space-x-1.5">
+                            <div class="flex items-center text-amber-400">
+                                @php
+                                    $ratingVal = $this->averageRating;
+                                    $fullStars = floor($ratingVal);
+                                    $hasHalf = ($ratingVal - $fullStars) >= 0.5;
+                                    $emptyStars = 5 - $fullStars - ($hasHalf ? 1 : 0);
+                                @endphp
+                                @for($i = 0; $i < $fullStars; $i++)
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                @endfor
+                                @if($hasHalf)
+                                    <div class="relative w-5 h-5">
+                                        <svg class="absolute text-gray-250 fill-current w-5 h-5" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        <div class="overflow-hidden absolute top-0 left-0 h-full w-[50%]">
+                                            <svg class="text-amber-400 fill-current w-5 h-5" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        </div>
+                                    </div>
+                                @endif
+                                @for($i = 0; $i < $emptyStars; $i++)
+                                    <svg class="w-5 h-5 text-gray-250 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                @endfor
+                            </div>
+                            <a href="#reviews-section" class="text-xs font-bold text-gray-500 hover:text-[#111111] transition underline underline-offset-4 decoration-dotted">
+                                {{ $ratingVal > 0 ? $ratingVal : 'No reviews yet' }} ({{ $this->reviews->count() }} {{ \Illuminate\Support\Str::plural('review', $this->reviews->count()) }})
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Price -->
@@ -67,7 +98,7 @@
                             <path d="M17 8C8 10 5.9 16.17 3.82 19.34A1 1 0 0 0 4.69 21h.31a1 1 0 0 0 .76-.35C9 17 12 16 17 16V8z"/>
                             <path d="M17 8v8"/>
                         </svg>
-                        What it does for you
+                        Details
                     </p>
 
                     <!-- Bullet list — each newline from the admin field becomes its own row -->
@@ -157,5 +188,156 @@
         </div>
     </div>
     @endif
+
+    <!-- ── Customer Reviews Section ──────────────────────────────────── -->
+    <div id="reviews-section" class="mt-20 pt-10 border-t border-gray-150 max-w-7xl">
+        <h2 class="text-sm font-extrabold uppercase tracking-widest text-[#111111] mb-8 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Customer Reviews
+        </h2>
+
+        <!-- Reviews Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            <!-- Left Side: Summary Stats & Form -->
+            <div class="lg:col-span-4 space-y-8">
+                <!-- Stats Summary -->
+                <div class="rounded-xl border border-gray-150 bg-[#fafafa] p-6 space-y-5">
+                    <div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-extrabold tracking-tight">{{ $this->averageRating }}</span>
+                            <span class="text-sm font-bold text-gray-400 uppercase">out of 5</span>
+                        </div>
+                        <div class="flex items-center text-amber-400 mt-1">
+                            @for($i = 0; $i < 5; $i++)
+                                <svg class="w-5 h-5 {{ $i < floor($this->averageRating) ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            @endfor
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Based on {{ $this->reviews->count() }} {{ \Illuminate\Support\Str::plural('review', $this->reviews->count()) }}</p>
+                    </div>
+
+                    <!-- Distribution -->
+                    <div class="space-y-2.5">
+                        @foreach($this->ratingDistribution as $stars => $percentage)
+                            <div class="flex items-center text-xs">
+                                <span class="w-12 text-gray-500 font-semibold">{{ $stars }} {{ \Illuminate\Support\Str::plural('star', $stars) }}</span>
+                                <div class="flex-1 h-2 bg-gray-200 rounded-full mx-3 overflow-hidden">
+                                    <div class="h-full bg-amber-400 rounded-full" style="width: {{ $percentage }}%"></div>
+                                </div>
+                                <span class="w-8 text-right text-gray-400 font-semibold">{{ $percentage }}%</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Write a Review Form -->
+                <div class="rounded-xl border border-gray-150 bg-[#fafafa] p-6 space-y-4">
+                    <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#111111] mb-2">Write a Review</h3>
+                    
+                    @if(session()->has('review_message'))
+                        <div class="p-4 text-xs text-emerald-800 bg-emerald-50 rounded-lg border border-emerald-100 font-semibold">
+                            {{ session('review_message') }}
+                        </div>
+                    @else
+                        <form wire:submit="submitReview" class="space-y-4">
+                            <!-- Name -->
+                            <div>
+                                <label for="newName" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Your Name</label>
+                                <input type="text" id="newName" wire:model.live="newName" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                @error('newName') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Rating -->
+                            <div>
+                                <label for="newRating" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Rating</label>
+                                <select id="newRating" wire:model.live="newRating" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                    <option value="5">5 Stars - Excellent</option>
+                                    <option value="4">4 Stars - Very Good</option>
+                                    <option value="3">3 Stars - Average</option>
+                                    <option value="2">2 Stars - Below Average</option>
+                                    <option value="1">1 Star - Poor</option>
+                                </select>
+                                @error('newRating') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Title -->
+                            <div>
+                                <label for="newTitle" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Review Title (Optional)</label>
+                                <input type="text" id="newTitle" wire:model.live="newTitle" placeholder="e.g. Highly recommend!" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                @error('newTitle') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Comment -->
+                            <div>
+                                <label for="newComment" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Comment</label>
+                                <textarea id="newComment" wire:model.live="newComment" rows="4" placeholder="Write your review comments here..." class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]"></textarea>
+                                @error('newComment') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Submit -->
+                            <button type="submit" class="w-full h-11 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-[10px] transition duration-300 flex items-center justify-center shadow-sm">
+                                Submit Review
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Right Side: Individual Reviews List -->
+            <div class="lg:col-span-8 space-y-6">
+                @if($this->reviews->isEmpty())
+                    <div class="rounded-xl border border-dashed border-gray-200 py-16 text-center text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <p class="font-bold text-sm">No reviews yet for this product</p>
+                        <p class="text-xs mt-1">Be the first to share your experience!</p>
+                    </div>
+                @else
+                    <div class="divide-y divide-gray-150">
+                        @foreach($this->reviews as $review)
+                            <div class="py-6 first:pt-0 last:pb-0 space-y-3">
+                                <!-- Top Row: Name, Verification, Date -->
+                                <div class="flex items-center justify-between text-xs">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-bold text-[#111111]">{{ $review->customer_name }}</span>
+                                        <span class="flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="20 6 9 17 4 12"/>
+                                            </svg>
+                                            Verified Buyer
+                                        </span>
+                                    </div>
+                                    <span class="text-gray-400 font-semibold">{{ $review->created_at->format('M d, Y') }}</span>
+                                </div>
+
+                                <!-- Middle Row: Stars & Title -->
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex items-center text-amber-400">
+                                        @for($i = 0; $i < 5; $i++)
+                                            <svg class="w-3.5 h-3.5 {{ $i < $review->rating ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        @endfor
+                                    </div>
+                                    @if($review->title)
+                                        <span class="font-extrabold text-[#111111] text-sm">{{ $review->title }}</span>
+                                    @endif
+                                </div>
+
+                                <!-- Review Body -->
+                                <p class="text-sm text-gray-600 leading-relaxed max-w-3xl whitespace-pre-line">{{ $review->comment }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+        </div>
+    </div>
 
 </div>
