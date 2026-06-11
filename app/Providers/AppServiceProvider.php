@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,6 +13,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        try {
+            $reflector = new \ReflectionClass(\Lunar\Admin\LunarPanelManager::class);
+            $property = $reflector->getProperty('resources');
+            $property->setAccessible(true);
+            $resources = $property->getValue();
+            foreach ($resources as $key => $resource) {
+                if ($resource === \Lunar\Admin\Filament\Resources\OrderResource::class) {
+                    $resources[$key] = \App\Filament\Resources\OrderResource::class;
+                }
+            }
+            $property->setValue(null, $resources);
+        } catch (\Exception $e) {
+            // Fallback
+        }
+
         \Lunar\Admin\Support\Facades\LunarPanel::panel(function (\Filament\Panel $panel) {
             return $panel->plugin(new \Lunar\Shipping\ShippingPlugin());
         })->register();
@@ -22,5 +39,51 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Lunar\Facades\Telemetry::optOut();
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::HEAD_END,
+            fn (): string => '
+                <style>
+                    /* Custom order status row backgrounds (targeting the tds to override opaque cell bg) */
+                    .order-status-shipped td {
+                        background-color: rgba(59, 130, 246, 0.08) !important;
+                    }
+                    .order-status-shipped {
+                        border-left: 4px solid rgba(59, 130, 246, 1) !important;
+                    }
+                    .order-status-returned td {
+                        background-color: rgba(249, 115, 22, 0.08) !important;
+                    }
+                    .order-status-returned {
+                        border-left: 4px solid rgba(249, 115, 22, 1) !important;
+                    }
+                    .order-status-cancelled td {
+                        background-color: rgba(239, 68, 68, 0.08) !important;
+                    }
+                    .order-status-cancelled {
+                        border-left: 4px solid rgba(239, 68, 68, 1) !important;
+                    }
+
+                    /* Override Filament SelectColumn size to make it compact and premium */
+                    .fi-ta-select {
+                        min-width: 120px !important;
+                        width: auto !important;
+                        max-width: 140px !important;
+                        padding-top: 0.25rem !important;
+                        padding-bottom: 0.25rem !important;
+                    }
+                    .fi-ta-select select {
+                        padding-top: 0.15rem !important;
+                        padding-bottom: 0.15rem !important;
+                        padding-left: 0.375rem !important;
+                        padding-right: 1.5rem !important;
+                        font-size: 0.75rem !important;
+                        line-height: 1rem !important;
+                        height: auto !important;
+                        border-radius: 0.375rem !important;
+                    }
+                </style>
+            '
+        );
     }
 }

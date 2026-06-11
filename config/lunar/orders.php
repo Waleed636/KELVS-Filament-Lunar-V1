@@ -93,6 +93,30 @@ return [
             'favourite' => true,
         ],
 
+        'shipped' => [
+            'label' => 'Shipped',
+            'color' => '#0A81D7', // Blue
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'returned' => [
+            'label' => 'Returned',
+            'color' => '#F97316', // Orange
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'cancelled' => [
+            'label' => 'Cancelled',
+            'color' => '#EF4444', // Red
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
     ],
 
     /*
