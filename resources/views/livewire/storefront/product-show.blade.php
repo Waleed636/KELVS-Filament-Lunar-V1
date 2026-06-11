@@ -2,15 +2,44 @@
     
     @php
         $sku = $activeVariant?->sku;
-        $productImage = match($sku) {
-            'KELVS-CLEAN-01' => '/images/cleanser.png',
-            'KELVS-NIAC-01' => '/images/niacinamide.png',
-            'KELVS-BHA-01' => '/images/bha.png',
-            'KELVS-HYA-01' => '/images/hyaluronic.png',
-            'KELVS-CER-01' => '/images/ceramide.png',
-            'KELVS-SPF-01' => '/images/sunshield.png',
-            default => '/images/hero_lifestyle.png'
-        };
+        
+        // Fetch media items from Spatie Media Library on the Product model
+        $mediaItems = $product->getMedia('images');
+        $allImages = [];
+        $primaryUrl = null;
+        
+        if ($mediaItems->isNotEmpty()) {
+            foreach ($mediaItems as $media) {
+                $url = parse_url($media->getUrl(), PHP_URL_PATH);
+                $allImages[] = $url;
+                
+                // Track primary image
+                if ($media->getCustomProperty('primary') === true && !$primaryUrl) {
+                    $primaryUrl = $url;
+                }
+            }
+            // Fall back to first image if no primary is specified
+            if (!$primaryUrl && count($allImages) > 0) {
+                $primaryUrl = $allImages[0];
+            }
+        }
+        
+        // Fall back to hardcoded placeholders if no database images exist
+        if (!$primaryUrl) {
+            $fallbackImage = match($sku) {
+                'KELVS-CLEAN-01' => '/images/cleanser.png',
+                'KELVS-NIAC-01' => '/images/niacinamide.png',
+                'KELVS-BHA-01' => '/images/bha.png',
+                'KELVS-HYA-01' => '/images/hyaluronic.png',
+                'KELVS-CER-01' => '/images/ceramide.png',
+                'KELVS-SPF-01' => '/images/sunshield.png',
+                default => '/images/hero_lifestyle.png'
+            };
+            $primaryUrl = $fallbackImage;
+            $allImages = [$fallbackImage];
+        }
+        
+        $productImage = $primaryUrl;
     @endphp
 
     <!-- Breadcrumbs -->
@@ -23,13 +52,84 @@
     </nav>
 
     <!-- Main Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+    <div x-data="{ activeImage: '{{ $productImage }}', zoomOpen: false }" class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         
         <!-- Left Column: Product Media -->
         <div class="lg:col-span-6 flex flex-col space-y-4">
-            <div class="aspect-square w-full rounded-2xl overflow-hidden bg-[#f6f6f5] border border-gray-150 flex items-center justify-center p-12 relative shadow-sm">
-                <img src="{{ $productImage }}" alt="{{ $product->attr('name') }}" class="object-contain w-full h-full">
+            <!-- Main Image Frame -->
+            <div 
+                @click="zoomOpen = true" 
+                class="aspect-square w-full rounded-2xl overflow-hidden bg-[#f6f6f5] border border-gray-150 flex items-center justify-center p-12 relative shadow-sm cursor-zoom-in group"
+            >
+                <img :src="activeImage" alt="{{ $product->attr('name') }}" class="object-contain w-full h-full transition duration-300 group-hover:scale-[1.02]">
+                
+                <!-- Hover indicator icon -->
+                <div class="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full border border-gray-200 shadow-sm opacity-0 group-hover:opacity-100 transition duration-350">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                    </svg>
+                </div>
             </div>
+
+            <!-- Lightbox Zoom Modal -->
+            <div 
+                x-data="{ scale: 1 }"
+                x-show="zoomOpen" 
+                x-transition:enter="transition ease-out duration-350"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @keydown.escape.window="zoomOpen = false; scale = 1"
+                @click="zoomOpen = false; scale = 1"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 sm:p-6 md:p-10"
+                style="display: none;"
+            >
+                <!-- Close Button -->
+                <button 
+                    type="button" 
+                    @click="zoomOpen = false; scale = 1" 
+                    class="absolute top-6 right-6 text-white/70 hover:text-white transition focus:outline-none z-10"
+                    aria-label="Close modal"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <!-- Zoomed Image Container -->
+                <div 
+                    @click.away="zoomOpen = false; scale = 1" 
+                    class="w-full max-w-5xl h-full max-h-[85vh] flex items-center justify-center overflow-auto rounded-xl bg-[#f6f6f5] relative"
+                >
+                    <div class="inline-block transition-transform duration-200" :style="'transform: scale(' + scale + ')'">
+                        <img 
+                            :src="activeImage" 
+                            alt="Product detail zoom" 
+                            :class="scale === 1 ? 'cursor-zoom-in' : 'cursor-zoom-out'"
+                            class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
+                            @click.stop="scale = (scale === 1 ? 2.2 : 1)"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Thumbnails -->
+            @if(count($allImages) > 1)
+                <div class="flex flex-wrap gap-3 py-1">
+                    @foreach($allImages as $imgUrl)
+                        <button 
+                            type="button"
+                            @click="activeImage = '{{ $imgUrl }}'"
+                            :class="activeImage === '{{ $imgUrl }}' ? 'border-[#111111] ring-1 ring-[#111111]' : 'border-gray-200 hover:border-gray-400'"
+                            class="w-20 h-20 rounded-lg overflow-hidden border bg-[#f6f6f5] flex items-center justify-center p-2 transition focus:outline-none"
+                        >
+                            <img src="{{ $imgUrl }}" class="object-contain w-full h-full">
+                        </button>
+                    @endforeach
+                </div>
+            @endif
         </div>
  
         <!-- Right Column: Product Info -->
@@ -75,8 +175,34 @@
                 </div>
 
                 <!-- Price -->
-                <div class="text-2xl font-extrabold text-[#111111] bg-gray-50 border border-gray-150 px-6 py-3.5 rounded-lg inline-block">
-                    {{ $activeVariant?->prices->first()?->price->formatted ?? 'N/A' }}
+                <div class="flex items-center gap-4">
+                    @php
+                        $priceRecord = $activeVariant?->prices->first();
+                        $price = $priceRecord?->price;
+                        $comparePrice = $priceRecord?->compare_price;
+                        $hasDiscount = $comparePrice && $comparePrice->value > $price->value;
+                    @endphp
+
+                    <div class="text-2xl font-extrabold text-[#111111] bg-gray-50 border border-gray-150 px-6 py-3.5 rounded-lg inline-block">
+                        {{ $price?->formatted ?? 'N/A' }}
+                    </div>
+
+                    @if($hasDiscount)
+                        <div class="flex items-center gap-2.5">
+                            <span class="line-through text-gray-500 text-base font-semibold" style="text-decoration: line-through;">
+                                {{ $comparePrice->formatted }}
+                            </span>
+                            
+                            @php
+                                $savings = (($comparePrice->value - $price->value) / $comparePrice->value) * 100;
+                                $discountPercent = round($savings);
+                            @endphp
+                            
+                            <span class="text-[9px] font-extrabold text-red-700 bg-red-50 border border-red-100 rounded px-2 py-0.5 uppercase tracking-widest">
+                                Save {{ $discountPercent }}%
+                            </span>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- ── Benefits / Short Description ──────────────────────── -->
