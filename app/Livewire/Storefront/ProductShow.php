@@ -47,12 +47,8 @@ class ProductShow extends Component
             'variantId' => 'required|exists:lunar_product_variants,id',
         ]);
 
-        $cart = CartSession::current();
+        $cart = CartSession::manager();
         
-        if (! $cart) {
-            $cart = CartSession::create();
-        }
-
         $variant = ProductVariant::find($this->variantId);
         
         if ($variant) {

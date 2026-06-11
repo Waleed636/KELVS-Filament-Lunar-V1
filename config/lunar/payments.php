@@ -9,6 +9,10 @@ return [
             'driver' => 'offline',
             'authorized' => 'payment-offline',
         ],
+        'manual' => [
+            'driver' => 'offline',
+            'authorized' => 'payment-offline',
+        ],
     ],
 
 ];

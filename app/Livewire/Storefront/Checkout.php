@@ -50,14 +50,13 @@ class Checkout extends Component
     {
         $rules = [
             'shippingAddress.first_name' => 'required|string|max:255',
-            'shippingAddress.last_name' => 'required|string|max:255',
             'shippingAddress.line_one' => 'required|string|max:255',
             'shippingAddress.city' => 'required|string|max:255',
             'shippingAddress.state' => 'nullable|string|max:255',
             'shippingAddress.postcode' => 'required|string|max:20',
             'shippingAddress.country_id' => 'required|exists:lunar_countries,id',
-            'shippingAddress.contact_email' => 'required|email|max:255',
-            'shippingAddress.contact_phone' => 'required|string|max:50',
+            'shippingAddress.contact_email' => 'required_without:shippingAddress.contact_phone|nullable|email|max:255',
+            'shippingAddress.contact_phone' => 'required_without:shippingAddress.contact_email|nullable|string|max:50',
             'shippingOptionHandle' => 'required|string',
             'paymentMethod' => 'required|in:cod,card',
         ];
@@ -65,7 +64,6 @@ class Checkout extends Component
         if (!$this->sameAsShipping) {
             $rules = array_merge($rules, [
                 'billingAddress.first_name' => 'required|string|max:255',
-                'billingAddress.last_name' => 'required|string|max:255',
                 'billingAddress.line_one' => 'required|string|max:255',
                 'billingAddress.city' => 'required|string|max:255',
                 'billingAddress.state' => 'nullable|string|max:255',
@@ -84,12 +82,12 @@ class Checkout extends Component
             return redirect()->to('/cart');
         }
 
-        // Set default country if available
-        $defaultCountry = Country::first();
-        if ($defaultCountry) {
-            $this->shippingAddress['country_id'] = $defaultCountry->id;
-            $this->billingAddress['country_id'] = $defaultCountry->id;
-        }
+        // Set default country to Pakistan (ID: 168) if available
+        $pakistan = Country::where('iso3', 'PAK')->orWhere('name', 'like', '%Pakistan%')->first();
+        $defaultCountryId = $pakistan ? $pakistan->id : (Country::first()?->id ?? 168);
+
+        $this->shippingAddress['country_id'] = $defaultCountryId;
+        $this->billingAddress['country_id'] = $defaultCountryId;
     }
 
     #[Computed]
@@ -125,21 +123,32 @@ class Checkout extends Component
             return collect();
         }
 
+        // Split name for internal Lunar cart compatibility
+        $parts = explode(' ', trim($this->shippingAddress['first_name']), 2);
+        $firstName = $parts[0];
+        $lastName = isset($parts[1]) ? $parts[1] : '.';
+
         $cart->setShippingAddress([
-            'first_name' => $this->shippingAddress['first_name'],
-            'last_name' => $this->shippingAddress['last_name'],
-            'company_name' => $this->shippingAddress['company_name'],
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'company_name' => '',
             'line_one' => $this->shippingAddress['line_one'],
-            'line_two' => $this->shippingAddress['line_two'],
+            'line_two' => '',
             'city' => $this->shippingAddress['city'],
             'state' => $this->shippingAddress['state'],
             'postcode' => $this->shippingAddress['postcode'],
             'country_id' => $this->shippingAddress['country_id'],
-            'contact_email' => $this->shippingAddress['contact_email'],
-            'contact_phone' => $this->shippingAddress['contact_phone'],
+            'contact_email' => $this->shippingAddress['contact_email'] ?? '',
+            'contact_phone' => $this->shippingAddress['contact_phone'] ?? '',
         ]);
 
-        $options = \Lunar\Facades\ShippingManifest::getOptions($cart);
+        try {
+            $options = \Lunar\Facades\ShippingManifest::getOptions($cart);
+        } catch (\Lunar\Exceptions\MissingCurrencyPriceException $e) {
+            $options = collect();
+        } catch (\Exception $e) {
+            $options = collect();
+        }
 
         // Fallback option if manifest has none
         if ($options->isEmpty()) {
@@ -181,48 +190,57 @@ class Checkout extends Component
             return redirect()->to('/cart');
         }
 
+        // Split name for internal Lunar cart compatibility
+        $parts = explode(' ', trim($this->shippingAddress['first_name']), 2);
+        $firstName = $parts[0];
+        $lastName = isset($parts[1]) ? $parts[1] : '.';
+
         // 1. Save addresses
         $cart->setShippingAddress([
-            'first_name' => $this->shippingAddress['first_name'],
-            'last_name' => $this->shippingAddress['last_name'],
-            'company_name' => $this->shippingAddress['company_name'],
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'company_name' => '',
             'line_one' => $this->shippingAddress['line_one'],
-            'line_two' => $this->shippingAddress['line_two'],
+            'line_two' => '',
             'city' => $this->shippingAddress['city'],
             'state' => $this->shippingAddress['state'],
             'postcode' => $this->shippingAddress['postcode'],
             'country_id' => $this->shippingAddress['country_id'],
-            'contact_email' => $this->shippingAddress['contact_email'],
-            'contact_phone' => $this->shippingAddress['contact_phone'],
+            'contact_email' => $this->shippingAddress['contact_email'] ?? '',
+            'contact_phone' => $this->shippingAddress['contact_phone'] ?? '',
         ]);
 
         if ($this->sameAsShipping) {
             $cart->setBillingAddress([
-                'first_name' => $this->shippingAddress['first_name'],
-                'last_name' => $this->shippingAddress['last_name'],
-                'company_name' => $this->shippingAddress['company_name'],
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'company_name' => '',
                 'line_one' => $this->shippingAddress['line_one'],
-                'line_two' => $this->shippingAddress['line_two'],
+                'line_two' => '',
                 'city' => $this->shippingAddress['city'],
                 'state' => $this->shippingAddress['state'],
                 'postcode' => $this->shippingAddress['postcode'],
                 'country_id' => $this->shippingAddress['country_id'],
-                'contact_email' => $this->shippingAddress['contact_email'],
-                'contact_phone' => $this->shippingAddress['contact_phone'],
+                'contact_email' => $this->shippingAddress['contact_email'] ?? '',
+                'contact_phone' => $this->shippingAddress['contact_phone'] ?? '',
             ]);
         } else {
+            $bParts = explode(' ', trim($this->billingAddress['first_name']), 2);
+            $bFirstName = $bParts[0];
+            $bLastName = isset($bParts[1]) ? $bParts[1] : '.';
+
             $cart->setBillingAddress([
-                'first_name' => $this->billingAddress['first_name'],
-                'last_name' => $this->billingAddress['last_name'],
-                'company_name' => $this->billingAddress['company_name'],
+                'first_name' => $bFirstName,
+                'last_name' => $bLastName,
+                'company_name' => '',
                 'line_one' => $this->billingAddress['line_one'],
-                'line_two' => $this->billingAddress['line_two'],
+                'line_two' => '',
                 'city' => $this->billingAddress['city'],
                 'state' => $this->billingAddress['state'],
                 'postcode' => $this->billingAddress['postcode'],
                 'country_id' => $this->billingAddress['country_id'],
-                'contact_email' => $this->shippingAddress['contact_email'], // fallback to contact email
-                'contact_phone' => $this->shippingAddress['contact_phone'], // fallback to contact phone
+                'contact_email' => $this->shippingAddress['contact_email'] ?? '', 
+                'contact_phone' => $this->shippingAddress['contact_phone'] ?? '', 
             ]);
         }
 
@@ -253,13 +271,11 @@ class Checkout extends Component
             'status' => $this->paymentMethod === 'cod' ? 'payment-offline' : 'payment-received',
         ]);
 
-        // 6. Save order info for success state & clear cart session
-        $this->completedOrder = Order::with(['lines', 'shippingAddress', 'billingAddress'])->find($order->id);
-        
+        // 6. Clear cart session and redirect to the thankyou page
         CartSession::forget();
         $this->dispatch('cart-updated');
 
-        $this->orderCompleted = true;
+        return redirect()->route('checkout.thankyou', ['id' => $order->id]);
     }
 
     public function render()
