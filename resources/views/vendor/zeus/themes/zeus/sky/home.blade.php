@@ -14,7 +14,7 @@
     <section class="py-12 px-4 border-b border-gray-100">
         <div class="max-w-7xl mx-auto">
             <h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-8">Featured</h2>
-            <div class="grid grid-cols-1 @if($stickies->count() > 1) md:grid-cols-{{ min($stickies->count(), 3) }} @endif gap-6">
+            <div class="grid grid-cols-1 @if($stickies->count() == 2) md:grid-cols-2 @elseif($stickies->count() >= 3) md:grid-cols-3 @endif gap-6">
                 @foreach($stickies as $post)
                     @include($skyTheme.'.partial.sticky')
                 @endforeach

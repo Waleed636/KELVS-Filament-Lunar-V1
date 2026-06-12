@@ -7,11 +7,28 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Lunar\Base\Traits\LunarUser;
 use Lunar\Base\LunarUser as LunarUserInterface;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements LunarUserInterface
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, LunarUser;
+
+    use HasRoles {
+        hasPermissionTo as parentHasPermissionTo;
+    }
+
+    /**
+     * Override hasPermissionTo to catch Spatie's exception if a permission doesn't exist for the 'web' guard.
+     */
+    public function hasPermissionTo($permission, $guardName = null): bool
+    {
+        try {
+            return $this->parentHasPermissionTo($permission, $guardName);
+        } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist $e) {
+            return false;
+        }
+    }
 
     /**
      * The attributes that are mass assignable.
