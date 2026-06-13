@@ -259,5 +259,7 @@
             });
         </script>
     @endif
+
+    <livewire:storefront.newsletter-popup />
 </body>
 </html>

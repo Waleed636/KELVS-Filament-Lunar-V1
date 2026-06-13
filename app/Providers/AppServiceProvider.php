@@ -85,5 +85,22 @@ class AppServiceProvider extends ServiceProvider
                 </style>
             '
         );
+
+        // Safeguard: Clean up CartLines when a ProductVariant is deleted to prevent 500 crashes
+        \Lunar\Models\ProductVariant::deleting(function (\Lunar\Models\ProductVariant $variant) {
+            \Lunar\Models\CartLine::where('purchasable_type', $variant->getMorphClass())
+                ->where('purchasable_id', $variant->id)
+                ->delete();
+        });
+
+        // Safeguard: Clean up CartLines when a Product is deleted
+        \Lunar\Models\Product::deleting(function (\Lunar\Models\Product $product) {
+            $variantIds = $product->variants()->pluck('id');
+            if ($variantIds->isNotEmpty()) {
+                \Lunar\Models\CartLine::where('purchasable_type', 'product_variant')
+                    ->whereIn('purchasable_id', $variantIds)
+                    ->delete();
+            }
+        });
     }
 }
