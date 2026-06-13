@@ -36,6 +36,29 @@ class ProductShow extends Component
         if (auth()->check()) {
             $this->newName = auth()->user()->name;
         }
+
+        // Trigger view_item ecommerce event
+        $activeVariant = $product->variants->first();
+        if ($activeVariant) {
+            $priceValue = $activeVariant->prices->first()?->price?->value;
+            $priceFloat = $priceValue ? (float) ($priceValue / 100) : 0.0;
+            $eventId = 'view_' . $activeVariant->id . '_' . time();
+            
+            $this->dispatch('track-ecommerce-event', [
+                'eventName' => 'view_item',
+                'eventId' => $eventId,
+                'ecommerceData' => [
+                    'currency' => 'PKR',
+                    'value' => $priceFloat,
+                    'items' => [[
+                        'item_id' => $activeVariant->sku,
+                        'item_name' => $product->attr('name'),
+                        'price' => $priceFloat,
+                        'quantity' => 1
+                    ]]
+                ]
+            ]);
+        }
     }
 
     #[Computed]
@@ -140,6 +163,26 @@ class ProductShow extends Component
         if ($variant) {
             $cart->add($variant, $this->quantity);
             session()->flash('message', 'Product successfully added to your cart!');
+
+            // Flash dataLayer event to session to survive the redirect
+            $priceValue = $variant->prices->first()?->price?->value;
+            $priceFloat = $priceValue ? (float) ($priceValue / 100) : 0.0;
+            $eventId = 'cart_' . $variant->id . '_' . time();
+
+            session()->flash('dataLayerEvent', [
+                'eventName' => 'add_to_cart',
+                'eventId' => $eventId,
+                'ecommerceData' => [
+                    'currency' => 'PKR',
+                    'value' => $priceFloat * $this->quantity,
+                    'items' => [[
+                        'item_id' => $variant->sku,
+                        'item_name' => $this->product->attr('name'),
+                        'price' => $priceFloat,
+                        'quantity' => (int) $this->quantity
+                    ]]
+                ]
+            ]);
         } else {
             session()->flash('error', 'Selected variant not found.');
         }

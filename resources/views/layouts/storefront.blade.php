@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        window.dataLayer = window.dataLayer || [];
+    </script>
 
     @php
         // ── Resolve page-level SEO values with site-level fallbacks ──────────
@@ -230,5 +233,31 @@
     </footer>
 
     @livewireScripts
+    <script>
+        // Global listener for dynamic Livewire custom browser events
+        window.addEventListener('track-ecommerce-event', event => {
+            const payload = event.detail;
+            if (payload && payload.eventName) {
+                window.dataLayer.push({
+                    event: payload.eventName,
+                    event_id: payload.eventId,
+                    ecommerce: payload.ecommerceData
+                });
+            }
+        });
+    </script>
+    
+    @if(session()->has('dataLayerEvent'))
+        @php
+            $sessionEvent = session('dataLayerEvent');
+        @endphp
+        <script>
+            window.dataLayer.push({
+                event: '{{ $sessionEvent['eventName'] }}',
+                event_id: '{{ $sessionEvent['eventId'] }}',
+                ecommerce: @json($sessionEvent['ecommerceData'])
+            });
+        </script>
+    @endif
 </body>
 </html>

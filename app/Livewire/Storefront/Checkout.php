@@ -88,6 +88,35 @@ class Checkout extends Component
 
         $this->shippingAddress['country_id'] = $defaultCountryId;
         $this->billingAddress['country_id'] = $defaultCountryId;
+
+        // Eager load relationships for tracking to prevent N+1 issues
+        $cart->load(['lines.purchasable.prices.currency', 'lines.purchasable.product']);
+
+        $eventId = 'chk_' . $cart->id . '_' . time();
+        $items = [];
+        foreach ($cart->lines as $line) {
+            $variant = $line->purchasable;
+            if ($variant) {
+                $priceValue = $variant->prices->first()?->price?->value;
+                $priceFloat = $priceValue ? (float) ($priceValue / 100) : 0.0;
+                $items[] = [
+                    'item_id' => $variant->sku,
+                    'item_name' => $variant->product?->attr('name') ?? 'Product',
+                    'price' => $priceFloat,
+                    'quantity' => (int) $line->quantity
+                ];
+            }
+        }
+
+        $this->dispatch('track-ecommerce-event', [
+            'eventName' => 'begin_checkout',
+            'eventId' => $eventId,
+            'ecommerceData' => [
+                'currency' => $cart->currency->code ?? 'PKR',
+                'value' => (float) ($cart->calculate()?->total?->value / 100),
+                'items' => $items
+            ]
+        ]);
     }
 
     #[Computed]
