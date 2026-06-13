@@ -138,12 +138,12 @@
                     <!-- Ingredient pills -->
                     <div class="grid grid-cols-2 gap-4">
                         @foreach([
-                            ['Niacinamide 10%', 'Brightening & pore-minimising'],
+                            ['Niacinamide 5%', 'Brightening & pore-minimising'],
                             ['BHA 2%', 'Deep exfoliation & clarity'],
                             ['Hyaluronic Acid', '3-layer deep hydration'],
-                            ['Ceramide Complex', 'Barrier repair & protection'],
+                            ['Gentle Cleanser', 'Gentle Cleanser without Stripping'],
                             ['Vitamin C', 'Antioxidant glow boost'],
-                            ['SPF Filters', 'Broad spectrum UV shield'],
+                            ['Keratin Hair Masque', 'Hair Damage Repair'],
                         ] as $ingredient)
                         <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 hover:border-[#e8dcd2] hover:bg-[#faf7f4] transition duration-300">
                             <p class="text-sm font-bold text-[#111111]">{{ $ingredient[0] }}</p>
@@ -175,7 +175,7 @@
             <p class="text-gray-600 mb-8 leading-relaxed">
                 Explore our curated collection of science-led skincare and find the perfect products for your skin.
             </p>
-            <a href="/" wire:navigate
+            <a href="/shop" wire:navigate
                class="inline-flex items-center gap-2 bg-[#111111] text-white font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#333] transition duration-300">
                 Shop the Collection
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,8 +1,27 @@
+@php
+    $image = $post->image();
+    $hasImage = false;
+    $imageUrl = '';
+    
+    if ($image) {
+        if (filter_var($image, FILTER_VALIDATE_URL)) {
+            $hasImage = true;
+            $imageUrl = $image;
+        } elseif (file_exists(public_path($image))) {
+            $hasImage = true;
+            $imageUrl = $image;
+        } elseif (file_exists(public_path('storage/' . $image))) {
+            $hasImage = true;
+            $imageUrl = asset('storage/' . $image);
+        }
+    }
+@endphp
+
 <article class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-md transition duration-300">
 
-    @if($post->image() !== null)
+    @if($hasImage)
     <a href="{{ route('post', $post->slug) }}">
-        <img alt="{{ $post->title }}" src="{{ $post->image() }}"
+        <img alt="{{ $post->title }}" src="{{ $imageUrl }}"
              class="w-full h-48 object-cover group-hover:scale-105 transition duration-500"/>
     </a>
     @endif

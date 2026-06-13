@@ -34,9 +34,10 @@
                         <a href="#featured-products" class="px-8 py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-sm font-bold rounded-[6px] tracking-wide uppercase transition duration-300 shadow-sm">
                             Shop Bestsellers
                         </a>
-                        <a href="#routine-builder" class="px-8 py-3.5 border border-[#111111] hover:bg-gray-50 text-[#111111] text-sm font-bold rounded-[6px] tracking-wide uppercase transition duration-300">
+                        <!-- <a href="#routine-builder" class="px-8 py-3.5 border border-[#111111] hover:bg-gray-50 text-[#111111] text-sm font-bold rounded-[6px] tracking-wide uppercase transition duration-300">
                             Explore Routine
-                        </a>
+                        </a> -->
+
                     </div>
                 </div>
 
@@ -298,13 +299,13 @@
                             @endfor
                         </div>
                         <p class="text-sm text-gray-700 italic leading-relaxed">
-                            "The Niacinamide serum has completely transformed my skin texture. My pore size is visibly reduced, and it absorbs almost instantly. Absolutely perfect for summer."
+                            "this is a super Gentle wash Have used my 3rd Bottle since its fragrance free it can also be used as hygiene wash Loving it so far the best cleanser i have used so far"
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 pt-4 border-t border-gray-100">
                         <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-[#111111]">SM</div>
                         <div>
-                            <h5 class="text-xs font-bold text-[#111111]">Sarah M.</h5>
+                            <h5 class="text-xs font-bold text-[#111111]">Zunaira.</h5>
                             <span class="text-[10px] text-gray-400 font-semibold uppercase">Verified Buyer — Karachi</span>
                         </div>
                     </div>
@@ -321,13 +322,13 @@
                             @endfor
                         </div>
                         <p class="text-sm text-gray-700 italic leading-relaxed">
-                            "Finding a barrier moisturizer that doesn't clog pores in Lahore's heat has always been impossible. The Ceramide cream has repaired my dry skin barrier without feeling heavy."
+                            "KELVS Detangle Shampoo has been a wonderful addition to my hair care routine. Not only is it effective at detangling my hair without causing breakage, but it's also free from harmful chemicals that can be detrimental to both my hair and my health."
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 pt-4 border-t border-gray-100">
                         <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-[#111111]">ZR</div>
                         <div>
-                            <h5 class="text-xs font-bold text-[#111111]">Zainab R.</h5>
+                            <h5 class="text-xs font-bold text-[#111111]">Aisha.</h5>
                             <span class="text-[10px] text-gray-400 font-semibold uppercase">Verified Buyer — Lahore</span>
                         </div>
                     </div>
@@ -344,13 +345,14 @@
                             @endfor
                         </div>
                         <p class="text-sm text-gray-700 italic leading-relaxed">
-                            "The SPF 50 Mineral Sunscreen has a beautiful dry-touch matte finish. It doesn't leave any white cast and holds up perfectly under makeup. Extremely impressed."
+                            "Love that some pakistani brand is doing this kind of providing such products at this price point
+"
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 pt-4 border-t border-gray-100">
                         <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-[#111111]">FK</div>
                         <div>
-                            <h5 class="text-xs font-bold text-[#111111]">Farhan K.</h5>
+                            <h5 class="text-xs font-bold text-[#111111]">Uzma.</h5>
                             <span class="text-[10px] text-gray-400 font-semibold uppercase">Verified Buyer — Islamabad</span>
                         </div>
                     </div>
@@ -365,9 +367,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="flex flex-col items-center text-center space-y-3 mb-16">
-                <span class="text-xs font-bold tracking-widest uppercase text-gray-400 bg-white px-3 py-1 rounded border border-gray-150">Routine Builder</span>
-                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-[#111111]">Three Steps to Clean Skin</h2>
-                <p class="text-sm text-gray-500 max-w-md font-normal">A minimal, science-backed approach. Cleanse, Treat, and Protect daily.</p>
+                <span class="text-xs font-bold tracking-widest uppercase text-gray-400 bg-white px-3 py-1 rounded border border-gray-150">Skin starts here</span>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-[#111111]">Good skin isn't just what you apply. It's how you live.</h2>
+                <!-- <p class="text-sm text-gray-500 max-w-md font-normal">A minimal, science-backed approach. Cleanse, Treat, and Protect daily.</p> -->
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -376,16 +378,16 @@
                 <div class="bg-white p-8 rounded-xl border border-gray-150 flex flex-col justify-between space-y-8 hover:border-gray-300 transition duration-300">
                     <div class="space-y-4">
                         <div class="text-[36px] font-extrabold text-[#e8dcd2] leading-none">01</div>
-                        <h3 class="text-lg font-bold text-[#111111]">CLEANSE</h3>
+                        <h3 class="text-lg font-bold text-[#111111]">HYDRATE</h3>
                         <p class="text-xs text-gray-500 leading-relaxed font-normal">
-                            Purify skin and wash away impurities with our pH-balanced daily gel cleanser. Infused with green tea to prevent dehydration.
+                            Your skin is ~64% water. When you're chronically under-hydrated, the skin barrier weakens, sebum production increases, and blemishes worsen. Aim for 2–3 litres daily — your cleanser and serum work significantly better when your skin isn't compensating for dehydration.
                         </p>
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-gray-400 uppercase">Step 01 Cleanser</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Step 01:  Hydrate</span>
                         <a href="/products/kelvs-gentle-gel-cleanser" wire:navigate class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
-                            <span>View Product</span>
-                            <span>&rarr;</span>
+                            <!-- <span>View Product</span>
+                            <span>&rarr;</span> -->
                         </a>
                     </div>
                 </div>
@@ -394,16 +396,17 @@
                 <div class="bg-white p-8 rounded-xl border border-gray-150 flex flex-col justify-between space-y-8 hover:border-gray-300 transition duration-300">
                     <div class="space-y-4">
                         <div class="text-[36px] font-extrabold text-[#e8dcd2] leading-none">02</div>
-                        <h3 class="text-lg font-bold text-[#111111]">TREAT</h3>
+                        <h3 class="text-lg font-bold text-[#111111]">SLEEP</h3>
                         <p class="text-xs text-gray-500 leading-relaxed font-normal">
-                            Target blemishes, excess sebum, and uneven tone with Niacinamide + Zinc PCA, or exfoliate deep within pores using 2% Salicylic Acid.
+                            Skin cell turnover peaks between 11pm–4am. Cutting sleep short means less collagen repair, elevated cortisol (which directly triggers breakouts), and a compromised barrier. 7–9 hours isn't beauty advice — it's biology.
+
                         </p>
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-gray-400 uppercase">Step 02 Treatment</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Step 02:  Sleep</span>
                         <a href="/products/kelvs-niacinamide-zinc-serum" wire:navigate class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
-                            <span>View Product</span>
-                            <span>&rarr;</span>
+                            <!-- <span>View Product</span>
+                            <span>&rarr;</span> -->
                         </a>
                     </div>
                 </div>
@@ -412,16 +415,16 @@
                 <div class="bg-white p-8 rounded-xl border border-gray-150 flex flex-col justify-between space-y-8 hover:border-gray-300 transition duration-300">
                     <div class="space-y-4">
                         <div class="text-[36px] font-extrabold text-[#e8dcd2] leading-none">03</div>
-                        <h3 class="text-lg font-bold text-[#111111]">PROTECT</h3>
+                        <h3 class="text-lg font-bold text-[#111111]">MOVE</h3>
                         <p class="text-xs text-gray-500 leading-relaxed font-normal">
-                            Form a broad-spectrum dry-touch shield against UVA/UVB rays, custom formulated for extreme heat and high humidity levels.
+                            Exercise increases circulation, delivering oxygen and nutrients to skin cells while flushing out toxins through sweat. Even 20–30 minutes of daily movement measurably reduces cortisol — the same hormone that triggers breakouts and slows healing.
                         </p>
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-gray-400 uppercase">Step 03 Sunshield</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Step 03:  Excercise</span>
                         <a href="/products/kelvs-matte-sun-shield-spf-50" wire:navigate class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
-                            <span>View Product</span>
-                            <span>&rarr;</span>
+                            <!-- <span>View Product</span>
+                            <span>&rarr;</span> -->
                         </a>
                     </div>
                 </div>
@@ -452,7 +455,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto items-stretch">
-                    <a href="https://wa.me/923000000000" target="_blank" class="px-8 py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[6px] tracking-wide uppercase transition duration-300 flex items-center justify-center space-x-2">
+                    <a href="https://wa.me/923124995545" target="_blank" class="px-8 py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[6px] tracking-wide uppercase transition duration-300 flex items-center justify-center space-x-2">
                         <!-- WhatsApp minimalist icon -->
                         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.734-1.458L0 24zm6.076-4.664c1.623.963 3.224 1.47 4.902 1.471 5.489 0 9.957-4.432 9.96-9.874.002-2.637-1.02-5.117-2.88-6.98-1.859-1.861-4.332-2.884-6.974-2.885-5.49 0-9.959 4.434-9.963 9.876-.001 1.761.472 3.428 1.368 4.933l-.979 3.57 3.666-.961zm10.741-6.938c-.3-.15-1.775-.875-2.049-.974-.275-.1-.475-.15-.675.15-.2.3-.775.974-.95 1.174-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.794-1.49-1.775-1.665-2.075-.175-.3-.019-.462.13-.611.135-.134.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.675-1.625-.925-2.225-.244-.589-.491-.51-.675-.519-.175-.008-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5s1.075 2.9 1.225 3.1c.15.2 2.11 3.22 5.11 4.52.714.31 1.272.495 1.704.633.717.227 1.369.195 1.884.118.574-.085 1.775-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>

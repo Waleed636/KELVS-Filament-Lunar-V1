@@ -84,7 +84,63 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="h-full bg-white text-[#111111] font-sans antialiased flex flex-col selection:bg-[#e8dcd2] selection:text-[#111111]">
+<body x-data="{ mobileMenuOpen: false }" class="h-full bg-white text-[#111111] font-sans antialiased flex flex-col selection:bg-[#e8dcd2] selection:text-[#111111]">
+
+    <!-- Mobile Drawer Overlay / Backdrop -->
+    <div x-show="mobileMenuOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="mobileMenuOpen = false"
+         class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden" 
+         style="display: none;">
+    </div>
+
+    <!-- Mobile Drawer Panel -->
+    <div x-show="mobileMenuOpen" 
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="translate-x-full"
+         class="fixed inset-y-0 right-0 z-50 w-full max-w-xs bg-[#fbfbfa] shadow-2xl flex flex-col border-l border-gray-100 md:hidden"
+         style="display: none;">
+        
+        <!-- Drawer Header -->
+        <div class="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
+            <a href="/" wire:navigate @click="mobileMenuOpen = false" class="flex items-center space-x-2.5">
+                <span class="text-xl font-bold tracking-widest text-[#111111]">KELVS</span>
+            </a>
+            <button @click="mobileMenuOpen = false" class="p-2 -mr-2 text-gray-500 hover:text-[#111111] focus:outline-none" aria-label="Close Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Drawer Links -->
+        <nav class="flex-grow px-6 py-8 flex flex-col space-y-6 text-sm font-semibold tracking-wide uppercase">
+            <a href="/" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('/') || request()->is('') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Home</a>
+            <a href="/about" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('about') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">About</a>
+            <a href="/sky" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('sky*') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Blog</a>
+            
+            <div class="pt-6 border-t border-gray-100">
+                <a href="/shop" wire:navigate @click="mobileMenuOpen = false" class="block w-full text-center py-3 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">
+                    Shop
+                </a>
+            </div>
+        </nav>
+
+        <!-- Drawer Footer -->
+        <div class="p-6 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 text-center">
+            <p>&copy; {{ date('Y') }} KELVS Store.</p>
+            <p class="mt-1 font-medium">Built for the Pakistani climate.</p>
+        </div>
+    </div>
 
     <!-- Header / Navigation -->
     <header class="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
@@ -93,9 +149,6 @@
             <a href="/" wire:navigate class="flex items-center space-x-2.5 group">
                 <span class="text-2xl font-bold tracking-widest text-[#111111] group-hover:opacity-80 transition duration-300">
                     KELVS
-                </span>
-                <span class="text-[9px] uppercase font-bold text-gray-500 tracking-widest border border-gray-200 px-1.5 py-0.5 rounded bg-gray-50">
-                    Skin
                 </span>
             </a>
 
@@ -118,6 +171,13 @@
 
                 <!-- Cart Button -->
                 <livewire:storefront.cart-badge />
+
+                <!-- Mobile Menu Hamburger Button -->
+                <button @click="mobileMenuOpen = true" class="md:hidden p-2 -mr-2 text-[#111111] hover:opacity-80 focus:outline-none" aria-label="Open Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
@@ -134,7 +194,7 @@
                 <!-- Branding -->
                 <div class="md:col-span-2">
                     <span class="text-lg font-extrabold tracking-widest text-[#111111]">
-                        KELVS SKIN
+                        KELVS
                     </span>
                     <p class="mt-4 text-gray-600 max-w-sm leading-relaxed">
                         Science-led skincare for real results. Minimal formulas, maximum performance. Made to simplify your daily routine with high-quality, dermatologically inspired ingredients.
@@ -156,7 +216,7 @@
                     <ul class="space-y-2.5">
                         <li><a href="/about" wire:navigate class="hover:text-[#111111] transition">About KELVS</a></li>
                         <li><a href="/sky" wire:navigate class="hover:text-[#111111] transition">Blog & Guides</a></li>
-                        <li><a href="/sky/faq" wire:navigate class="hover:text-[#111111] transition">FAQ</a></li>
+                        <!-- <li><a href="/sky/faq" wire:navigate class="hover:text-[#111111] transition">FAQ</a></li> -->
                     </ul>
                 </div>
             </div>
