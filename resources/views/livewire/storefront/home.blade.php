@@ -44,7 +44,7 @@
                 <!-- Right Visual Column -->
                 <div class="lg:col-span-7 relative flex justify-center lg:justify-end">
                     <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-square max-w-[620px] rounded-xl overflow-hidden shadow-sm border border-gray-200/40 bg-gray-50">
-                        <img src="/images/hero_lifestyle.png" alt="KELVS Skincare Hero" class="object-cover w-full h-full object-center hover:scale-[1.01] transition duration-700">
+                        <img src="/images/Product-tray.webp" alt="KELVS Skincare Hero" class="object-cover w-full h-full object-center hover:scale-[1.01] transition duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
                     </div>
                     
