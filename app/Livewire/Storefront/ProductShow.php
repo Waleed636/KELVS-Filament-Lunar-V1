@@ -41,7 +41,8 @@ class ProductShow extends Component
         $activeVariant = $product->variants->first();
         if ($activeVariant) {
             $priceValue = $activeVariant->prices->first()?->price?->value;
-            $priceFloat = $priceValue ? (float) ($priceValue / 100) : 0.0;
+            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 2);
+            $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
             $eventId = 'view_' . $activeVariant->id . '_' . time();
             
             $this->dispatch('track-ecommerce-event', [
@@ -166,7 +167,8 @@ class ProductShow extends Component
 
             // Flash dataLayer event to session to survive the redirect
             $priceValue = $variant->prices->first()?->price?->value;
-            $priceFloat = $priceValue ? (float) ($priceValue / 100) : 0.0;
+            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 2);
+            $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
             $eventId = 'cart_' . $variant->id . '_' . time();
 
             session()->flash('dataLayerEvent', [

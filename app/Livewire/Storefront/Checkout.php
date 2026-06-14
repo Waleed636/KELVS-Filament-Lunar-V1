@@ -9,6 +9,7 @@ use Lunar\Models\Country;
 use Lunar\Models\Order;
 use Lunar\DataTypes\ShippingOption;
 use Lunar\Models\TaxClass;
+use App\Models\PartialOrder;
 
 class Checkout extends Component
 {
@@ -92,13 +93,16 @@ class Checkout extends Component
         // Eager load relationships for tracking to prevent N+1 issues
         $cart->load(['lines.purchasable.prices.currency', 'lines.purchasable.product']);
 
+        $decimalPlaces = $cart->currency->decimal_places ?? 2;
+        $factor = 10 ** $decimalPlaces;
+
         $eventId = 'chk_' . $cart->id . '_' . time();
         $items = [];
         foreach ($cart->lines as $line) {
             $variant = $line->purchasable;
             if ($variant) {
                 $priceValue = $variant->prices->first()?->price?->value;
-                $priceFloat = $priceValue ? (float) ($priceValue / 100) : 0.0;
+                $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
                 $items[] = [
                     'item_id' => $variant->sku,
                     'item_name' => $variant->product?->attr('name') ?? 'Product',
@@ -113,10 +117,12 @@ class Checkout extends Component
             'eventId' => $eventId,
             'ecommerceData' => [
                 'currency' => $cart->currency->code ?? 'PKR',
-                'value' => (float) ($cart->calculate()?->total?->value / 100),
+                'value' => (float) ($cart->calculate()?->total?->value / $factor),
                 'items' => $items
             ]
         ]);
+
+        $this->capturePartialOrder();
     }
 
     #[Computed]
@@ -300,11 +306,64 @@ class Checkout extends Component
             'status' => $this->paymentMethod === 'cod' ? 'payment-offline' : 'payment-received',
         ]);
 
+        // Delete partial order on successful purchase
+        PartialOrder::where('session_id', session()->getId())->delete();
+
         // 6. Clear cart session and redirect to the thankyou page
         CartSession::forget();
         $this->dispatch('cart-updated');
 
         return redirect()->route('checkout.thankyou', ['id' => $order->id]);
+    }
+
+    public function updated($name, $value)
+    {
+        if (str_starts_with($name, 'shippingAddress') || str_starts_with($name, 'billingAddress') || $name === 'shippingOptionHandle') {
+            $this->capturePartialOrder();
+        }
+    }
+
+    public function capturePartialOrder()
+    {
+        $cart = CartSession::current();
+        if (!$cart || $cart->lines->isEmpty()) {
+            return;
+        }
+
+        $decimalPlaces = $cart->currency->decimal_places ?? 2;
+        $factor = 10 ** $decimalPlaces;
+
+        $items = [];
+        foreach ($cart->lines as $line) {
+            $variant = $line->purchasable;
+            if ($variant) {
+                $priceValue = $variant->prices->first()?->price?->value;
+                $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
+                $items[] = [
+                    'name' => $variant->product?->attr('name') ?? 'Product',
+                    'quantity' => (int) $line->quantity,
+                    'price' => $priceFloat,
+                ];
+            }
+        }
+
+        $cartTotal = $cart->calculate()?->total?->value;
+        $totalFloat = $cartTotal ? (float) ($cartTotal / $factor) : 0.0;
+
+        PartialOrder::updateOrCreate(
+            ['session_id' => session()->getId()],
+            [
+                'name' => $this->shippingAddress['first_name'] ?: null,
+                'phone' => $this->shippingAddress['contact_phone'] ?: null,
+                'email' => $this->shippingAddress['contact_email'] ?: null,
+                'address' => $this->shippingAddress['line_one'] ?: null,
+                'city' => $this->shippingAddress['city'] ?: null,
+                'province' => $this->shippingAddress['state'] ?: null,
+                'postalcode' => $this->shippingAddress['postcode'] ?: null,
+                'cart_contents' => $items,
+                'cart_total' => $totalFloat,
+            ]
+        );
     }
 
     public function render()
