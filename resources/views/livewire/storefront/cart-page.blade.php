@@ -136,7 +136,21 @@
                     </a>
                 </div>
             </div>
-
         </div>
     @endif
+
+    @script
+    <script>
+        @if($dataLayerPayload)
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+                event: '{{ $dataLayerPayload['eventName'] }}',
+                event_id: '{{ $dataLayerPayload['eventId'] }}',
+                ecommerce: @json($dataLayerPayload['ecommerceData'])
+            });
+        @endif
+    </script>
+    @endscript
+
 </div>

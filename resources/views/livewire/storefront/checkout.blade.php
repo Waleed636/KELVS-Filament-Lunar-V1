@@ -243,5 +243,21 @@
 
         </div>
 
-    </div>
+    @script
+    <script>
+        @if($checkoutEventData)
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+                event: '{{ $checkoutEventData['eventName'] }}',
+                event_id: '{{ $checkoutEventData['eventId'] }}',
+                @if(!empty($checkoutEventData['userData']))
+                    user_data: @json($checkoutEventData['userData']),
+                @endif
+                ecommerce: @json($checkoutEventData['ecommerceData'])
+            });
+        @endif
+    </script>
+    @endscript
+
 </div>

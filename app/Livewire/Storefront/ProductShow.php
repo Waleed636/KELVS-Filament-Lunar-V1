@@ -11,6 +11,8 @@ use App\Models\Review;
 
 class ProductShow extends Component
 {
+    public $dataLayerPayload = null;
+
     public $slug;
     public $variantId;
     public $quantity = 1;
@@ -41,24 +43,30 @@ class ProductShow extends Component
         $activeVariant = $product->variants->first();
         if ($activeVariant) {
             $priceValue = $activeVariant->prices->first()?->price?->value;
-            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 2);
+            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 0);
             $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
             $eventId = 'view_' . $activeVariant->id . '_' . time();
+            $category = $product->collections()->first()?->attr('name') ?? 'Skincare';
+            $variantName = $activeVariant->attr('name') ?? $activeVariant->sku;
             
-            $this->dispatch('track-ecommerce-event', [
+            $this->dataLayerPayload = [
                 'eventName' => 'view_item',
                 'eventId' => $eventId,
                 'ecommerceData' => [
                     'currency' => 'PKR',
                     'value' => $priceFloat,
                     'items' => [[
-                        'item_id' => $activeVariant->sku,
-                        'item_name' => $product->attr('name'),
-                        'price' => $priceFloat,
-                        'quantity' => 1
+                        'item_id'        => $activeVariant->sku,
+                        'item_name'      => $product->attr('name'),
+                        'item_brand'     => 'KELVS',
+                        'item_category'  => $category,
+                        'item_variant'   => $variantName,
+                        'item_list_name' => 'Product Page',
+                        'price'          => $priceFloat,
+                        'quantity'       => 1,
                     ]]
                 ]
-            ]);
+            ];
         }
     }
 
@@ -167,23 +175,30 @@ class ProductShow extends Component
 
             // Flash dataLayer event to session to survive the redirect
             $priceValue = $variant->prices->first()?->price?->value;
-            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 2);
+            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 0);
             $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
             $eventId = 'cart_' . $variant->id . '_' . time();
+            $category = $variant->product?->collections()->first()?->attr('name') ?? 'Skincare';
+            $variantName = $variant->attr('name') ?? $variant->sku;
 
             session()->flash('dataLayerEvent', [
                 'eventName' => 'add_to_cart',
-                'eventId' => $eventId,
+                'eventId'   => $eventId,
+                'userData'  => [],
                 'ecommerceData' => [
                     'currency' => 'PKR',
-                    'value' => $priceFloat * $this->quantity,
-                    'items' => [[
-                        'item_id' => $variant->sku,
-                        'item_name' => $this->product->attr('name'),
-                        'price' => $priceFloat,
-                        'quantity' => (int) $this->quantity
-                    ]]
-                ]
+                    'value'    => $priceFloat * $this->quantity,
+                    'items'    => [[
+                        'item_id'        => $variant->sku,
+                        'item_name'      => $this->product->attr('name'),
+                        'item_brand'     => 'KELVS',
+                        'item_category'  => $category,
+                        'item_variant'   => $variantName,
+                        'item_list_name' => 'Product Page',
+                        'price'          => $priceFloat,
+                        'quantity'       => (int) $this->quantity,
+                    ]],
+                ],
             ]);
         } else {
             session()->flash('error', 'Selected variant not found.');

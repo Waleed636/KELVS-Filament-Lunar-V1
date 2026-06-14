@@ -6,7 +6,79 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
         window.dataLayer = window.dataLayer || [];
+
+        // Guard to ensure listeners are only added once across wire:navigate transitions
+        if (!window.dataLayerListenersRegistered) {
+            window.dataLayerListenersRegistered = true;
+
+            // ── DataLayer: Global Ecommerce Event Bridge ─────────────────────────
+            // Handles all events dispatched via Livewire's dispatch('track-ecommerce-event')
+            window.addEventListener('track-ecommerce-event', function(event) {
+                const payload = event.detail;
+                if (!payload || !payload.eventName) return;
+
+                // Purchase deduplication: prevent double-counting on page refresh
+                if (payload.eventName === 'purchase' && payload.ecommerceData && payload.ecommerceData.transaction_id) {
+                    const dedupKey = 'fired_purchase_' + payload.ecommerceData.transaction_id;
+                    if (sessionStorage.getItem(dedupKey)) return;
+                    sessionStorage.setItem(dedupKey, '1');
+                }
+
+                // Always clear ecommerce object before pushing to prevent data bleed
+                window.dataLayer.push({ ecommerce: null });
+
+                const pushPayload = {
+                    event:    payload.eventName,
+                    event_id: payload.eventId,
+                    ecommerce: payload.ecommerceData
+                };
+
+                // Forward hashed user_data (Enhanced Conversions) if present
+                if (payload.userData && Object.keys(payload.userData).length > 0) {
+                    pushPayload.user_data = payload.userData;
+                }
+
+                window.dataLayer.push(pushPayload);
+            });
+
+            // ── DataLayer: select_item — product card click listener ─────────────
+            // Fires when any element with data-track-select-item is clicked
+            document.addEventListener('click', function(e) {
+                // Ignore clicks on Add to Cart buttons
+                if (e.target.closest('button') || e.target.closest('[wire\\:click]')) return;
+
+                let el = e.target.closest('[data-track-select-item]');
+                if (!el) {
+                    const card = e.target.closest('.group');
+                    if (card) {
+                        el = card.querySelector('[data-track-select-item]');
+                    }
+                }
+                if (!el) return;
+
+                window.dataLayer.push({ ecommerce: null });
+                window.dataLayer.push({
+                    event: 'select_item',
+                    ecommerce: {
+                        item_list_id:   el.dataset.listId   || '',
+                        item_list_name: el.dataset.listName || '',
+                        items: [{
+                            item_id:        el.dataset.itemId    || '',
+                            item_name:      el.dataset.itemName  || '',
+                            item_brand:     'KELVS',
+                            item_category:  el.dataset.itemCategory || 'Skincare',
+                            item_variant:   el.dataset.itemVariant  || '',
+                            item_list_name: el.dataset.listName || '',
+                            price:          parseFloat(el.dataset.itemPrice) || 0,
+                            index:          parseInt(el.dataset.itemIndex)   || 0,
+                            quantity:       1
+                        }]
+                    }
+                });
+            });
+        }
     </script>
+
 
     @php
         // ── Resolve page-level SEO values with site-level fallbacks ──────────
@@ -233,30 +305,37 @@
     </footer>
 
     @livewireScripts
-    <script>
-        // Global listener for dynamic Livewire custom browser events
-        window.addEventListener('track-ecommerce-event', event => {
-            const payload = event.detail;
-            if (payload && payload.eventName) {
-                window.dataLayer.push({
-                    event: payload.eventName,
-                    event_id: payload.eventId,
-                    ecommerce: payload.ecommerceData
-                });
-            }
-        });
-    </script>
-    
+
+
     @if(session()->has('dataLayerEvent'))
         @php
             $sessionEvent = session('dataLayerEvent');
         @endphp
         <script>
-            window.dataLayer.push({
-                event: '{{ $sessionEvent['eventName'] }}',
-                event_id: '{{ $sessionEvent['eventId'] }}',
-                ecommerce: @json($sessionEvent['ecommerceData'])
-            });
+            // Clear ecommerce before session-flashed event (e.g. add_to_cart after redirect)
+            window.dataLayer.push({ ecommerce: null });
+
+            // Purchase dedup check for session-flashed events too
+            (function() {
+                var payload = {
+                    eventName:     '{{ $sessionEvent['eventName'] }}',
+                    eventId:       '{{ $sessionEvent['eventId'] }}',
+                    ecommerceData: @json($sessionEvent['ecommerceData']),
+                    userData:      @json($sessionEvent['userData'] ?? [])
+                };
+
+                if (payload.eventName === 'purchase' && payload.ecommerceData && payload.ecommerceData.transaction_id) {
+                    var dedupKey = 'fired_purchase_' + payload.ecommerceData.transaction_id;
+                    if (sessionStorage.getItem(dedupKey)) return;
+                    sessionStorage.setItem(dedupKey, '1');
+                }
+
+                var push = { event: payload.eventName, event_id: payload.eventId, ecommerce: payload.ecommerceData };
+                if (payload.userData && Object.keys(payload.userData).length > 0) {
+                    push.user_data = payload.userData;
+                }
+                window.dataLayer.push(push);
+            })();
         </script>
     @endif
 

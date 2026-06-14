@@ -8,6 +8,8 @@ use Lunar\Models\Product;
 
 class Home extends Component
 {
+    public $dataLayerPayload = null;
+
     public function addToCart($variantId)
     {
         $cart = \Lunar\Facades\CartSession::manager();
@@ -21,24 +23,72 @@ class Home extends Component
 
             // Trigger add_to_cart event for frontend
             $priceValue = $variant->prices->first()?->price?->value;
-            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 2);
+            $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 0);
             $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
             $eventId = 'cart_' . $variant->id . '_' . time();
+            $category = $variant->product?->collections()->first()?->attr('name') ?? 'Skincare';
 
             $this->dispatch('track-ecommerce-event', [
                 'eventName' => 'add_to_cart',
-                'eventId' => $eventId,
+                'eventId'   => $eventId,
                 'ecommerceData' => [
                     'currency' => 'PKR',
-                    'value' => $priceFloat,
-                    'items' => [[
-                        'item_id' => $variant->sku,
-                        'item_name' => $variant->product?->attr('name') ?? 'Product',
-                        'price' => $priceFloat,
-                        'quantity' => 1
-                    ]]
-                ]
+                    'value'    => $priceFloat,
+                    'items'    => [[
+                        'item_id'        => $variant->sku,
+                        'item_name'      => $variant->product?->attr('name') ?? 'Product',
+                        'item_brand'     => 'KELVS',
+                        'item_category'  => $category,
+                        'item_list_name' => 'Homepage Featured',
+                        'price'          => $priceFloat,
+                        'quantity'       => 1,
+                    ]],
+                ],
             ]);
+        }
+    }
+
+    protected $productsList;
+
+    public function mount()
+    {
+        $factor = 10 ** (\Lunar\Models\Currency::getDefault()?->decimal_places ?? 0);
+        $this->productsList = Product::with(['variants.prices.currency', 'thumbnail', 'urls', 'collections'])
+            ->latest()
+            ->take(8)
+            ->get();
+
+        // Build view_item_list payload for homepage featured section
+        $listItems = [];
+        foreach ($this->productsList as $index => $product) {
+            $variant    = $product->variants->first();
+            $priceValue = $variant?->prices->first()?->price?->value;
+            $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
+            $category   = $product->collections->first()?->attr('name') ?? 'Skincare';
+
+            $listItems[] = [
+                'item_id'        => $variant?->sku ?? (string) $product->id,
+                'item_name'      => $product->attr('name'),
+                'item_brand'     => 'KELVS',
+                'item_category'  => $category,
+                'item_list_id'   => 'homepage_featured',
+                'item_list_name' => 'Homepage Featured',
+                'index'          => $index,
+                'price'          => $priceFloat,
+                'quantity'       => 1,
+            ];
+        }
+
+        if (!empty($listItems)) {
+            $this->dataLayerPayload = [
+                'eventName' => 'view_item_list',
+                'eventId'   => 'vil_home_' . time(),
+                'ecommerceData' => [
+                    'item_list_id'   => 'homepage_featured',
+                    'item_list_name' => 'Homepage Featured',
+                    'items'          => $listItems,
+                ],
+            ];
         }
     }
 
@@ -46,10 +96,12 @@ class Home extends Component
     {
         $collections = Collection::take(4)->get();
         
-        $products = Product::with(['variants.prices.currency', 'thumbnail', 'urls'])
-            ->latest()
-            ->take(8)
-            ->get();
+        if (!$this->productsList) {
+            $this->productsList = Product::with(['variants.prices.currency', 'thumbnail', 'urls', 'collections'])
+                ->latest()
+                ->take(8)
+                ->get();
+        }
 
         $posts = collect();
         if (class_exists(\LaraZeus\Sky\Models\Post::class)) {
@@ -61,8 +113,8 @@ class Home extends Component
 
         return view('livewire.storefront.home', [
             'collections' => $collections,
-            'products' => $products,
-            'posts' => $posts,
+            'products'    => $this->productsList,
+            'posts'       => $posts,
         ])->layout('layouts.storefront');
     }
 }

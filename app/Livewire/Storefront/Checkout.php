@@ -46,6 +46,8 @@ class Checkout extends Component
     public $paymentMethod = 'cod';
     public $orderCompleted = false;
     public $completedOrder = null;
+    public $checkoutEventData = null;
+
 
     protected function rules()
     {
@@ -93,34 +95,36 @@ class Checkout extends Component
         // Eager load relationships for tracking to prevent N+1 issues
         $cart->load(['lines.purchasable.prices.currency', 'lines.purchasable.product']);
 
-        $decimalPlaces = $cart->currency->decimal_places ?? 2;
+        $decimalPlaces = $cart->currency->decimal_places ?? 0;
         $factor = 10 ** $decimalPlaces;
 
-        $eventId = 'chk_' . $cart->id . '_' . time();
-        $items = [];
-        foreach ($cart->lines as $line) {
-            $variant = $line->purchasable;
-            if ($variant) {
-                $priceValue = $variant->prices->first()?->price?->value;
-                $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
-                $items[] = [
-                    'item_id' => $variant->sku,
-                    'item_name' => $variant->product?->attr('name') ?? 'Product',
-                    'price' => $priceFloat,
-                    'quantity' => (int) $line->quantity
-                ];
-            }
-        }
+        $eventId   = 'chk_' . $cart->id . '_' . time();
+        $cartTotal = $cart->calculate()?->total?->value ?? 0;
 
-        $this->dispatch('track-ecommerce-event', [
+        // Build partial user_data from form state (may be empty on first mount)
+        $userData = [];
+        if (!empty($this->shippingAddress['contact_email'])) {
+            $userData['email_address'] = hash('sha256', strtolower(trim($this->shippingAddress['contact_email'])));
+        }
+        if (!empty($this->shippingAddress['contact_phone'])) {
+            $phone = preg_replace('/\D/', '', $this->shippingAddress['contact_phone']);
+            if (!str_starts_with($phone, '92')) {
+                $phone = '92' . ltrim($phone, '0');
+            }
+            $userData['phone_number'] = hash('sha256', '+' . $phone);
+        }
+        $userData['external_id'] = hash('sha256', 'cart_' . $cart->id);
+
+        $this->checkoutEventData = [
             'eventName' => 'begin_checkout',
-            'eventId' => $eventId,
+            'eventId'   => $eventId,
+            'userData'  => $userData,
             'ecommerceData' => [
                 'currency' => $cart->currency->code ?? 'PKR',
-                'value' => (float) ($cart->calculate()?->total?->value / $factor),
-                'items' => $items
-            ]
-        ]);
+                'value'    => (float) ($cartTotal / $factor),
+                'items'    => $this->buildCheckoutItems($cart, $factor),
+            ],
+        ];
 
         $this->capturePartialOrder();
     }
@@ -216,8 +220,102 @@ class Checkout extends Component
         $this->reset('shippingOptionHandle');
     }
 
+    /**
+     * Build the items array from the current cart (shared by multiple events).
+     */
+    protected function buildCheckoutItems($cart, float $factor): array
+    {
+        $items = [];
+        foreach ($cart->lines as $line) {
+            $variant = $line->purchasable;
+            if (!$variant) continue;
+
+            $priceValue = $variant->prices->first()?->price?->value;
+            $priceFloat = $priceValue ? (float) ($priceValue / $factor) : 0.0;
+            $category   = $variant->product?->collections()->first()?->attr('name') ?? 'Skincare';
+
+            $items[] = [
+                'item_id'       => $variant->sku,
+                'item_name'     => $variant->product?->attr('name') ?? 'Product',
+                'item_brand'    => 'KELVS',
+                'item_category' => $category,
+                'price'         => $priceFloat,
+                'quantity'      => (int) $line->quantity,
+            ];
+        }
+        return $items;
+    }
+
+    /**
+     * Fires add_shipping_info when a shipping option is selected.
+     */
+    public function updatedShippingOptionHandle($value)
+    {
+        if (blank($value)) return;
+
+        $cart = CartSession::current();
+        if (!$cart || $cart->lines->isEmpty()) return;
+
+        $cart->load(['lines.purchasable.prices.currency', 'lines.purchasable.product']);
+        $factor = 10 ** ($cart->currency->decimal_places ?? 0);
+
+        $option   = $this->shippingOptions->first(fn($opt) => $opt->identifier === $value);
+        $cartTotal = $cart->calculate()?->total?->value ?? 0;
+
+        $this->dispatch('track-ecommerce-event', [
+            'eventName' => 'add_shipping_info',
+            'eventId'   => 'shi_' . $cart->id . '_' . time(),
+            'ecommerceData' => [
+                'currency'      => $cart->currency->code ?? 'PKR',
+                'value'         => (float) ($cartTotal / $factor),
+                'shipping_tier' => $option?->name ?? $value,
+                'items'         => $this->buildCheckoutItems($cart, $factor),
+            ],
+        ]);
+    }
+
+    /**
+     * Fires add_payment_info when a payment method is selected.
+     */
+    public function updatedPaymentMethod($value)
+    {
+        if (blank($value)) return;
+
+        $cart = CartSession::current();
+        if (!$cart || $cart->lines->isEmpty()) return;
+
+        $cart->load(['lines.purchasable.prices.currency', 'lines.purchasable.product']);
+        $factor    = 10 ** ($cart->currency->decimal_places ?? 0);
+        $cartTotal = $cart->calculate()?->total?->value ?? 0;
+
+        $paymentLabel = match($value) {
+            'cod'  => 'Cash on Delivery',
+            'card' => 'Card',
+            default => $value,
+        };
+
+        $this->dispatch('track-ecommerce-event', [
+            'eventName' => 'add_payment_info',
+            'eventId'   => 'pay_' . $cart->id . '_' . time(),
+            'ecommerceData' => [
+                'currency'     => $cart->currency->code ?? 'PKR',
+                'value'        => (float) ($cartTotal / $factor),
+                'payment_type' => $paymentLabel,
+                'items'        => $this->buildCheckoutItems($cart, $factor),
+            ],
+        ]);
+    }
+
     public function placeOrder()
     {
+        // Populate shippingOptionHandle if empty but options exist to prevent validation failure
+        if (blank($this->shippingOptionHandle)) {
+            $options = $this->shippingOptions;
+            if ($options && $options->isNotEmpty()) {
+                $this->shippingOptionHandle = $options->first()->identifier;
+            }
+        }
+
         $this->validate();
 
         $cart = CartSession::current();
@@ -330,7 +428,7 @@ class Checkout extends Component
             return;
         }
 
-        $decimalPlaces = $cart->currency->decimal_places ?? 2;
+        $decimalPlaces = $cart->currency->decimal_places ?? 0;
         $factor = 10 ** $decimalPlaces;
 
         $items = [];

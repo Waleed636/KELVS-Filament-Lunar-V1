@@ -109,5 +109,32 @@
             </div>
         </div>
 
-    </div>
+    @script
+    <script>
+        @if($purchaseEventData)
+            (function() {
+                var payload = @json($purchaseEventData);
+                if (payload && payload.ecommerceData && payload.ecommerceData.transaction_id) {
+                    var dedupKey = 'fired_purchase_' + payload.ecommerceData.transaction_id;
+                    if (sessionStorage.getItem(dedupKey)) return;
+                    sessionStorage.setItem(dedupKey, '1');
+                }
+
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ ecommerce: null });
+                
+                var pushPayload = {
+                    event:    payload.eventName,
+                    event_id: payload.eventId,
+                    ecommerce: payload.ecommerceData
+                };
+                if (payload.userData && Object.keys(payload.userData).length > 0) {
+                    pushPayload.user_data = payload.userData;
+                }
+                window.dataLayer.push(pushPayload);
+            })();
+        @endif
+    </script>
+    @endscript
+
 </div>

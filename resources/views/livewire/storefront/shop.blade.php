@@ -79,7 +79,16 @@
                         <div class="group flex flex-col bg-white border border-gray-150 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition duration-300">
                             
                             <!-- Image Container -->
-                            <a href="/products/{{ $product->urls->first()?->slug }}" wire:navigate class="aspect-square w-full bg-[#f6f6f5] flex items-center justify-center relative overflow-hidden border-b border-gray-100 p-8">
+                            <a href="/products/{{ $product->urls->first()?->slug }}" wire:navigate
+                               data-track-select-item
+                               data-item-id="{{ $variant?->sku }}"
+                               data-item-name="{{ $product->attr('name') }}"
+                               data-item-price="{{ $price ? number_format($price->value / (10 ** ($priceRecord?->currency?->decimal_places ?? 0)), 2, '.', '') : '0' }}"
+                               data-item-index="{{ $loop->index }}"
+                               data-item-category="{{ $product->collections->first()?->attr('name') ?? 'Skincare' }}"
+                               data-list-id="shop_page"
+                               data-list-name="Shop"
+                               class="aspect-square w-full bg-[#f6f6f5] flex items-center justify-center relative overflow-hidden border-b border-gray-100 p-8">
                                 <img src="{{ $productImage }}" alt="{{ $product->attr('name') }}" class="object-contain w-full h-full group-hover:scale-[1.03] transition duration-500" loading="lazy">
                                 
                                 @if($variant && $variant->stock < 10)
@@ -144,5 +153,19 @@
 
         </div>
     </section>
+
+    @script
+    <script>
+        @if($dataLayerPayload)
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+                event: '{{ $dataLayerPayload['eventName'] }}',
+                event_id: '{{ $dataLayerPayload['eventId'] }}',
+                ecommerce: @json($dataLayerPayload['ecommerceData'])
+            });
+        @endif
+    </script>
+    @endscript
 
 </div>
