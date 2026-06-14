@@ -12,7 +12,7 @@ class ThankYou extends Component
     public function mount($id)
     {
         $this->order = Order::with([
-            'lines.purchasable.product', 
+            'lines', 
             'shippingAddress', 
             'billingAddress', 
             'transactions'
@@ -22,6 +22,10 @@ class ThankYou extends Component
             return redirect()->to('/');
         }
 
+        // Eager load purchasable.product only for non-shipping lines
+        $productLines = $this->order->lines->filter(fn($line) => $line->type !== 'shipping');
+        $productLines->load('purchasable.product');
+
         $eventId = 'pur_' . $this->order->id;
         $currencyModel = \Lunar\Models\Currency::where('code', $this->order->currency_code)->first() ?? \Lunar\Models\Currency::getDefault();
         $decimalPlaces = $currencyModel ? $currencyModel->decimal_places : 2;
@@ -29,6 +33,9 @@ class ThankYou extends Component
 
         $items = [];
         foreach ($this->order->lines as $line) {
+            if ($line->type === 'shipping') {
+                continue;
+            }
             $variant = $line->purchasable;
             if ($variant) {
                 $items[] = [
