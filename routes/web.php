@@ -12,3 +12,8 @@ Route::get('/checkout/thankyou/{id}', \App\Livewire\Storefront\ThankYou::class)-
 
 Route::redirect('/login', '/admin/login')->name('login');
 
+// Redirect legacy /blog/{slug} URLs to new /blog/post/{slug} structure
+Route::get('/blog/{slug}', function ($slug) {
+    return redirect()->to('/blog/post/' . $slug, 301);
+});
+

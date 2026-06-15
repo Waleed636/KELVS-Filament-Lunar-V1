@@ -2,7 +2,7 @@
    class="group relative block rounded-2xl overflow-hidden aspect-[4/3] bg-gray-100 hover:shadow-md transition duration-300">
 
     @if($post->image() !== null)
-    <img alt="{{ $post->title }}" src="{{ $post->image() }}"
+    <img alt="{{ $post->title }}" src="{{ asset($post->image()) }}"
          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500 z-0"/>
     @else
     <div class="absolute inset-0 bg-[#f5f0eb] z-0"></div>

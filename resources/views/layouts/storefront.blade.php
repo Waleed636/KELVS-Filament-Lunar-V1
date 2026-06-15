@@ -201,7 +201,7 @@
         <nav class="flex-grow px-6 py-8 flex flex-col space-y-6 text-sm font-semibold tracking-wide uppercase">
             <a href="/" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('/') || request()->is('') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Home</a>
             <a href="/about" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('about') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">About</a>
-            <a href="/sky" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('sky*') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Blog</a>
+            <a href="/blog" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('blog*') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Blog</a>
             
             <div class="pt-6 border-t border-gray-100">
                 <a href="/shop" wire:navigate @click="mobileMenuOpen = false" class="block w-full text-center py-3 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">
@@ -231,7 +231,7 @@
             <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold tracking-wide uppercase">
                 <a href="/" wire:navigate class="{{ request()->is('/') || request()->is('') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Home</a>
                 <a href="/about" wire:navigate class="{{ request()->is('about') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">About</a>
-                <a href="/sky" wire:navigate class="{{ request()->is('sky*') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Blog</a>
+                <a href="/blog" wire:navigate class="{{ request()->is('blog*') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Blog</a>
                 <a href="/shop" wire:navigate class="px-4 py-1.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">Shop</a>
             </nav>
 
@@ -290,8 +290,8 @@
                     <h3 class="text-xs uppercase font-bold text-[#111111] tracking-widest mb-4">Content</h3>
                     <ul class="space-y-2.5">
                         <li><a href="/about" wire:navigate class="hover:text-[#111111] transition">About KELVS</a></li>
-                        <li><a href="/sky" wire:navigate class="hover:text-[#111111] transition">Blog & Guides</a></li>
-                        <!-- <li><a href="/sky/faq" wire:navigate class="hover:text-[#111111] transition">FAQ</a></li> -->
+                        <li><a href="/blog" wire:navigate class="hover:text-[#111111] transition">Blog & Guides</a></li>
+                        <!-- <li><a href="/blog/faq" wire:navigate class="hover:text-[#111111] transition">FAQ</a></li> -->
                     </ul>
                 </div>
             </div>
@@ -427,7 +427,7 @@
         }
     </style>
 
-    <div class="wa-btn-wrap" role="complementary" aria-label="WhatsApp support">
+    <div class="wa-btn-wrap" role="complementary" aria-label="WhatsApp support" wire:persist="whatsapp-widget">
         <span class="wa-tooltip">Chat with us on WhatsApp</span>
 
         <a href="https://wa.me/923124995545?text=Hi%20KELVS!%20I%20have%20a%20question%20about%20your%20products."

@@ -7,7 +7,7 @@
             <a href="{{ route('post', $post->slug) }}"
                class="flex gap-3 group items-start py-2 border-b border-gray-50 last:border-0">
                 @if($post->image() !== null)
-                <img alt="{{ $post->title }}" src="{{ $post->image() }}"
+                <img alt="{{ $post->title }}" src="{{ asset($post->image()) }}"
                      class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition"/>
                 @else
                 <div class="w-12 h-12 rounded-lg bg-[#f5f0eb] flex-shrink-0 flex items-center justify-center">

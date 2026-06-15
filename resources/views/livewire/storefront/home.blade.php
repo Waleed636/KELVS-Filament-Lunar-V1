@@ -271,7 +271,7 @@
                         Our research focuses on creating clean formulations adapted specifically for the hot and humid Pakistani climate. No unnecessary fillers, no synthetic fragrances, no dyes. Just science-backed hydration and repair.
                     </p>
                     <div class="pt-2">
-                        <a href="/sky" class="inline-flex items-center space-x-1 text-sm font-bold text-[#111111] border-b-2 border-[#111111] pb-1 hover:opacity-75 transition">
+                        <a href="/blog" class="inline-flex items-center space-x-1 text-sm font-bold text-[#111111] border-b-2 border-[#111111] pb-1 hover:opacity-75 transition">
                             <span>Read Our Research</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>

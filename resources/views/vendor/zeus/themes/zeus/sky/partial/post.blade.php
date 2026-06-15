@@ -9,7 +9,7 @@
             $imageUrl = $image;
         } elseif (file_exists(public_path($image))) {
             $hasImage = true;
-            $imageUrl = $image;
+            $imageUrl = asset($image);
         } elseif (file_exists(public_path('storage/' . $image))) {
             $hasImage = true;
             $imageUrl = asset('storage/' . $image);

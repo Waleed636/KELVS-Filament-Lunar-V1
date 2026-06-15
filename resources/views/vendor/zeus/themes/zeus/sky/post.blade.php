@@ -28,7 +28,7 @@
     <!-- Featured Image -->
     @if($post->image() !== null)
     <div class="max-w-4xl mx-auto px-4 -mt-0">
-        <img alt="{{ $post->title }}" src="{{ $post->image() }}"
+        <img alt="{{ $post->title }}" src="{{ asset($post->image()) }}"
              class="w-full h-72 sm:h-96 object-cover rounded-2xl shadow-md mt-8"/>
     </div>
     @endif

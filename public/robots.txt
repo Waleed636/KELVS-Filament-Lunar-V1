@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /admin/
+Disallow: /lunar
+Disallow: /lunar/
+Disallow: /login
+Disallow: /cart
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /livewire/

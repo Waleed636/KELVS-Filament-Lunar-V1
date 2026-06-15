@@ -11,7 +11,7 @@ return [
     /**
      * set the default path for the blog homepage.
      */
-    'prefix' => 'sky',
+    'prefix' => 'blog',
 
     /**
      * the middleware you want to apply on all the blog routes
@@ -36,7 +36,7 @@ return [
      */
     'models' => [
         'Faq' => \LaraZeus\Sky\Models\Faq::class,
-        'Post' => \LaraZeus\Sky\Models\Post::class,
+        'Post' => \App\Models\Post::class,
         'PostStatus' => \LaraZeus\Sky\Models\PostStatus::class,
         'Tag' => \LaraZeus\Sky\Models\Tag::class,
         'Library' => \LaraZeus\Sky\Models\Library::class,
