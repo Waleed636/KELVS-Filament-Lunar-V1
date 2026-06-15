@@ -115,6 +115,10 @@ class Home extends Component
             'collections' => $collections,
             'products'    => $this->productsList,
             'posts'       => $posts,
-        ])->layout('layouts.storefront');
+        ])->layout('layouts.storefront', [
+            'seoTitle'       => 'KELVS — Science-Led Skincare for Real Results',
+            'seoDescription' => 'KELVS offers high-performance, dermatologist-inspired skincare formulas tailored for the Pakistani climate. Shop cleansers, serums, moisturisers, and SPF.',
+            'seoKeywords'    => 'skincare Pakistan, dermatologist inspired skincare, hyaluronic acid, niacinamide, BHA cleanser, sunshield SPF 50, KELVS',
+        ]);
     }
 }

@@ -215,7 +215,7 @@ class ProductShow extends Component
         $productName = $product->attr('name') ?? '';
 
         $seoTitle = $product->attr('seo_title')
-            ?? ($productName ? "{$productName} | KELVS Skin" : config('app.name', 'KELVS Skin'));
+            ?? ($productName ? "{$productName} | KELVS" : config('app.name', 'KELVS'));
 
         $seoDescription = $product->attr('seo_description')
             ?? strip_tags((string) ($product->attr('description') ?? ''));
@@ -229,6 +229,36 @@ class ProductShow extends Component
 
         // Product URL for Open Graph
         $productUrl = url('/products/' . $this->slug);
+
+        // Resolve Product Image & SKU for Structured SEO Data
+        $sku = $this->activeVariant?->sku ?? $product->variants->first()?->sku;
+        
+        $mediaItems = $product->getMedia('images');
+        $primaryUrl = null;
+        if ($mediaItems->isNotEmpty()) {
+            foreach ($mediaItems as $media) {
+                if ($media->getCustomProperty('primary') === true) {
+                    $primaryUrl = parse_url($media->getUrl(), PHP_URL_PATH);
+                    break;
+                }
+            }
+            if (!$primaryUrl) {
+                $primaryUrl = parse_url($mediaItems->first()->getUrl(), PHP_URL_PATH);
+            }
+        }
+        
+        if (!$primaryUrl) {
+            $primaryUrl = match($sku) {
+                'KELVS-CLEAN-01' => '/images/cleanser.png',
+                'KELVS-NIAC-01'  => '/images/niacinamide.png',
+                'KELVS-BHA-01'   => '/images/bha.png',
+                'KELVS-HYA-01'   => '/images/hyaluronic.png',
+                'KELVS-CER-01'   => '/images/ceramide.png',
+                'KELVS-SPF-01'   => '/images/sunshield.png',
+                default          => '/images/hero_lifestyle.png'
+            };
+        }
+        $seoImage = $primaryUrl;
 
         return view('livewire.storefront.product-show', [
             'product'        => $product,
@@ -245,6 +275,10 @@ class ProductShow extends Component
             'canonicalUrl'   => $canonicalUrl,
             'productUrl'     => $productUrl,
             'productName'    => $productName,
+            'productSku'     => $sku,
+            'seoImage'       => $seoImage,
+            'averageRating'  => $this->averageRating,
+            'reviewCount'    => $this->reviews->count(),
         ]);
     }
 }

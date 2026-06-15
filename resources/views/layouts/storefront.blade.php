@@ -81,6 +81,8 @@
 
 
     @php
+        $siteName = 'KELVS';
+
         // ── Resolve page-level SEO values with site-level fallbacks ──────────
         $pageSeoTitle       = $seoTitle       ?? null;
         $pageSeoDescription = $seoDescription ?? null;
@@ -88,15 +90,44 @@
         $pageCanonicalUrl   = $canonicalUrl   ?? request()->url();
         $pageProductUrl     = $productUrl     ?? request()->url();
         $pageProductName    = $productName    ?? null;
+        $pageSeoImage       = $seoImage       ?? null;
+
+        // Auto-extract SEO meta details if viewing a blog post from Lara-Zeus Sky
+        if (isset($post) && $post instanceof \LaraZeus\Sky\Models\Post) {
+            $pageSeoTitle = $post->title . ' | Journal | ' . $siteName;
+            
+            // Clean description and constrain to 160 characters
+            $rawDesc = $post->description ?? strip_tags($post->getContent());
+            $pageSeoDescription = mb_strimwidth(strip_tags((string) $rawDesc), 0, 160, '…');
+            
+            // Extract categories & tags as keywords
+            $tagsList = $post->tags->pluck('name')->toArray();
+            if (!empty($tagsList)) {
+                $pageSeoKeywords = implode(', ', $tagsList);
+            }
+            
+            // Extract post image
+            if (empty($pageSeoImage)) {
+                $pageSeoImage = $post->image();
+            }
+        }
 
         $resolvedTitle = $pageSeoTitle
-            ?? config('app.name', 'KELVS Skin') . ' — Science-Led Skincare';
+            ?? config('app.name', 'KELVS') . ' — Science-Led Skincare';
 
         $resolvedDescription = $pageSeoDescription
-            ?? 'KELVS Skin offers dermatologist-inspired skincare formulas. Shop cleansers, serums, moisturisers and SPF made for real results.';
+            ?? 'KELVS offers dermatologist-inspired skincare formulas. Shop cleansers, serums, moisturisers and SPF made for real results.';
 
-        $siteName = 'KELVS Skin';
-        $isProductPage = isset($seoTitle);
+        $isProductPage = isset($seoTitle) && !isset($post);
+
+        // Resolve social preview image
+        if (empty($pageSeoImage)) {
+            $pageSeoImage = asset('images/hero_lifestyle.png');
+        } else {
+            if (!filter_var($pageSeoImage, FILTER_VALIDATE_URL)) {
+                $pageSeoImage = url($pageSeoImage);
+            }
+        }
     @endphp
 
     {{-- ── Primary SEO Tags ─────────────────────────────────────────────── --}}
@@ -112,6 +143,7 @@
     <meta property="og:type"        content="{{ $isProductPage ? 'product' : 'website' }}">
     <meta property="og:title"       content="{{ $resolvedTitle }}">
     <meta property="og:description" content="{{ $resolvedDescription }}">
+    <meta property="og:image"       content="{{ $pageSeoImage }}">
     <meta property="og:url"         content="{{ $pageProductUrl }}">
     <meta property="og:site_name"   content="{{ $siteName }}">
     @if($isProductPage)
@@ -122,6 +154,7 @@
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="{{ $resolvedTitle }}">
     <meta name="twitter:description" content="{{ $resolvedDescription }}">
+    <meta name="twitter:image"       content="{{ $pageSeoImage }}">
 
     {{-- ── Structured Data: Product (JSON-LD) ─────────────────────────── --}}
     @if($isProductPage && $pageProductName)
@@ -132,10 +165,19 @@
         "name": "{{ addslashes($pageProductName) }}",
         "description": "{{ addslashes($resolvedDescription) }}",
         "url": "{{ $pageProductUrl }}",
+        "image": "{{ $pageSeoImage }}",
+        "sku": "{{ $productSku ?? 'N/A' }}",
         "brand": {
             "@type": "Brand",
             "name": "{{ $siteName }}"
         },
+        @if(isset($averageRating) && $averageRating > 0)
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "{{ $averageRating }}",
+            "reviewCount": "{{ $reviewCount ?? 0 }}"
+        },
+        @endif
         "offers": {
             "@type": "Offer",
             "url": "{{ $pageProductUrl }}",
@@ -149,6 +191,72 @@
     }
     </script>
     @endif
+
+    {{-- ── Structured Data: Blog Posting (JSON-LD) ────────────────────── --}}
+    @if(isset($post) && $post instanceof \LaraZeus\Sky\Models\Post)
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "{{ addslashes($post->title) }}",
+        "description": "{{ addslashes($resolvedDescription) }}",
+        "image": "{{ $pageSeoImage }}",
+        "datePublished": "{{ optional($post->published_at)->toIso8601String() }}",
+        "dateModified": "{{ optional($post->updated_at)->toIso8601String() }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ $post->author->name ?? $siteName }}"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "{{ $siteName }}",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ url('/favicon.ico') }}"
+            }
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{ request()->url() }}"
+        }
+    }
+    </script>
+    @endif
+
+    {{-- ── Structured Data: Organization & WebSite (JSON-LD) ──────────── --}}
+    @if(request()->is('/'))
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "{{ $siteName }}",
+        "url": "{{ url('/') }}",
+        "logo": "{{ url('/favicon.ico') }}",
+        "sameAs": [
+            "https://www.facebook.com/kelvsskin",
+            "https://www.instagram.com/kelvsskin"
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "{{ $siteName }}",
+        "url": "{{ url('/') }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ url('/shop') }}?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    @endif
+
+    <!-- Mobile Manifest & PWA Tags -->
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#F5F5F4">
+
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

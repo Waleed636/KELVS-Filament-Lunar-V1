@@ -17,3 +17,7 @@ Route::get('/blog/{slug}', function ($slug) {
     return redirect()->to('/blog/post/' . $slug, 301);
 });
 
+// Dynamic XML Sitemap for SEO
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index']);
+
+

@@ -100,6 +100,10 @@ class Shop extends Component
 
         return view('livewire.storefront.shop', [
             'products' => $this->productsList,
-        ])->layout('layouts.storefront');
+        ])->layout('layouts.storefront', [
+            'seoTitle'       => 'Shop Dermatologist-Inspired Skincare | KELVS',
+            'seoDescription' => 'Browse the complete KELVS collection. High-performance serums, cleansers, moisturisers, and sun shields made for acne-prone, sensitive, and oily skin.',
+            'seoKeywords'    => 'skincare products, online skincare shop, buy serums Pakistan, BHA exfoliant, niacinamide serum, ceramide cream, matte SPF 50',
+        ]);
     }
 }
