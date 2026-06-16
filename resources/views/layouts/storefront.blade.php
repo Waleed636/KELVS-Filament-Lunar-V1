@@ -113,7 +113,7 @@
         }
 
         $resolvedTitle = $pageSeoTitle
-            ?? config('app.name', 'KELVS') . ' — Science-Led Skincare';
+            ?? (config('app.name') === 'Laravel' ? 'KELVS' : config('app.name', 'KELVS')) . ' — Science-Led Skincare';
 
         $resolvedDescription = $pageSeoDescription
             ?? 'KELVS offers dermatologist-inspired skincare formulas. Shop cleansers, serums, moisturisers and SPF made for real results.';
@@ -252,6 +252,9 @@
     }
     </script>
     @endif
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/k2.webp">
 
     <!-- Mobile Manifest & PWA Tags -->
     <link rel="manifest" href="/site.webmanifest">
@@ -542,6 +545,7 @@
            target="_blank"
            rel="noopener noreferrer"
            class="wa-btn-link"
+           onclick="window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'whatsapp_click' });"
            aria-label="Chat with KELVS on WhatsApp">
 
             {{-- Pulse ring (sibling to icon, outside the icon flow) --}}
