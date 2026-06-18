@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto text-center">
             <span class="inline-block text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-4">Complete Collection</span>
             <h1 class="text-4xl sm:text-5xl font-bold text-[#111111] mb-4">Science-Backed Skincare</h1>
-            <p class="text-gray-500 max-w-xl mx-auto leading-relaxed text-sm">Targeted clinical solutions designed for optimal dermal performance. Clean, simplified formulas, formulated for heat and humidity.</p>
+            <p class="text-gray-500 max-w-xl mx-auto leading-relaxed text-sm">Clean, simplified formulas, formulated for heat and humidity.</p>
         </div>
     </section>
 
@@ -133,9 +133,14 @@
                                     </div>
                                     
                                     @if($variant)
-                                        <button wire:click="addToCart({{ $variant->id }})" class="px-4 py-2 bg-[#111111] hover:bg-[#222222] text-white text-[11px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200">
-                                            Add to Cart
-                                        </button>
+                                        <div class="flex items-center gap-1.5">
+                                            <button wire:click="addToCart({{ $variant->id }})" class="px-3 py-2 bg-white border border-[#111111] text-[#111111] hover:bg-gray-50 text-[10px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200" title="Add to Cart">
+                                                Add to Cart
+                                            </button>
+                                            <button type="button" wire:click="$dispatch('open-buy-now', { variantId: {{ $variant->id }} })" class="px-3 py-2 bg-[#111111] hover:bg-[#222222] text-white text-[10px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200">
+                                                Buy Now
+                                            </button>
+                                        </div>
                                     @else
                                         <span class="text-xs text-gray-400 font-semibold italic">Sold Out</span>
                                     @endif

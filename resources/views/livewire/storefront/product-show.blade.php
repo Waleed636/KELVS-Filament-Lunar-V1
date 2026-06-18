@@ -262,11 +262,19 @@
                     </div>
 
                     <!-- Add to Cart Button -->
-                    <button type="button" wire:click="addToCart" class="w-full sm:flex-1 h-14 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <button type="button" wire:click="addToCart" class="w-full sm:flex-1 h-14 bg-white border border-[#111111] hover:bg-gray-50 text-[#111111] font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
                         <span>Add to Cart</span>
+                    </button>
+
+                    <!-- Buy Now Button -->
+                    <button type="button" wire:click="$dispatch('open-buy-now', { variantId: {{ $variantId }}, quantity: {{ $quantity }} })" class="w-full sm:flex-1 h-14 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Buy Now</span>
                     </button>
                 </div>
             </div>

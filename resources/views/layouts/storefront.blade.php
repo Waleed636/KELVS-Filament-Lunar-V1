@@ -14,7 +14,12 @@
             // ── DataLayer: Global Ecommerce Event Bridge ─────────────────────────
             // Handles all events dispatched via Livewire's dispatch('track-ecommerce-event')
             window.addEventListener('track-ecommerce-event', function(event) {
-                const payload = event.detail;
+                let payload = event.detail;
+                if (Array.isArray(payload)) {
+                    payload = payload[0];
+                } else if (payload && typeof payload === 'object' && '0' in payload) {
+                    payload = payload['0'];
+                }
                 if (!payload || !payload.eventName) return;
 
                 // Purchase deduplication: prevent double-counting on page refresh
@@ -451,6 +456,7 @@
     @endif
 
     <livewire:storefront.newsletter-popup />
+    <livewire:storefront.buy-now-modal />
 
     {{-- ── Floating WhatsApp Button (Global) ────────────────────────────── --}}
     <style>
