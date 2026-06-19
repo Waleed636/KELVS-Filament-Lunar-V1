@@ -56,7 +56,7 @@ class Checkout extends Component
             'shippingAddress.line_one' => 'required|string|max:255',
             'shippingAddress.city' => 'required|string|max:255',
             'shippingAddress.state' => 'nullable|string|max:255',
-            'shippingAddress.postcode' => 'required|string|max:20',
+            'shippingAddress.postcode' => 'nullable|string|max:20',
             'shippingAddress.country_id' => 'required|exists:lunar_countries,id',
             'shippingAddress.contact_email' => 'required_without:shippingAddress.contact_phone|nullable|email|max:255',
             'shippingAddress.contact_phone' => 'required_without:shippingAddress.contact_email|nullable|string|max:50',
@@ -70,7 +70,7 @@ class Checkout extends Component
                 'billingAddress.line_one' => 'required|string|max:255',
                 'billingAddress.city' => 'required|string|max:255',
                 'billingAddress.state' => 'nullable|string|max:255',
-                'billingAddress.postcode' => 'required|string|max:20',
+                'billingAddress.postcode' => 'nullable|string|max:20',
                 'billingAddress.country_id' => 'required|exists:lunar_countries,id',
             ]);
         }
@@ -157,7 +157,6 @@ class Checkout extends Component
         if (blank($this->shippingAddress['first_name']) ||
             blank($this->shippingAddress['line_one']) ||
             blank($this->shippingAddress['city']) ||
-            blank($this->shippingAddress['postcode']) ||
             blank($this->shippingAddress['country_id'])) {
             return collect();
         }

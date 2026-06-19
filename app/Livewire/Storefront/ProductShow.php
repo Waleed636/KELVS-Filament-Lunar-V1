@@ -235,20 +235,28 @@ class ProductShow extends Component
         
         $mediaItems = $product->getMedia('images');
         $primaryUrl = null;
+        $primaryUrlLarge = null;
         if ($mediaItems->isNotEmpty()) {
             foreach ($mediaItems as $media) {
                 if ($media->getCustomProperty('primary') === true) {
                     $primaryUrl = parse_url($media->getUrl(), PHP_URL_PATH);
+                    $primaryUrlLarge = $media->hasGeneratedConversion('large')
+                        ? parse_url($media->getUrl('large'), PHP_URL_PATH)
+                        : $primaryUrl;
                     break;
                 }
             }
             if (!$primaryUrl) {
-                $primaryUrl = parse_url($mediaItems->first()->getUrl(), PHP_URL_PATH);
+                $firstMedia = $mediaItems->first();
+                $primaryUrl = parse_url($firstMedia->getUrl(), PHP_URL_PATH);
+                $primaryUrlLarge = $firstMedia->hasGeneratedConversion('large')
+                    ? parse_url($firstMedia->getUrl('large'), PHP_URL_PATH)
+                    : $primaryUrl;
             }
         }
         
         if (!$primaryUrl) {
-            $primaryUrl = match($sku) {
+            $fallbackImage = match($sku) {
                 'KELVS-CLEAN-01' => '/images/cleanser.png',
                 'KELVS-NIAC-01'  => '/images/niacinamide.png',
                 'KELVS-BHA-01'   => '/images/bha.png',
@@ -257,6 +265,8 @@ class ProductShow extends Component
                 'KELVS-SPF-01'   => '/images/sunshield.png',
                 default          => '/images/hero_lifestyle.png'
             };
+            $primaryUrl = $fallbackImage;
+            $primaryUrlLarge = $fallbackImage;
         }
         $seoImage = $primaryUrl;
 
@@ -277,9 +287,9 @@ class ProductShow extends Component
             'productName'    => $productName,
             'productSku'     => $sku,
             'seoImage'       => $seoImage,
+            'lcpImageUrl'    => $primaryUrlLarge,
             'averageRating'  => $this->averageRating,
             'reviewCount'    => $this->reviews->count(),
         ]);
     }
 }
-

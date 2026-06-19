@@ -261,6 +261,11 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/k2.webp">
 
+    {{-- Preload the Largest Contentful Paint (LCP) Image --}}
+    @if(isset($lcpImageUrl))
+        <link rel="preload" as="image" href="{{ $lcpImageUrl }}" fetchpriority="high">
+    @endif
+
     <!-- Mobile Manifest & PWA Tags -->
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#F5F5F4">

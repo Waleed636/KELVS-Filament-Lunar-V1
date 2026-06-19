@@ -41,7 +41,7 @@
                         @error('shippingAddress.state') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP</label>
+                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP (Optional)</label>
                         <input type="text" placeholder="e.g. 54000" wire:model.blur="shippingAddress.postcode" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                         @error('shippingAddress.postcode') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
@@ -102,7 +102,7 @@
                             @error('billingAddress.state') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP</label>
+                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP (Optional)</label>
                             <input type="text" wire:model.blur="billingAddress.postcode" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                             @error('billingAddress.postcode') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                         </div>

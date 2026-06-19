@@ -135,10 +135,12 @@ class PartialOrderResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
+                    ->timezone('Asia/Karachi')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()
+                    ->timezone('Asia/Karachi')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

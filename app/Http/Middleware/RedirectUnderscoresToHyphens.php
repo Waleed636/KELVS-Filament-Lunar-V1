@@ -65,6 +65,7 @@ class RedirectUnderscoresToHyphens
             '/livewire',
             '/_debugbar',
             '/storage',
+            '/filament',
         ];
 
         foreach ($excludePrefixes as $prefix) {

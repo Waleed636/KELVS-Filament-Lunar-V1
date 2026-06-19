@@ -82,7 +82,8 @@ class OrderResource extends BaseOrderResource
             Tables\Columns\TextColumn::make('placed_at')
                 ->label(__('lunarpanel::order.table.date.label'))
                 ->toggleable()
-                ->dateTime(),
+                ->dateTime()
+                ->timezone('Asia/Karachi'),
         ];
     }
 

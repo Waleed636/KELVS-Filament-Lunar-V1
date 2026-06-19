@@ -7,20 +7,30 @@
         $mediaItems = $product->getMedia('images');
         $allImages = [];
         $primaryUrl = null;
+        $primaryZoomUrl = null;
         
         if ($mediaItems->isNotEmpty()) {
             foreach ($mediaItems as $media) {
-                $url = parse_url($media->getUrl(), PHP_URL_PATH);
-                $allImages[] = $url;
+                $originalUrl = parse_url($media->getUrl(), PHP_URL_PATH);
+                $smallUrl = $media->hasGeneratedConversion('small') ? parse_url($media->getUrl('small'), PHP_URL_PATH) : $originalUrl;
+                $largeUrl = $media->hasGeneratedConversion('large') ? parse_url($media->getUrl('large'), PHP_URL_PATH) : $originalUrl;
+
+                $allImages[] = [
+                    'small' => $smallUrl,
+                    'large' => $largeUrl,
+                    'original' => $originalUrl,
+                ];
                 
                 // Track primary image
                 if ($media->getCustomProperty('primary') === true && !$primaryUrl) {
-                    $primaryUrl = $url;
+                    $primaryUrl = $largeUrl;
+                    $primaryZoomUrl = $originalUrl;
                 }
             }
             // Fall back to first image if no primary is specified
             if (!$primaryUrl && count($allImages) > 0) {
-                $primaryUrl = $allImages[0];
+                $primaryUrl = $allImages[0]['large'];
+                $primaryZoomUrl = $allImages[0]['original'];
             }
         }
         
@@ -36,10 +46,16 @@
                 default => '/images/hero_lifestyle.png'
             };
             $primaryUrl = $fallbackImage;
-            $allImages = [$fallbackImage];
+            $primaryZoomUrl = $fallbackImage;
+            $allImages = [[
+                'small' => $fallbackImage,
+                'large' => $fallbackImage,
+                'original' => $fallbackImage,
+            ]];
         }
         
         $productImage = $primaryUrl;
+        $productZoomImage = $primaryZoomUrl;
     @endphp
 
     <!-- Breadcrumbs -->
@@ -52,7 +68,7 @@
     </nav>
 
     <!-- Main Grid -->
-    <div x-data="{ activeImage: '{{ $productImage }}', zoomOpen: false }" class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+    <div x-data="{ activeImage: '{{ $productImage }}', activeZoomImage: '{{ $productZoomImage }}', zoomOpen: false }" class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         
         <!-- Left Column: Product Media -->
         <div class="lg:col-span-6 flex flex-col space-y-4">
@@ -61,7 +77,7 @@
                 @click="zoomOpen = true" 
                 class="aspect-square w-full rounded-2xl overflow-hidden bg-[#f6f6f5] border border-gray-150 flex items-center justify-center p-12 relative shadow-sm cursor-zoom-in group"
             >
-                <img :src="activeImage" alt="{{ $product->attr('name') }}" class="object-contain w-full h-full transition duration-300 group-hover:scale-[1.02]">
+                <img src="{{ $productImage }}" :src="activeImage" fetchpriority="high" alt="{{ $product->attr('name') }}" class="object-contain w-full h-full transition duration-300 group-hover:scale-[1.02]">
                 
                 <!-- Hover indicator icon -->
                 <div class="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full border border-gray-200 shadow-sm opacity-0 group-hover:opacity-100 transition duration-350">
@@ -105,7 +121,7 @@
                 >
                     <div class="inline-block transition-transform duration-200" :style="'transform: scale(' + scale + ')'">
                         <img 
-                            :src="activeImage" 
+                            :src="activeZoomImage" 
                             alt="Product detail zoom" 
                             :class="scale === 1 ? 'cursor-zoom-in' : 'cursor-zoom-out'"
                             class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
@@ -118,14 +134,14 @@
             <!-- Gallery Thumbnails -->
             @if(count($allImages) > 1)
                 <div class="flex flex-wrap gap-3 py-1">
-                    @foreach($allImages as $imgUrl)
+                    @foreach($allImages as $img)
                         <button 
                             type="button"
-                            @click="activeImage = '{{ $imgUrl }}'"
-                            :class="activeImage === '{{ $imgUrl }}' ? 'border-[#111111] ring-1 ring-[#111111]' : 'border-gray-200 hover:border-gray-400'"
+                            @click="activeImage = '{{ $img['large'] }}'; activeZoomImage = '{{ $img['original'] }}'"
+                            :class="activeImage === '{{ $img['large'] }}' ? 'border-[#111111] ring-1 ring-[#111111]' : 'border-gray-200 hover:border-gray-400'"
                             class="w-20 h-20 rounded-lg overflow-hidden border bg-[#f6f6f5] flex items-center justify-center p-2 transition focus:outline-none"
                         >
-                            <img src="{{ $imgUrl }}" class="object-contain w-full h-full">
+                            <img src="{{ $img['small'] }}" class="object-contain w-full h-full" alt="Thumbnail">
                         </button>
                     @endforeach
                 </div>
