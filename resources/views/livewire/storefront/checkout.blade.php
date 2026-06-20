@@ -175,17 +175,19 @@
                 @foreach($cart->lines as $line)
                     @php
                         $variant = $line->purchasable;
-                        $product = $variant->product;
+                        $product = $variant?->product;
                     @endphp
-                    <div class="flex items-center justify-between text-xs">
-                        <div class="flex items-center space-x-3 truncate">
-                            <span class="text-gray-400 font-bold">{{ $line->quantity }}x</span>
-                            <span class="text-[#111111] font-semibold truncate">
-                                {{ $product->attr('name') }}
-                            </span>
+                    @if($variant && $product)
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center space-x-3 truncate">
+                                <span class="text-gray-400 font-bold">{{ $line->quantity }}x</span>
+                                <span class="text-[#111111] font-semibold truncate">
+                                    {{ $product->attr('name') }}
+                                </span>
+                            </div>
+                            <span class="font-bold text-[#111111] flex-shrink-0">{{ $line->subTotal->formatted }}</span>
                         </div>
-                        <span class="font-bold text-[#111111] flex-shrink-0">{{ $line->subTotal->formatted }}</span>
-                    </div>
+                    @endif
                 @endforeach
             </div>
 

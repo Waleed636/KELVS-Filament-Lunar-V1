@@ -191,21 +191,23 @@
                                         default => 'Clinical Formulation'
                                     };
                                 @endphp
-                                <div class="flex items-center space-x-4">
-                                    <!-- Image Thumbnail -->
-                                    <div class="w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0 flex items-center justify-center border border-gray-150 p-1.5 shadow-sm">
-                                        <img src="{{ $productImage }}" alt="{{ $product?->attr('name') ?? 'Product' }}" class="object-contain w-full h-full">
-                                    </div>
-                                    <!-- Details -->
-                                    <div class="flex-grow space-y-0.5">
-                                        <span class="text-[9px] uppercase font-bold text-gray-400 block tracking-wide">{{ $benefit }}</span>
-                                        <h4 class="text-xs font-extrabold text-[#111111] line-clamp-1 leading-snug">{{ $product?->attr('name') ?? 'Product' }}</h4>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-[9px] text-gray-400 uppercase tracking-widest font-semibold">Qty: {{ $line->quantity }}</span>
-                                            <span class="text-xs font-bold text-[#111111]">{{ $line->subTotal->formatted }}</span>
+                                @if($variant && $product)
+                                    <div class="flex items-center space-x-4">
+                                        <!-- Image Thumbnail -->
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0 flex items-center justify-center border border-gray-150 p-1.5 shadow-sm">
+                                            <img src="{{ $productImage }}" alt="{{ $product->attr('name') }}" class="object-contain w-full h-full">
+                                        </div>
+                                        <!-- Details -->
+                                        <div class="flex-grow space-y-0.5">
+                                            <span class="text-[9px] uppercase font-bold text-gray-400 block tracking-wide">{{ $benefit }}</span>
+                                            <h4 class="text-xs font-extrabold text-[#111111] line-clamp-1 leading-snug">{{ $product->attr('name') }}</h4>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-[9px] text-gray-400 uppercase tracking-widest font-semibold">Qty: {{ $line->quantity }}</span>
+                                                <span class="text-xs font-bold text-[#111111]">{{ $line->subTotal->formatted }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             @endforeach
                         </div>
                     </div>

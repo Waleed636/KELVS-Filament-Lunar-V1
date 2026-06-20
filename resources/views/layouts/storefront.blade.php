@@ -478,6 +478,7 @@
             background: #25D366;
             animation: wa-pulse 2s ease-out infinite;
             pointer-events: none;
+            will-change: transform, opacity;
         }
         .wa-btn-wrap {
             position: fixed;

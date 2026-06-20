@@ -102,5 +102,19 @@ class AppServiceProvider extends ServiceProvider
                     ->delete();
             }
         });
+
+        // Safeguard: Automatically clean up orphaned CartLines when a Cart is loaded to prevent TypeError in calculations
+        \Lunar\Models\Cart::retrieved(function (\Lunar\Models\Cart $cart) {
+            \Illuminate\Support\Facades\DB::table('lunar_cart_lines')
+                ->where('cart_id', $cart->id)
+                ->where('purchasable_type', 'product_variant')
+                ->whereNotExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('lunar_product_variants')
+                        ->whereColumn('lunar_product_variants.id', 'lunar_cart_lines.purchasable_id')
+                        ->whereNull('lunar_product_variants.deleted_at');
+                })
+                ->delete();
+        });
     }
 }

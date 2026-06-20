@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    # Disable LiteSpeed built-in reCAPTCHA bot protection
+    <IfModule LiteSpeed>
+        RewriteRule .* - [E=verifycaptcha:off]
+    </IfModule>
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

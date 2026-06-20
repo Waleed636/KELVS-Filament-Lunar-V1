@@ -147,11 +147,14 @@ class BuyNowModal extends Component
         $stashed = session()->pull('stashed_cart_lines', []);
         if (!empty($stashed)) {
             foreach ($stashed as $item) {
-                CartSession::manager()->add(
-                    purchasable: $item['purchasable_type']::find($item['purchasable_id']),
-                    quantity: $item['quantity'],
-                    meta: $item['meta']
-                );
+                $purchasableModel = $item['purchasable_type']::find($item['purchasable_id']);
+                if ($purchasableModel) {
+                    CartSession::manager()->add(
+                        purchasable: $purchasableModel,
+                        quantity: $item['quantity'],
+                        meta: $item['meta']
+                    );
+                }
             }
         }
 
