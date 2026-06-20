@@ -36,8 +36,12 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(\Lunar\Base\ShippingModifiers $shippingModifiers): void
     {
+        $shippingModifiers->add(
+            \App\Shipping\FallbackShippingModifier::class
+        );
+
         \Lunar\Facades\Telemetry::optOut();
 
         FilamentView::registerRenderHook(

@@ -40,7 +40,7 @@ class BuyNowModal extends Component
             'shippingAddress.line_one' => 'required|string|max:255',
             'shippingAddress.city' => 'required|string|max:255',
             'shippingAddress.state' => 'nullable|string|max:255',
-            'shippingAddress.postcode' => 'required|string|max:20',
+            'shippingAddress.postcode' => 'nullable|string|max:20',
             'shippingAddress.country_id' => 'required|exists:lunar_countries,id',
             'shippingAddress.contact_email' => 'required_without:shippingAddress.contact_phone|nullable|email|max:255',
             'shippingAddress.contact_phone' => 'required_without:shippingAddress.contact_email|nullable|string|max:50',
@@ -51,7 +51,6 @@ class BuyNowModal extends Component
         'shippingAddress.first_name.required' => 'Please enter your full name.',
         'shippingAddress.line_one.required' => 'Please enter your shipping address.',
         'shippingAddress.city.required' => 'Please enter your city.',
-        'shippingAddress.postcode.required' => 'Please enter your postal code.',
         'shippingAddress.contact_phone.required_without' => 'Please enter either a phone number or email address.',
         'shippingAddress.contact_email.required_without' => 'Please enter either an email address or phone number.',
     ];
@@ -188,7 +187,6 @@ class BuyNowModal extends Component
         if (blank($this->shippingAddress['first_name']) ||
             blank($this->shippingAddress['line_one']) ||
             blank($this->shippingAddress['city']) ||
-            blank($this->shippingAddress['postcode']) ||
             blank($this->shippingAddress['country_id'])) {
             return collect();
         }

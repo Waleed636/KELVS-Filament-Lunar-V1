@@ -104,7 +104,7 @@ return [
         ],
 
         'order_create' => [
-            Lunar\Validation\Cart\ValidateCartForOrderCreation::class,
+            App\Validation\Cart\ValidateCartForOrderCreation::class,
         ],
 
     ],

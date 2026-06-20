@@ -109,7 +109,7 @@
  
                             <!-- Postcode -->
                             <div>
-                                <label for="buy-now-postcode" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Postal Code</label>
+                                <label for="buy-now-postcode" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Postal Code (Optional)</label>
                                 <input type="text" id="buy-now-postcode" wire:model.live.debounce.500ms="shippingAddress.postcode" placeholder="e.g. 54000" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('shippingAddress.postcode') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>

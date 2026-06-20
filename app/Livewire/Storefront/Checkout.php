@@ -49,6 +49,14 @@ class Checkout extends Component
     public $checkoutEventData = null;
 
 
+    protected $messages = [
+        'shippingAddress.first_name.required' => 'Please enter your full name.',
+        'shippingAddress.line_one.required' => 'Please enter your shipping address.',
+        'shippingAddress.city.required' => 'Please enter your city.',
+        'shippingAddress.contact_phone.required_without' => 'Please enter either a phone number or email address.',
+        'shippingAddress.contact_email.required_without' => 'Please enter either an email address or phone number.',
+    ];
+
     protected function rules()
     {
         $rules = [
