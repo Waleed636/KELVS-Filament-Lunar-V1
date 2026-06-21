@@ -120,5 +120,29 @@ class AppServiceProvider extends ServiceProvider
                 })
                 ->delete();
         });
+
+        // Dispatch order confirmation email on successful placement
+        \Lunar\Models\Order::updated(function (\Lunar\Models\Order $order) {
+            \Illuminate\Support\Facades\Log::info('Order updated event fired for Order #' . $order->id, [
+                'wasChanged_placed_at' => $order->wasChanged('placed_at'),
+                'placed_at' => $order->placed_at,
+            ]);
+            // Check if the order has transitioned to placed (placed_at transitioned from null to a timestamp)
+            if ($order->wasChanged('placed_at') && $order->placed_at) {
+                // Ensure relations are not cached as null
+                $shippingAddress = $order->shippingAddress ?: $order->addresses()->where('type', 'shipping')->first();
+                $billingAddress = $order->billingAddress ?: $order->addresses()->where('type', 'billing')->first();
+
+                $recipientEmail = $billingAddress?->contact_email 
+                    ?? $shippingAddress?->contact_email;
+
+                \Illuminate\Support\Facades\Log::info('Recipient email found: ' . ($recipientEmail ?? 'null'));
+
+                if ($recipientEmail && filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+                    \Illuminate\Support\Facades\Mail::to($recipientEmail)
+                        ->queue(new \App\Mail\OrderPlacedMail($order));
+                }
+            }
+        });
     }
 }

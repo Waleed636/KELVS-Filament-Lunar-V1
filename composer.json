@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "aws/aws-sdk-php": "*",
         "filament/filament": "^3.0",
         "lara-zeus/sky": "^3.4",
         "laravel/framework": "^11.31",
