@@ -7,11 +7,14 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Lunar\Admin\Support\CustomerStatus;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use App\Services\PostExService;
 
 class OrderResource extends BaseOrderResource
 {
     /**
-     * Override default table configuration to add row styling.
+     * Override default table configuration to add row styling and PostEx action.
      */
     public static function getDefaultTable(Table $table): Table
     {
@@ -22,11 +25,172 @@ class OrderResource extends BaseOrderResource
                 'returned' => 'order-status-returned',
                 'cancelled' => 'order-status-cancelled',
                 default => null,
-            });
+            })
+            ->actions([
+                Tables\Actions\EditAction::make()
+                    ->url(fn ($record) => \App\Filament\Resources\OrderResource\Pages\ManageOrder::getUrl(['record' => $record])),
+
+                Tables\Actions\Action::make('book_postex_row')
+                    ->label('Book PostEx')
+                    ->icon('heroicon-m-truck')
+                    ->color('success')
+                    ->visible(fn (Model $record) => !isset($record->meta['postex_tracking_number']))
+                    ->modalHeading('Book Order on PostEx')
+                    ->modalSubmitActionLabel('Confirm Booking')
+                    ->form(function (Model $record) {
+                        $postExService = app(PostExService::class);
+
+                        // 1. Get operational cities
+                        $rawCities = $postExService->getOperationalCities('delivery');
+                        $cities = [];
+                        foreach ($rawCities as $city) {
+                            $name = $city['operationalCityName'];
+                            $cities[$name] = $name;
+                        }
+
+                        // 2. Get pickup addresses
+                        $rawPickups = $postExService->getPickupAddresses();
+                        $pickups = [];
+                        foreach ($rawPickups as $pickup) {
+                            $pickups[$pickup['addressCode']] = $pickup['address'] . ' (' . $pickup['cityName'] . ')';
+                        }
+
+                        // Match default city (case-insensitive)
+                        $shippingCity = $record->shippingAddress?->city ?? '';
+                        $defaultCity = collect($rawCities)->first(fn($c) => strtolower(trim($c['operationalCityName'])) === strtolower(trim($shippingCity)))['operationalCityName'] ?? null;
+
+                        // Items count
+                        $itemsCount = $record->lines->filter(fn ($line) => $line->type !== 'shipping')->sum('quantity');
+
+                        // Order details summary (items, quantity, SKU)
+                        $orderDetail = $record->lines
+                            ->filter(fn ($line) => $line->type !== 'shipping')
+                            ->map(function ($line) {
+                                $sku = $line->purchasable?->sku ?? 'N/A';
+                                return "{$line->quantity}x {$sku}";
+                            })->implode(', ');
+
+                        return [
+                            Forms\Components\Grid::make(2)
+                                ->schema([
+                                    Forms\Components\Select::make('cityName')
+                                        ->label('Customer City (PostEx Match)')
+                                        ->options($cities)
+                                        ->searchable()
+                                        ->required()
+                                        ->default($defaultCity)
+                                        ->helperText('Please select the exact matching operational city in Pakistan.'),
+
+                                    Forms\Components\Select::make('pickupAddressCode')
+                                        ->label('Pickup Address (Warehouse)')
+                                        ->options($pickups)
+                                        ->required()
+                                        ->default(config('postex.default_pickup_address_code') ?? (array_key_first($pickups) ?: null)),
+
+                                    Forms\Components\Select::make('orderType')
+                                        ->label('Order Type')
+                                        ->options([
+                                            'Normal' => 'Normal',
+                                            'Reversed' => 'Reversed',
+                                            'Replacement' => 'Replacement',
+                                        ])
+                                        ->required()
+                                        ->default(config('postex.default_order_type') ?? 'Normal'),
+
+                                    Forms\Components\TextInput::make('invoicePayment')
+                                        ->label('COD Amount to Collect (PKR)')
+                                        ->numeric()
+                                        ->required()
+                                        ->default((int) round($record->total->decimal)),
+
+                                    Forms\Components\TextInput::make('items')
+                                        ->label('Number of Pieces')
+                                        ->numeric()
+                                        ->required()
+                                        ->default($itemsCount),
+
+                                    Forms\Components\TextInput::make('customerName')
+                                        ->label('Customer Name')
+                                        ->required()
+                                        ->default($record->shippingAddress?->fullName ?? ''),
+
+                                    Forms\Components\TextInput::make('customerPhone')
+                                        ->label('Customer Phone')
+                                        ->required()
+                                        ->default(function () use ($record) {
+                                            $phone = $record->shippingAddress?->contact_phone ?? '';
+                                            $cleanPhone = preg_replace('/\D/', '', $phone);
+                                            if (str_starts_with($cleanPhone, '92')) {
+                                                $cleanPhone = '0' . substr($cleanPhone, 2);
+                                            }
+                                            return $cleanPhone;
+                                        })
+                                        ->helperText('Format: 03xxxxxxxxx (11 digits)'),
+
+                                    Forms\Components\Textarea::make('deliveryAddress')
+                                        ->label('Delivery Address')
+                                        ->required()
+                                        ->columnSpan(2)
+                                        ->default($record->shippingAddress?->line_one . ($record->shippingAddress?->line_two ? ', ' . $record->shippingAddress->line_two : '')),
+
+                                    Forms\Components\Textarea::make('orderDetail')
+                                        ->label('Order Details (SKU/Items Info)')
+                                        ->columnSpan(2)
+                                        ->default($orderDetail),
+
+                                    Forms\Components\Textarea::make('transactionNotes')
+                                        ->label('Transaction / Delivery Notes')
+                                        ->columnSpan(2)
+                                        ->default($record->notes),
+                                ]),
+                        ];
+                    })
+                    ->action(function (array $data, Model $record) {
+                        $postExService = app(PostExService::class);
+
+                        // Add orderRefNumber explicitly
+                        $data['orderRefNumber'] = $record->reference ?? $record->id;
+
+                        $response = $postExService->createOrder($data);
+
+                        if (($response['statusCode'] ?? null) == '200' && isset($response['dist'])) {
+                            $dist = $response['dist'];
+                            $trackingNumber = $dist['trackingNumber'] ?? null;
+                            $orderStatus = $dist['orderStatus'] ?? 'UnBooked';
+                            $orderDate = $dist['orderDate'] ?? now()->toDateTimeString();
+
+                            $meta = $record->meta ?? [];
+                            $meta['postex_tracking_number'] = $trackingNumber;
+                            $meta['postex_status'] = $orderStatus;
+                            $meta['postex_booked_at'] = $orderDate;
+                            $meta['postex_city'] = $data['cityName'];
+                            $meta['postex_order_type'] = $data['orderType'];
+
+                            $record->update([
+                                'meta' => $meta,
+                                'status' => 'shipped',
+                            ]);
+
+                            Notification::make()
+                                ->title('Order Booked on PostEx Successfully')
+                                ->body("Tracking Number: {$trackingNumber}")
+                                ->success()
+                                ->send();
+                        } else {
+                            $errorMsg = $response['statusMessage'] ?? 'Unknown Error';
+                            Notification::make()
+                                ->title('Failed to Book Order on PostEx')
+                                ->body($errorMsg)
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
+                    })
+            ]);
     }
 
     /**
-     * Override columns to replace the static status TextColumn with an interactive SelectColumn.
+     * Override columns to replace the static status TextColumn with an interactive SelectColumn and add PostEx info.
      */
     public static function getTableColumns(): array
     {
@@ -75,6 +239,26 @@ class OrderResource extends BaseOrderResource
             Tables\Columns\TextColumn::make('billingAddress.contact_phone')
                 ->label(__('lunarpanel::order.table.phone.label'))
                 ->toggleable(),
+            
+            // PostEx Info columns
+            Tables\Columns\TextColumn::make('meta.postex_tracking_number')
+                ->label('PostEx Tracking')
+                ->copyable()
+                ->badge()
+                ->color('info')
+                ->toggleable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('meta.postex_status')
+                ->label('PostEx Status')
+                ->badge()
+                ->color(fn ($state) => match ($state) {
+                    'UnBooked' => 'gray',
+                    'Booked' => 'success',
+                    'Cancelled' => 'danger',
+                    default => 'primary',
+                })
+                ->toggleable(),
+
             Tables\Columns\TextColumn::make('total')
                 ->label(__('lunarpanel::order.table.total.label'))
                 ->toggleable()
