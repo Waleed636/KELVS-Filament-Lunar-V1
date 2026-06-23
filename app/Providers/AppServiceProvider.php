@@ -13,6 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(\Lunar\DiscountTypes\AmountOff::class, \App\DiscountTypes\AmountOff::class);
+        $this->app->bind(\Lunar\DiscountTypes\BuyXGetY::class, \App\DiscountTypes\BuyXGetY::class);
+
         try {
             $reflector = new \ReflectionClass(\Lunar\Admin\LunarPanelManager::class);
             $property = $reflector->getProperty('resources');

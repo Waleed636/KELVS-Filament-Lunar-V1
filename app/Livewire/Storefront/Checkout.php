@@ -47,6 +47,12 @@ class Checkout extends Component
     public $orderCompleted = false;
     public $completedOrder = null;
     public $checkoutEventData = null;
+    public $couponCode = '';
+    public $appliedCoupon = '';
+
+    protected $validationAttributes = [
+        'couponCode' => 'coupon code',
+    ];
 
 
     protected $messages = [
@@ -92,6 +98,9 @@ class Checkout extends Component
         if (!$cart || $cart->lines->isEmpty()) {
             return redirect()->to('/cart');
         }
+
+        $this->couponCode = $cart->coupon_code;
+        $this->appliedCoupon = $cart->coupon_code;
 
         // Set default country to Pakistan (ID: 168) if available
         $pakistan = Country::where('iso3', 'PAK')->orWhere('name', 'like', '%Pakistan%')->first();
@@ -469,6 +478,41 @@ class Checkout extends Component
                 'cart_total' => $totalFloat,
             ]
         );
+    }
+
+    public function applyCoupon()
+    {
+        $this->validate([
+            'couponCode' => ['required', 'string', new \Lunar\Rules\ValidCoupon],
+        ], [
+            'couponCode.required' => 'Please enter a coupon code.',
+        ]);
+
+        $cart = CartSession::current();
+        if ($cart) {
+            $cart->coupon_code = $this->couponCode;
+            $cart->save();
+            $cart->recalculate();
+            $this->appliedCoupon = $cart->coupon_code;
+            unset($this->cart);
+            $this->dispatch('cart-updated');
+            $this->capturePartialOrder();
+        }
+    }
+
+    public function removeCoupon()
+    {
+        $cart = CartSession::current();
+        if ($cart) {
+            $cart->coupon_code = null;
+            $cart->save();
+            $cart->recalculate();
+            $this->couponCode = '';
+            $this->appliedCoupon = '';
+            unset($this->cart);
+            $this->dispatch('cart-updated');
+            $this->capturePartialOrder();
+        }
     }
 
     public function render()

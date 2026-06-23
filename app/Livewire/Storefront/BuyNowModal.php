@@ -32,6 +32,12 @@ class BuyNowModal extends Component
 
     public $shippingOptionHandle = '';
     public $paymentMethod = 'cod';
+    public $couponCode = '';
+    public $appliedCoupon = '';
+
+    protected $validationAttributes = [
+        'couponCode' => 'coupon code',
+    ];
 
     protected function rules()
     {
@@ -62,21 +68,34 @@ class BuyNowModal extends Component
         $this->variantId = $variantId;
         $this->quantity = (int) $quantity;
 
+        $this->couponCode = '';
+        $this->appliedCoupon = '';
+
         // 1. Stash current cart session items to restore later if canceled
         $cart = CartSession::current();
-        if ($cart && !$cart->lines->isEmpty()) {
-            $stashed = [];
-            foreach ($cart->lines as $line) {
-                $stashed[] = [
-                    'purchasable_type' => $line->purchasable_type,
-                    'purchasable_id' => $line->purchasable_id,
-                    'quantity' => $line->quantity,
-                    'meta' => $line->meta,
-                ];
+        if ($cart) {
+            session(['stashed_coupon_code' => $cart->coupon_code]);
+            if (!$cart->lines->isEmpty()) {
+                $stashed = [];
+                foreach ($cart->lines as $line) {
+                    $stashed[] = [
+                        'purchasable_type' => $line->purchasable_type,
+                        'purchasable_id' => $line->purchasable_id,
+                        'quantity' => $line->quantity,
+                        'meta' => $line->meta,
+                    ];
+                }
+                session(['stashed_cart_lines' => $stashed]);
+                $cart->lines()->delete();
+            } else {
+                session()->forget('stashed_cart_lines');
             }
-            session(['stashed_cart_lines' => $stashed]);
-            $cart->lines()->delete();
+            
+            // Clear coupon for the Buy Now modal until they enter one
+            $cart->coupon_code = null;
+            $cart->save();
         } else {
+            session()->forget('stashed_coupon_code');
             session()->forget('stashed_cart_lines');
         }
 
@@ -126,6 +145,7 @@ class BuyNowModal extends Component
         }
 
         $this->capturePartialOrder();
+        unset($this->cart);
         $this->ready = true;
     }
 
@@ -138,9 +158,16 @@ class BuyNowModal extends Component
 
     protected function restoreCart()
     {
+        $this->couponCode = '';
+        $this->appliedCoupon = '';
+
         $cart = CartSession::current();
         if ($cart) {
             $cart->lines()->delete();
+            $cart->coupon_code = session()->pull('stashed_coupon_code');
+            $cart->save();
+        } else {
+            session()->forget('stashed_coupon_code');
         }
 
         $stashed = session()->pull('stashed_cart_lines', []);
@@ -157,6 +184,7 @@ class BuyNowModal extends Component
             }
         }
 
+        unset($this->cart);
         $this->dispatch('cart-updated');
     }
 
@@ -385,6 +413,7 @@ class BuyNowModal extends Component
 
         PartialOrder::where('session_id', session()->getId())->delete();
         session()->forget('stashed_cart_lines');
+        session()->forget('stashed_coupon_code');
 
         CartSession::forget();
         $this->dispatch('cart-updated');
@@ -393,6 +422,41 @@ class BuyNowModal extends Component
         $this->ready = false;
 
         return redirect()->route('checkout.thankyou', ['id' => $order->id]);
+    }
+
+    public function applyCoupon()
+    {
+        $this->validate([
+            'couponCode' => ['required', 'string', new \Lunar\Rules\ValidCoupon],
+        ], [
+            'couponCode.required' => 'Please enter a coupon code.',
+        ]);
+
+        $cart = CartSession::current();
+        if ($cart) {
+            $cart->coupon_code = $this->couponCode;
+            $cart->save();
+            $cart->recalculate();
+            $this->appliedCoupon = $cart->coupon_code;
+            unset($this->cart);
+            $this->dispatch('cart-updated');
+            $this->capturePartialOrder();
+        }
+    }
+
+    public function removeCoupon()
+    {
+        $cart = CartSession::current();
+        if ($cart) {
+            $cart->coupon_code = null;
+            $cart->save();
+            $cart->recalculate();
+            $this->couponCode = '';
+            $this->appliedCoupon = '';
+            unset($this->cart);
+            $this->dispatch('cart-updated');
+            $this->capturePartialOrder();
+        }
     }
 
     public function render()

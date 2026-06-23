@@ -191,12 +191,46 @@
                 @endforeach
             </div>
 
+            <!-- Coupon / Promo Code -->
+            <div class="border-b border-gray-150 pb-6">
+                <label for="checkout-coupon" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Promo Code / Coupon</label>
+                <div class="flex space-x-2">
+                    <input type="text" id="checkout-coupon" wire:model="couponCode" placeholder="Enter coupon code" class="flex-1 bg-white border border-gray-200 rounded-[6px] text-[#111111] text-xs px-3 py-2.5 uppercase focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                    <button type="button" wire:click="applyCoupon" wire:loading.attr="disabled" class="bg-[#111111] hover:bg-[#222222] text-white px-4 py-2.5 rounded-[6px] text-xs font-bold uppercase tracking-wider transition disabled:opacity-50">
+                        Apply
+                    </button>
+                </div>
+                @error('couponCode') 
+                    <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> 
+                @enderror
+                
+                @if($appliedCoupon)
+                    <div class="mt-2.5 flex items-center justify-between bg-emerald-50 border border-emerald-100 rounded-[6px] px-3 py-2 text-xs text-emerald-800 animate-fade-in">
+                        <div class="flex items-center space-x-1.5 font-semibold">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Code: <strong class="uppercase">{{ $appliedCoupon }}</strong> applied!</span>
+                        </div>
+                        <button type="button" wire:click="removeCoupon" class="text-emerald-700 hover:text-red-650 font-bold transition">
+                            Remove
+                        </button>
+                    </div>
+                @endif
+            </div>
+
             <!-- Pricing Breakdown -->
             <div class="space-y-3 border-b border-gray-150 pb-6 text-sm text-gray-500">
                 <div class="flex justify-between">
                     <span>Subtotal</span>
                     <span class="font-semibold text-[#111111]">{{ $cart->subTotal->formatted }}</span>
                 </div>
+                @if($cart->discountTotal && $cart->discountTotal->value > 0)
+                    <div class="flex justify-between text-emerald-600 font-semibold animate-fade-in">
+                        <span>Discount</span>
+                        <span>-{{ $cart->discountTotal->formatted }}</span>
+                    </div>
+                @endif
                 @php
                     $selectedOption = $this->shippingOptions->first(fn($opt) => $opt->identifier === $this->shippingOptionHandle);
                 @endphp
@@ -214,7 +248,7 @@
 
             <!-- Total -->
             @php
-                $subTotalVal = $cart->subTotal->value;
+                $subTotalVal = $cart->subTotalDiscounted->value;
                 $taxVal = $cart->taxTotal->value;
                 $shippingVal = $selectedOption ? $selectedOption->price->value : 0;
                 $grandTotalValue = $subTotalVal + $taxVal + $shippingVal;

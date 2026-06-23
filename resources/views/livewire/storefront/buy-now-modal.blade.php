@@ -211,13 +211,47 @@
                             @endforeach
                         </div>
                     </div>
- 
+
+                    <!-- Coupon / Promo Code -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <label for="buy-now-coupon" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-2">Promo Code / Coupon</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="buy-now-coupon" wire:model="couponCode" placeholder="Enter coupon code" class="flex-1 bg-white border border-gray-200 rounded text-xs px-3 py-2 uppercase focus:outline-none focus:ring-1 focus:ring-[#111111] transition duration-200">
+                            <button type="button" wire:click="applyCoupon" wire:loading.attr="disabled" class="bg-[#111111] hover:bg-[#222222] text-white px-3 py-2 rounded text-xs font-bold uppercase tracking-wider transition disabled:opacity-50">
+                                Apply
+                            </button>
+                        </div>
+                        @error('couponCode') 
+                            <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> 
+                        @enderror
+                        
+                        @if($appliedCoupon)
+                            <div class="mt-2.5 flex items-center justify-between bg-emerald-50 border border-emerald-100 rounded px-2.5 py-1.5 text-xs text-emerald-800 animate-fade-in">
+                                <div class="flex items-center space-x-1.5 font-semibold">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Code: <strong class="uppercase">{{ $appliedCoupon }}</strong> applied!</span>
+                                </div>
+                                <button type="button" wire:click="removeCoupon" class="text-emerald-700 hover:text-red-650 font-bold transition">
+                                    Remove
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+
                     <!-- Totals Block -->
                     <div class="space-y-4 border-t border-gray-200 pt-6">
                         <div class="flex justify-between text-xs text-gray-650">
                             <span>Subtotal</span>
                             <span class="font-bold text-[#111111]">{{ $cart->subTotal->formatted }}</span>
                         </div>
+                        @if($cart->discountTotal && $cart->discountTotal->value > 0)
+                            <div class="flex justify-between text-xs text-emerald-700 font-semibold animate-fade-in">
+                                <span>Discount</span>
+                                <span>-{{ $cart->discountTotal->formatted }}</span>
+                            </div>
+                        @endif
                         <div class="flex justify-between text-xs text-gray-650">
                             <span>Shipping</span>
                             <span class="font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider">Free Delivery</span>
