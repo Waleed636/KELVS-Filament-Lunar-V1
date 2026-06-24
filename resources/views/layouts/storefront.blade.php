@@ -187,6 +187,7 @@
             "@type": "Offer",
             "url": "{{ $pageProductUrl }}",
             "priceCurrency": "PKR",
+            "price": "{{ number_format($productPrice ?? 0, 2, '.', '') }}",
             "availability": "https://schema.org/InStock",
             "seller": {
                 "@type": "Organization",

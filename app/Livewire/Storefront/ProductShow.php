@@ -270,6 +270,14 @@ class ProductShow extends Component
         }
         $seoImage = $primaryUrl;
 
+        // Resolve Product Price for Structured SEO Data
+        $priceRecord = $this->activeVariant?->prices->first() ?? $product->variants->first()?->prices->first();
+        $priceVal = 0.00;
+        if ($priceRecord) {
+            $factor = 10 ** ($priceRecord->currency?->decimal_places ?? \Lunar\Models\Currency::getDefault()?->decimal_places ?? 2);
+            $priceVal = $priceRecord->price?->value ? (float) ($priceRecord->price->value / $factor) : 0.00;
+        }
+
         return view('livewire.storefront.product-show', [
             'product'        => $product,
             'activeVariant'  => $this->activeVariant,
@@ -286,6 +294,7 @@ class ProductShow extends Component
             'productUrl'     => $productUrl,
             'productName'    => $productName,
             'productSku'     => $sku,
+            'productPrice'   => $priceVal,
             'seoImage'       => $seoImage,
             'lcpImageUrl'    => $primaryUrlLarge,
             'averageRating'  => $this->averageRating,
