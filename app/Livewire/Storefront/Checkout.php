@@ -521,6 +521,9 @@ class Checkout extends Component
             'cart' => $this->cart,
             'countries' => $this->countries,
             'shippingOptions' => $this->shippingOptions,
-        ])->layout('layouts.storefront');
+        ])->layout('layouts.storefront', [
+            'seoTitle'  => 'Secure Checkout | KELVS',
+            'seoRobots' => 'noindex, nofollow',
+        ]);
     }
 }

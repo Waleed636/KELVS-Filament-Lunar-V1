@@ -9,4 +9,4 @@ Disallow: /checkout
 Disallow: /checkout/
 Disallow: /livewire/
 
-Sitemap: http://localhost:8000/sitemap.xml
+Sitemap: https://kelvsint.com/sitemap.xml

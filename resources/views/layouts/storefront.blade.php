@@ -142,7 +142,7 @@
         <meta name="keywords" content="{{ $pageSeoKeywords }}">
     @endif
     <link rel="canonical" href="{{ $pageCanonicalUrl }}">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{{ $seoRobots ?? 'index, follow' }}">
 
     {{-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ─────────────────── --}}
     <meta property="og:type"        content="{{ $isProductPage ? 'product' : 'website' }}">
@@ -167,8 +167,8 @@
     {
         "@context": "https://schema.org",
         "@type": "Product",
-        "name": "{{ addslashes($pageProductName) }}",
-        "description": "{{ addslashes($resolvedDescription) }}",
+        "name": {!! json_encode($pageProductName) !!},
+        "description": {!! json_encode($resolvedDescription) !!},
         "url": "{{ $pageProductUrl }}",
         "image": "{{ $pageSeoImage }}",
         "sku": "{{ $productSku ?? 'N/A' }}",
@@ -204,8 +204,8 @@
     {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        "headline": "{{ addslashes($post->title) }}",
-        "description": "{{ addslashes($resolvedDescription) }}",
+        "headline": {!! json_encode($post->title) !!},
+        "description": {!! json_encode($resolvedDescription) !!},
         "image": "{{ $pageSeoImage }}",
         "datePublished": "{{ optional($post->published_at)->toIso8601String() }}",
         "dateModified": "{{ optional($post->updated_at)->toIso8601String() }}",

@@ -105,6 +105,9 @@ class ThankYou extends Component
     {
         return view('livewire.storefront.thankyou', [
             'completedOrder' => $this->order,
-        ])->layout('layouts.storefront');
+        ])->layout('layouts.storefront', [
+            'seoTitle'  => 'Thank You for Your Order | KELVS',
+            'seoRobots' => 'noindex, nofollow',
+        ]);
     }
 }

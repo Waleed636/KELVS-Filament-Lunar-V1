@@ -1,0 +1,22 @@
+# KELVS Store - Science-Led Skincare
+
+KELVS is a dermatologist-inspired skincare brand tailored for South Asian climates, formulated with high-quality active ingredients to simplify daily skincare routines.
+
+## Core Products
+- **KELVS Gentle Cleanser**: Sulfate-free, daily cleanse with Sodium Lauroyl Sarcosinate & Coco-Glucoside.
+- **KELVS Niacinamide Serum**: 5% Niacinamide with Hyaluronic Acid to minimize pores, control oil, and brighten skin.
+- **KELVS BHA Exfoliant**: 2% Salicylic Acid with Hyaluronic Acid to clear pores and fight acne.
+- **KELVS Hyaluronic Acid Serum**: B5 + Multi-weight Hyaluronic Acid for deep skin barrier repair.
+- **KELVS Ceramide Cream**: Skin barrier defense cream.
+- **KELVS Matte Sun Shield**: SPF 50 high-protection matte sunscreen.
+
+## Key Slugs & Routes
+- Homepage: `/`
+- Store/Shop: `/shop`
+- About Story: `/about`
+- Blog & Guides: `/blog`
+- Policy & Help:
+  - Privacy Policy: `/blog/page/privacy-policy`
+  - Terms & Conditions: `/blog/page/terms-and-conditions`
+  - Return Policy: `/blog/page/return-policy`
+  - Shipping Policy: `/blog/page/shipping-policy`

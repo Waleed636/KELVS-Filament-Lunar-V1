@@ -35,7 +35,7 @@
                 </div>
                 <div class="relative">
                     <div class="aspect-[4/3] rounded-2xl overflow-hidden bg-[#e8dcd2]">
-                        <img src="/images/kelvs_brand_story.png" alt="KELVS skincare mission" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <img src="/images/brand_story.png" alt="KELVS skincare mission" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
                         <div class="hidden absolute inset-0 items-center justify-center text-center p-8">
                             <div>
                                 <div class="text-5xl mb-4">🌿</div>

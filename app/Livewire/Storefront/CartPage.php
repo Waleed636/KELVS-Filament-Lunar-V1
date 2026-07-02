@@ -124,6 +124,9 @@ class CartPage extends Component
     {
         return view('livewire.storefront.cart-page', [
             'cart' => $this->cart,
-        ])->layout('layouts.storefront');
+        ])->layout('layouts.storefront', [
+            'seoTitle'  => 'Your Shopping Cart | KELVS',
+            'seoRobots' => 'noindex, nofollow',
+        ]);
     }
 }
