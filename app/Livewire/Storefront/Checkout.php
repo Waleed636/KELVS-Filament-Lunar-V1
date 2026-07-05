@@ -394,7 +394,8 @@ class Checkout extends Component
         }
 
         // 2. Select shipping option
-        $shippingOption = $this->shippingOptions->first(fn($opt) => $opt->identifier === $this->shippingOptionHandle);
+        $shippingOption = $this->shippingOptions->first(fn($opt) => $opt->identifier === $this->shippingOptionHandle)
+            ?? $this->shippingOptions->first();
         if ($shippingOption) {
             $cart->setShippingOption($shippingOption);
         }

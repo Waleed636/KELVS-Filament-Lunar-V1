@@ -388,7 +388,8 @@ class BuyNowModal extends Component
             'contact_phone' => $this->shippingAddress['contact_phone'] ?? '',
         ]);
 
-        $shippingOption = $this->shippingOptions->first(fn($opt) => $opt->identifier === $this->shippingOptionHandle);
+        $shippingOption = $this->shippingOptions->first(fn($opt) => $opt->identifier === $this->shippingOptionHandle)
+            ?? $this->shippingOptions->first();
         if ($shippingOption) {
             $cart->setShippingOption($shippingOption);
         }

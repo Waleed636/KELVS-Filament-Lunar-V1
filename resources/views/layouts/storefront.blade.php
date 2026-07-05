@@ -81,6 +81,41 @@
                     }
                 });
             });
+
+            // Initialize flag to track initial page load vs dynamic navigation
+            window.isInitialLoad = true;
+
+            // ── DataLayer: Initial Page View (deferred to DOMContentLoaded or run immediately if ready) ──
+            function pushInitialPageView() {
+                window.dataLayer.push({
+                    event: 'page_view',
+                    is_virtual: false,
+                    page_path: window.location.pathname + window.location.search,
+                    page_title: document.title,
+                    page_referrer: document.referrer || ''
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', pushInitialPageView);
+            } else {
+                pushInitialPageView();
+            }
+
+            // ── DataLayer: Dynamic Page Views for wire:navigate ──────────────────
+            document.addEventListener('livewire:navigated', function() {
+                if (window.isInitialLoad) {
+                    window.isInitialLoad = false;
+                    return;
+                }
+                window.dataLayer.push({
+                    event: 'page_view',
+                    is_virtual: true,
+                    page_path: window.location.pathname + window.location.search,
+                    page_title: document.title,
+                    page_referrer: document.referrer || ''
+                });
+            });
         }
     </script>
 
