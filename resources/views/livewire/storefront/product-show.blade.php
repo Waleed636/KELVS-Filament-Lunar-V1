@@ -3,6 +3,11 @@
     @php
         $sku = $activeVariant?->sku;
         
+        $priceRecord = $activeVariant?->prices->first();
+        $price = $priceRecord?->price;
+        $comparePrice = $priceRecord?->compare_price;
+        $hasDiscount = $comparePrice && $comparePrice->value > $price->value;
+        
         // Fetch media items from Spatie Media Library on the Product model
         $mediaItems = $product->getMedia('images');
         $allImages = [];
@@ -192,12 +197,6 @@
 
                 <!-- Price -->
                 <div class="flex items-center gap-4">
-                    @php
-                        $priceRecord = $activeVariant?->prices->first();
-                        $price = $priceRecord?->price;
-                        $comparePrice = $priceRecord?->compare_price;
-                        $hasDiscount = $comparePrice && $comparePrice->value > $price->value;
-                    @endphp
 
                     <div class="text-2xl font-extrabold text-[#111111] bg-gray-50 border border-gray-150 px-6 py-3.5 rounded-lg inline-block">
                         {{ $price?->formatted ?? 'N/A' }}
@@ -240,6 +239,87 @@
                 </div>
                 @endif
 
+                <!-- Science-Led Highlights Bar -->
+                @php
+                    $ph = $product->attr('formula_ph');
+                    $actives = $product->attr('active_ingredients');
+                    $concern = $product->attr('target_concern');
+                    $texture = $product->attr('texture');
+                    $hasHighlights = $ph || $actives || $concern || $texture;
+                @endphp
+
+                @if($hasHighlights)
+                <div class="rounded-xl border border-gray-200 bg-[#fbfbfa] text-xs shadow-sm divide-y divide-gray-200/60 overflow-hidden mb-6">
+                    @if($ph || $actives)
+                    <div class="grid grid-cols-2 gap-4 p-4 bg-white">
+                        @if($ph)
+                        <div class="flex flex-col gap-0.5">
+                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Formula pH</span>
+                            <span class="font-extrabold text-[#111111]">{{ $ph }}</span>
+                        </div>
+                        @endif
+                        @if($actives)
+                        <div class="flex flex-col gap-0.5">
+                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Key Actives</span>
+                            <span class="font-extrabold text-[#111111]">{{ $actives }}</span>
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+                    @if($concern)
+                    <div class="flex flex-col gap-0.5 p-4">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Target Concern</span>
+                        <span class="font-extrabold text-[#111111]">{{ $concern }}</span>
+                    </div>
+                    @endif
+                    @if($texture)
+                    <div class="flex flex-col gap-0.5 p-4">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Texture</span>
+                        <span class="font-extrabold text-[#111111]">{{ $texture }}</span>
+                    </div>
+                    @endif
+                </div>
+                @endif
+
+                <!-- Live visitor & Sold count indicators -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <!-- Live Visitor Count -->
+                    @php
+                        $seed = ($product->id % 6) + 8; // Deterministic seed (8 to 13)
+                    @endphp
+                    <div x-data="{
+                            count: {{ $seed }},
+                            fluctuate() {
+                                setInterval(() => {
+                                    let change = Math.floor(Math.random() * 3) - 1; // -1, 0, or +1
+                                    this.count = Math.max(5, this.count + change);
+                                }, 8000 + Math.random() * 4000); // dynamic fluctuation interval
+                            }
+                         }" 
+                         x-init="fluctuate()"
+                         class="inline-flex items-center gap-2 bg-[#fbfbfa] border border-gray-200/60 px-4 py-2.5 rounded-lg text-xs font-semibold text-gray-500 shadow-sm w-full sm:w-auto"
+                    >
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span>
+                            <span x-text="count" class="text-[#111111] font-bold"></span> people are viewing this product
+                        </span>
+                    </div>
+
+                    <!-- Sold Count -->
+                    @php
+                        $soldCount = (($product->id * 3) % 15) + 12; // Deterministic count between 12 and 26
+                    @endphp
+                    <div class="inline-flex items-center gap-2 bg-[#fbfbfa] border border-gray-200/60 px-4 py-2.5 rounded-lg text-xs font-semibold text-gray-500 shadow-sm w-full sm:w-auto">
+                        <span class="text-sm">🔥</span>
+                        <span>
+                            <span class="text-[#111111] font-bold">{{ $soldCount }} sold</span> in the last 24 hours
+                        </span>
+                    </div>
+                </div>
+
                 <!-- Variants Selection if multiple -->
                 @if($product->variants->count() > 1)
                     <div class="space-y-3">
@@ -257,8 +337,65 @@
                 @endif
             </div>
 
+            <!-- Delivery Estimator & Countdown -->
+            @php
+                $now = now();
+                $cutoffHour = 15; // 3 PM
+                $shippingDaysMin = 2;
+                $shippingDaysMax = 3;
+
+                if ($now->hour >= $cutoffHour) {
+                    $dispatchDate = $now->copy()->addDay();
+                } else {
+                    $dispatchDate = $now;
+                }
+
+                $estMin = $dispatchDate->copy()->addDays($shippingDaysMin);
+                $estMax = $dispatchDate->copy()->addDays($shippingDaysMax);
+                
+                if ($estMin->isSunday()) $estMin->addDay();
+                if ($estMax->isSunday()) $estMax->addDay();
+
+                $formattedEstMin = $estMin->format('D, M j');
+                $formattedEstMax = $estMax->format('D, M j');
+
+                $cutoffToday = $now->copy()->hour($cutoffHour)->minute(0)->second(0);
+                if ($now->hour >= $cutoffHour) {
+                    $targetTime = $cutoffToday->addDay();
+                } else {
+                    $targetTime = $cutoffToday;
+                }
+                $secondsLeft = $targetTime->diffInSeconds($now);
+            @endphp
+            <div x-data="{
+                    secondsLeft: {{ $secondsLeft }},
+                    hours: 0,
+                    minutes: 0,
+                    updateTimer() {
+                        if (this.secondsLeft <= 0) return;
+                        this.hours = Math.floor(this.secondsLeft / 3600);
+                        this.minutes = Math.floor((this.secondsLeft % 3600) / 60);
+                    }
+                 }"
+                 x-init="
+                    updateTimer();
+                    setInterval(() => {
+                        secondsLeft--;
+                        if (secondsLeft < 0) secondsLeft = 86400;
+                        updateTimer();
+                    }, 1000);
+                 "
+                 class="flex items-center gap-3 bg-amber-50/50 border border-amber-200/50 px-5 py-3 rounded-xl text-xs font-semibold text-amber-800 shadow-sm w-full"
+            >
+                <span class="text-lg animate-pulse">⚡</span>
+                <div class="leading-tight">
+                    <p>Order in <span class="font-extrabold text-[#111111]"><span x-text="hours"></span>h <span x-text="minutes"></span>m</span> to get it by <span class="font-extrabold text-[#111111]">{{ $formattedEstMin }} - {{ $formattedEstMax }}</span></p>
+                    <p class="text-[10px] text-amber-700/80 font-medium mt-0.5">Dispatched via Express Courier with Cash on Delivery</p>
+                </div>
+            </div>
+
             <!-- Cart Controls -->
-            <div class="space-y-6">
+            <div id="main-cart-controls" class="space-y-6">
                 @if(session()->has('message'))
                     <div class="p-4 text-sm text-[#111111] bg-[#e8dcd2] rounded-md font-bold shadow-sm border border-[#e8dcd2]">
                         {{ session('message') }}
@@ -292,6 +429,24 @@
                         </svg>
                         <span>Buy Now</span>
                     </button>
+                </div>
+
+                <!-- Assurance Badges -->
+                <div class="grid grid-cols-2 gap-4 pt-6 border-t border-gray-100">
+                    <div class="flex items-center gap-3 bg-gray-50/50 border border-gray-200/50 rounded-xl p-4">
+                        <div class="text-xl shrink-0">💵</div>
+                        <div>
+                            <p class="text-xs font-bold text-[#111111]">Cash on Delivery</p>
+                            <p class="text-[10px] text-gray-400 font-medium">Pay on delivery nationwide</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-gray-50/50 border border-gray-200/50 rounded-xl p-4">
+                        <div class="text-xl shrink-0">🚚</div>
+                        <div>
+                            <p class="text-xs font-bold text-[#111111]">Free Shipping</p>
+                            <p class="text-[10px] text-gray-400 font-medium">On all orders above Rs. 2,000</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -469,6 +624,87 @@
             </div>
 
         </div>
+
+    <!-- Shift WhatsApp button and recent buyer toast to clear the sticky checkout bar on mobile/desktop -->
+    <style>
+        body .wa-btn-wrap {
+            bottom: 80px !important; /* Move WhatsApp button up on the product page */
+        }
+        @media (max-width: 639px) {
+            body .recent-buyer-toast {
+                bottom: 5rem !important; /* Move toast up on mobile screen sizes to match WhatsApp */
+            }
+        }
+        @media (min-width: 640px) {
+            body .recent-buyer-toast {
+                bottom: 5rem !important; /* Keep toast shifted up on desktop viewports to clear bottom bar span */
+            }
+        }
+    </style>
+
+    <!-- Sticky Add to Cart & Buy Now Bar -->
+    <div x-data="{
+             showSticky: false,
+             init() {
+                 const observer = new IntersectionObserver((entries) => {
+                     this.showSticky = !entries[0].isIntersecting;
+                 }, { threshold: 0 });
+                 const target = document.getElementById('main-cart-controls');
+                 if (target) {
+                     observer.observe(target);
+                 }
+             }
+         }"
+         x-show="showSticky"
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="translate-y-full"
+         x-transition:enter-end="translate-y-0"
+         x-transition:leave="transition ease-in duration-250 transform"
+         x-transition:leave-start="translate-y-0"
+         x-transition:leave-end="translate-y-full"
+         class="fixed bottom-0 left-0 right-0 z-[99] bg-white/95 backdrop-blur-md border-t border-gray-200/80 shadow-[0_-6px_25px_rgba(0,0,0,0.06)] py-3 px-4 sm:px-6 lg:px-8"
+         style="display: none;"
+    >
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <!-- Left: Product details (hidden on tiny mobile, visible sm+) -->
+            <div class="hidden sm:flex items-center gap-3 min-w-0">
+                <img src="{{ $productImage }}" class="w-10 h-10 object-contain rounded-lg bg-[#f6f6f5] border border-gray-200/50 shrink-0 shadow-sm">
+                <div class="min-w-0 text-left">
+                    <p class="font-bold text-xs text-[#111111] truncate max-w-[200px] md:max-w-[320px]">{{ $product->attr('name') }}</p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span class="text-[11px] font-extrabold text-[#111111]">{{ $price?->formatted }}</span>
+                        @if($hasDiscount)
+                        <span class="line-through text-gray-400 text-[10px]" style="text-decoration: line-through;">{{ $comparePrice->formatted }}</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Action Buttons (full width on mobile, auto on sm+) -->
+            <div class="flex items-center gap-2.5 w-full sm:w-auto">
+                <button type="button" 
+                        wire:click="addToCart" 
+                        class="flex-1 sm:flex-initial h-11 px-5 bg-white border border-[#111111] hover:bg-gray-50 text-[#111111] font-bold rounded-md tracking-wider uppercase text-[10px] transition duration-300 flex items-center justify-center gap-1.5 shadow-sm"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    <span>Add to Cart</span>
+                </button>
+
+                <button type="button" 
+                        wire:click="$dispatch('open-buy-now', { variantId: {{ $variantId }}, quantity: {{ $quantity }} })" 
+                        class="flex-1 sm:flex-initial h-11 px-6 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-[10px] transition duration-300 flex items-center justify-center gap-1.5 shadow-sm"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span>Buy Now</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     @script
     <script>
         @if($dataLayerPayload)

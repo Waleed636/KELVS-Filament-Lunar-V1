@@ -41,6 +41,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(\Lunar\Base\ShippingModifiers $shippingModifiers): void
     {
+        // Prevent polymorphic loading crashes for Lunar's non-model ShippingOption class
+        \Illuminate\Database\Eloquent\Relations\Relation::morphMap([
+            'Lunar\DataTypes\ShippingOption' => \App\Models\ShippingOptionModel::class,
+        ]);
+
         $shippingModifiers->add(
             \App\Shipping\FallbackShippingModifier::class
         );

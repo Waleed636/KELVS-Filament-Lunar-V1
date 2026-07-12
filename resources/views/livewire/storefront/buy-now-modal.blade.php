@@ -14,7 +14,7 @@
          });
      "
      @keydown.escape.window="$wire.closeModal(); showModal = false"
-     class="fixed inset-0 z-50 overflow-y-auto" 
+     class="fixed inset-0 z-[100] overflow-y-auto" 
      role="dialog" 
      aria-modal="true"
      style="display: none;">
@@ -148,6 +148,14 @@
                                 
                                 <span>Place COD Order</span>
                             </button>
+                        </div>
+
+                        <!-- Trust Badge for Pakistani COD Shoppers -->
+                        <div class="mt-4 text-center">
+                            <p class="text-[10px] text-gray-500 font-semibold flex items-center justify-center gap-1.5 bg-[#fbfbfa] py-2 px-3 rounded-lg border border-gray-200/50">
+                                <span>🛡️</span>
+                                <span><strong>Cash on Delivery Guarantee</strong> — Pay only when you receive your parcel</span>
+                            </p>
                         </div>
                     </form>
                 </div>
