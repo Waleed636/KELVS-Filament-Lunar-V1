@@ -376,6 +376,8 @@
 
     <!-- Header / Navigation -->
     <header class="sticky top-0 z-30 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
+        <!-- Promotional / Utility Announcement Bar -->
+        <livewire:storefront.promotional-bar />
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Logo -->
             <a href="/" wire:navigate class="flex items-center space-x-2.5 group">
