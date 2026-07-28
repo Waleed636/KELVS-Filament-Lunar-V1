@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductScienceAttributesSeeder::class,
             PromotionalBarSeeder::class,
+            PolicyPagesSeeder::class,
         ]);
     }
 }

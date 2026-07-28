@@ -424,13 +424,13 @@
     <!-- Footer -->
     <footer class="bg-gray-50 border-t border-gray-200/80 text-gray-500 text-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <!-- Branding -->
-                <div class="md:col-span-2">
+                <div>
                     <span class="text-lg font-extrabold tracking-widest text-[#111111]">
                         KELVS
                     </span>
-                    <p class="mt-4 text-gray-600 max-w-sm leading-relaxed">
+                    <p class="mt-4 text-gray-600 max-w-sm leading-relaxed text-xs">
                         Science-led skincare for real results. Minimal formulas, maximum performance. Made to simplify your daily routine with high-quality, dermatologically inspired ingredients.
                     </p>
                 </div>
@@ -450,7 +450,41 @@
                     <ul class="space-y-2.5">
                         <li><a href="/about" wire:navigate class="hover:text-[#111111] transition">About KELVS</a></li>
                         <li><a href="/blog" wire:navigate class="hover:text-[#111111] transition">Blog & Guides</a></li>
-                        <!-- <li><a href="/blog/faq" wire:navigate class="hover:text-[#111111] transition">FAQ</a></li> -->
+                    </ul>
+                </div>
+
+                <!-- Links Column 3: Customer Care & Policies -->
+                <div>
+                    <h3 class="text-xs uppercase font-bold text-[#111111] tracking-widest mb-4">Customer Care</h3>
+                    @php
+                        $footerPolicies = \App\Models\Post::where('post_type', 'page')
+                            ->where('status', 'publish')
+                            ->orderBy('title')
+                            ->get(['id', 'title', 'slug']);
+
+                        if ($footerPolicies->isEmpty()) {
+                            $footerPolicies = collect([
+                                (object)['title' => 'Return & Exchange Policy', 'slug' => 'return-policy'],
+                                (object)['title' => 'Privacy Policy', 'slug' => 'privacy-policy'],
+                                (object)['title' => 'Terms & Conditions', 'slug' => 'terms-and-conditions'],
+                                (object)['title' => 'Shipping Policy', 'slug' => 'shipping-policy'],
+                                (object)['title' => 'Refund Policy', 'slug' => 'refund-policy'],
+                            ]);
+                        }
+                    @endphp
+                    <ul class="space-y-2.5">
+                        @foreach($footerPolicies as $fPolicy)
+                            @php
+                                $fTitle = is_array($fPolicy->title)
+                                    ? ($fPolicy->title[app()->getLocale()] ?? $fPolicy->title['en'] ?? reset($fPolicy->title))
+                                    : $fPolicy->title;
+                            @endphp
+                            <li>
+                                <a href="/{{ $fPolicy->slug }}" wire:navigate class="hover:text-[#111111] transition">
+                                    {{ $fTitle }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>

@@ -35,7 +35,10 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \Filament\SpatieLaravelTranslatablePlugin::make()
                     ->defaultLocales([config('app.locale')]),
-                \LaraZeus\Sky\SkyPlugin::make(),
+                \LaraZeus\Sky\SkyPlugin::make()
+                    ->hideResources([
+                        \LaraZeus\Sky\Filament\Resources\PageResource::class,
+                    ]),
             ])
             ->discoverResources(
                 in: app_path('Filament/Resources'),

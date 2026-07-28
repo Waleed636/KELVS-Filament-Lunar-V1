@@ -51,13 +51,10 @@ Route::get('/shop/{slug}', function ($slug) {
 // Redirect legacy /about-us URL to /about
 Route::redirect('/about-us', '/about', 301);
 
-// Redirect legacy pages/policies to new LaraZeus Sky pages structure
-Route::redirect('/terms-and-conditions', '/blog/page/terms-and-conditions', 301);
-Route::redirect('/contact-us', '/blog/page/contact-us', 301);
-Route::redirect('/return-policy', '/blog/page/return-policy', 301);
-Route::redirect('/privacy-policy', '/blog/page/privacy-policy', 301);
-Route::redirect('/refund-policy', '/blog/page/refund-policy', 301);
-Route::redirect('/shipping-policy', '/blog/page/shipping-policy', 301);
+// Dynamic CMS Page Route (Policy pages & backend created pages)
+Route::get('/{slug}', \App\Livewire\Storefront\PageShow::class)
+    ->where('slug', '^(?!admin|blog|shop|products|cart|checkout|about|sitemap\.xml)[a-z0-9\-]+$');
+
 
 // Dynamic XML Sitemap for SEO
 Route::get('/sitemap.xml', function () {
