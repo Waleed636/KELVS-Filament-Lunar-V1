@@ -475,6 +475,138 @@
     </div>
     @endif
 
+    <!-- ── Verified Customer Showcase Carousel ──────────────────────────── -->
+    @if($this->whatsappFeedbacks->isNotEmpty())
+    <div x-data="{ 
+            activeModalImage: null, 
+            activeModalCaption: '', 
+            activeModalName: '',
+            scrollLeft() { $refs.carousel.scrollBy({ left: -300, behavior: 'smooth' }) },
+            scrollRight() { $refs.carousel.scrollBy({ left: 300, behavior: 'smooth' }) }
+         }" 
+         class="mt-28 sm:mt-36 pt-16 sm:pt-20 border-t border-gray-150 w-full max-w-7xl mx-auto px-4 sm:px-6">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+                <div class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold uppercase tracking-wider mb-2.5">
+                    <svg class="w-3.5 h-3.5 fill-current text-emerald-600 shrink-0" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span>Verified Customer Showcase</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#111111] tracking-tight">Real Customer Photos & Results</h2>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">Unfiltered customer photos, unboxing moments, and real feedback.</p>
+            </div>
+            
+            <!-- Navigation Controls (Desktop & Mobile) -->
+            <div class="flex items-center gap-3 self-start sm:self-auto">
+                <div class="flex items-center gap-1.5">
+                    <button type="button" @click="scrollLeft()" class="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-gray-100 text-gray-700 flex items-center justify-center transition shadow-sm focus:outline-none">
+                        &larr;
+                    </button>
+                    <button type="button" @click="scrollRight()" class="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-gray-100 text-gray-700 flex items-center justify-center transition shadow-sm focus:outline-none">
+                        &rarr;
+                    </button>
+                </div>
+                <span class="text-[11px] text-gray-400 font-medium">Swipe or tap to zoom</span>
+            </div>
+        </div>
+
+        <!-- Carousel Container -->
+        <div x-ref="carousel" class="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory pb-6 pt-1 scrollbar-none w-full">
+            @foreach($this->whatsappFeedbacks as $feedback)
+                <div @click="activeModalImage = '{{ Storage::url($feedback->image_path) }}'; activeModalCaption = '{{ e($feedback->caption) }}'; activeModalName = '{{ e($feedback->customer_name) }}'"
+                     style="width: 250px; min-width: 250px; height: 390px; max-height: 60vh;"
+                     class="snap-start shrink-0 sm:!w-[320px] sm:!min-w-[320px] sm:!h-[500px] sm:!max-h-[75vh] group cursor-pointer relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-200/80 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    
+                    <!-- Feedback Image (Fixed Uniform Bounds + Auto Trim) -->
+                    <img src="{{ Storage::url($feedback->image_path) }}" 
+                         alt="{{ $feedback->customer_name ?? 'Customer Review' }}" 
+                         style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+                         class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+
+                    <!-- Top Glass Header Overlay -->
+                    <div class="absolute inset-x-0 top-0 p-2.5 sm:p-3.5 bg-gradient-to-b from-black/80 via-black/40 to-transparent flex items-center justify-between z-10">
+                        <span class="bg-emerald-500/90 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-400/30">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            Verified Review
+                        </span>
+                        <div class="flex items-center text-amber-400 text-[10px] sm:text-xs">
+                            @for($i = 0; $i < ($feedback->rating ?? 5); $i++)
+                                ★
+                            @endfor
+                        </div>
+                    </div>
+
+                    <!-- Click to Expand Prompt Overlay (On Hover) -->
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none z-10">
+                        <span class="bg-white/95 backdrop-blur-md text-[#111111] text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                            Tap to Zoom
+                        </span>
+                    </div>
+
+                    <!-- Bottom Content Overlay -->
+                    <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white pt-8 z-10">
+                        @if($feedback->caption)
+                            <p class="text-[11px] sm:text-xs font-medium text-gray-200 italic line-clamp-2 mb-1.5 leading-tight sm:leading-relaxed">
+                                "{{ $feedback->caption }}"
+                            </p>
+                        @endif
+                        <div class="flex items-center justify-between border-t border-white/20 pt-1.5 text-[10px] sm:text-[11px]">
+                            <span class="font-bold text-white truncate max-w-[120px] sm:max-w-[180px]">{{ $feedback->customer_name ?? 'Verified Customer' }}</span>
+                            <span class="text-emerald-400 font-semibold text-[9px] sm:text-[10px] shrink-0">Verified Photo</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Lightbox Zoom Modal -->
+        <template x-teleport="body">
+            <div x-show="activeModalImage" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @keydown.escape.window="activeModalImage = null"
+                 class="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md"
+                 style="display: none;">
+                
+                <!-- Backdrop Click -->
+                <div class="absolute inset-0" @click="activeModalImage = null"></div>
+
+                <!-- Modal Content Card -->
+                <div class="relative max-w-md sm:max-w-2xl w-full bg-[#111111] rounded-2xl overflow-hidden shadow-2xl z-10 border border-gray-800 flex flex-col max-h-[92vh]">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between p-3.5 border-b border-gray-800 bg-[#181818]">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs sm:text-sm font-bold text-white truncate" x-text="activeModalName || 'Customer Photo'"></span>
+                        </div>
+                        <button type="button" @click="activeModalImage = null" class="text-gray-400 hover:text-white transition p-1 text-xl font-bold leading-none">
+                            &times;
+                        </button>
+                    </div>
+
+                    <!-- Scrollable Modal Image -->
+                    <div class="overflow-y-auto p-2 flex-1 bg-black flex items-center justify-center min-h-[300px]">
+                        <img :src="activeModalImage" class="max-h-[75vh] w-auto max-w-full object-contain rounded-lg">
+                    </div>
+
+                    <!-- Footer Caption -->
+                    <div x-show="activeModalCaption" class="p-3.5 border-t border-gray-800 bg-[#181818] text-xs text-gray-300 italic">
+                        "<span x-text="activeModalCaption"></span>"
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    @endif
+
     <!-- ── Customer Reviews Section ──────────────────────────────────── -->
     <div id="reviews-section" class="mt-20 pt-10 border-t border-gray-150 max-w-7xl">
         <h2 class="text-sm font-extrabold uppercase tracking-widest text-[#111111] mb-8 flex items-center gap-2">

@@ -8,9 +8,11 @@ use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 use Lunar\Facades\CartSession;
 use App\Models\Review;
+use App\Models\WhatsappFeedback;
 
 class ProductShow extends Component
 {
+    public $activeWhatsappModalImage = null;
     public $dataLayerPayload = null;
 
     public $slug;
@@ -90,6 +92,17 @@ class ProductShow extends Component
         return Review::where('product_id', $this->product->id)
             ->where('is_approved', true)
             ->latest()
+            ->get();
+    }
+
+    #[Computed]
+    public function whatsappFeedbacks()
+    {
+        return WhatsappFeedback::active()
+            ->where(function ($query) {
+                $query->whereNull('product_id')
+                    ->orWhere('product_id', $this->product->id);
+            })
             ->get();
     }
 
