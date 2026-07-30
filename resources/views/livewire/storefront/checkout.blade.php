@@ -21,45 +21,45 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="sm:col-span-2">
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
-                        <input type="text" placeholder="e.g. Waleed Ahmed" wire:model.blur="shippingAddress.first_name" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                        <label for="shipping-name" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
+                        <input type="text" id="shipping-name" name="name" autocomplete="shipping name" placeholder="e.g. Waleed Ahmed" wire:model.blur="shippingAddress.first_name" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                         @error('shippingAddress.first_name') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Shipping Address</label>
-                        <input type="text" placeholder="House number, street name, area..." wire:model.blur="shippingAddress.line_one" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                        <label for="shipping-address" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Shipping Address</label>
+                        <input type="text" id="shipping-address" name="address" autocomplete="shipping address-line1" placeholder="House number, street name, area..." wire:model.blur="shippingAddress.line_one" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                         @error('shippingAddress.line_one') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">City</label>
-                        <input type="text" placeholder="e.g. Lahore" wire:model.blur="shippingAddress.city" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                        <label for="shipping-city" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">City</label>
+                        <input type="text" id="shipping-city" name="city" autocomplete="shipping address-level2" placeholder="e.g. Lahore" wire:model.blur="shippingAddress.city" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                         @error('shippingAddress.city') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">State / Province (Optional)</label>
-                        <input type="text" placeholder="e.g. Punjab" wire:model.blur="shippingAddress.state" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                        <label for="shipping-state" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">State / Province (Optional)</label>
+                        <input type="text" id="shipping-state" name="state" autocomplete="shipping address-level1" placeholder="e.g. Punjab" wire:model.blur="shippingAddress.state" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                         @error('shippingAddress.state') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP (Optional)</label>
-                        <input type="text" placeholder="e.g. 54000" wire:model.blur="shippingAddress.postcode" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                        <label for="shipping-postcode" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP (Optional)</label>
+                        <input type="text" id="shipping-postcode" name="postal-code" autocomplete="shipping postal-code" placeholder="e.g. 54000" wire:model.blur="shippingAddress.postcode" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                         @error('shippingAddress.postcode') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Country</label>
-                        <input type="text" readonly value="Pakistan" class="w-full bg-gray-50 border border-gray-200 rounded-[6px] text-gray-500 text-sm px-4 py-3 cursor-not-allowed outline-none">
+                        <label for="shipping-country" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Country</label>
+                        <input type="text" id="shipping-country" name="country" autocomplete="shipping country-name" readonly value="Pakistan" class="w-full bg-gray-50 border border-gray-200 rounded-[6px] text-gray-500 text-sm px-4 py-3 cursor-not-allowed outline-none">
                     </div>
                     <div class="sm:col-span-2 pt-2 border-t border-gray-150">
                         <span class="block text-xs font-semibold text-gray-500 mb-4">Contact Details (Please provide at least one contact method)</span>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Email Address</label>
-                                <input type="email" placeholder="e.g. name@example.com" wire:model.blur="shippingAddress.contact_email" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                                <label for="shipping-email" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Email Address</label>
+                                <input type="email" id="shipping-email" name="email" autocomplete="shipping email" placeholder="e.g. name@example.com" wire:model.blur="shippingAddress.contact_email" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                                 @error('shippingAddress.contact_email') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
-                                <input type="text" placeholder="e.g. 03001234567" wire:model.blur="shippingAddress.contact_phone" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
+                                <label for="shipping-phone" class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
+                                <input type="tel" id="shipping-phone" name="tel" autocomplete="shipping tel" placeholder="e.g. 03001234567" wire:model.blur="shippingAddress.contact_phone" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
                                 @error('shippingAddress.contact_phone') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -67,57 +67,10 @@
                 </div>
             </div>
 
-            <!-- 2. Billing Address Selection -->
+            <!-- 2. Shipping Method Section -->
             <div class="bg-[#fbfbfa] border border-gray-150 rounded-xl p-8 space-y-6">
                 <h2 class="text-base font-bold text-[#111111] flex items-center space-x-3">
                     <span class="flex items-center justify-center w-7 h-7 rounded-full bg-[#111111] text-white text-xs font-bold font-mono">2</span>
-                    <span class="uppercase tracking-wider">Billing Information</span>
-                </h2>
-
-                <label class="flex items-center space-x-3 cursor-pointer">
-                    <input type="checkbox" wire:model.live="sameAsShipping" class="rounded border-gray-300 text-[#111111] focus:ring-[#111111] focus:ring-0">
-                    <span class="text-sm font-semibold text-gray-650">Billing address is the same as shipping</span>
-                </label>
-
-                @if(!$sameAsShipping)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-gray-150 animate-fade-in">
-                        <div class="sm:col-span-2">
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
-                            <input type="text" wire:model.blur="billingAddress.first_name" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
-                            @error('billingAddress.first_name') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Billing Address</label>
-                            <input type="text" wire:model.blur="billingAddress.line_one" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
-                            @error('billingAddress.line_one') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">City</label>
-                            <input type="text" wire:model.blur="billingAddress.city" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
-                            @error('billingAddress.city') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">State / Province (Optional)</label>
-                            <input type="text" wire:model.blur="billingAddress.state" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
-                            @error('billingAddress.state') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Postcode / ZIP (Optional)</label>
-                            <input type="text" wire:model.blur="billingAddress.postcode" class="w-full bg-white border border-gray-200 rounded-[6px] text-[#111111] text-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition duration-200">
-                            @error('billingAddress.postcode') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Country</label>
-                            <input type="text" readonly value="Pakistan" class="w-full bg-gray-50 border border-gray-200 rounded-[6px] text-gray-500 text-sm px-4 py-3 cursor-not-allowed outline-none">
-                        </div>
-                    </div>
-                @endif
-            </div>
-
-            <!-- 3. Shipping Method Section -->
-            <div class="bg-[#fbfbfa] border border-gray-150 rounded-xl p-8 space-y-6">
-                <h2 class="text-base font-bold text-[#111111] flex items-center space-x-3">
-                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-[#111111] text-white text-xs font-bold font-mono">3</span>
                     <span class="uppercase tracking-wider">Shipping Options</span>
                 </h2>
 
@@ -144,10 +97,10 @@
                 @endif
             </div>
 
-            <!-- 4. Payment Details Section -->
+            <!-- 3. Payment Details Section -->
             <div class="bg-[#fbfbfa] border border-gray-150 rounded-xl p-8 space-y-6">
                 <h2 class="text-base font-bold text-[#111111] flex items-center space-x-3">
-                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-[#111111] text-white text-xs font-bold font-mono">4</span>
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-[#111111] text-white text-xs font-bold font-mono">3</span>
                     <span class="uppercase tracking-wider">Payment Details</span>
                 </h2>
 

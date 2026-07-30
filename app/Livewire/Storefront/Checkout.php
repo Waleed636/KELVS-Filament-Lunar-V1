@@ -27,20 +27,6 @@ class Checkout extends Component
         'contact_phone' => '',
     ];
 
-    public $billingAddress = [
-        'first_name' => '',
-        'last_name' => '',
-        'company_name' => '',
-        'line_one' => '',
-        'line_two' => '',
-        'city' => '',
-        'state' => '',
-        'postcode' => '',
-        'country_id' => '',
-        'contact_email' => '',
-        'contact_phone' => '',
-    ];
-
     public $sameAsShipping = true;
     public $shippingOptionHandle = '';
     public $paymentMethod = 'cod';
@@ -65,7 +51,7 @@ class Checkout extends Component
 
     protected function rules()
     {
-        $rules = [
+        return [
             'shippingAddress.first_name' => 'required|string|max:255',
             'shippingAddress.line_one' => 'required|string|max:255',
             'shippingAddress.city' => 'required|string|max:255',
@@ -77,19 +63,6 @@ class Checkout extends Component
             'shippingOptionHandle' => 'required|string',
             'paymentMethod' => 'required|in:cod,card',
         ];
-
-        if (!$this->sameAsShipping) {
-            $rules = array_merge($rules, [
-                'billingAddress.first_name' => 'required|string|max:255',
-                'billingAddress.line_one' => 'required|string|max:255',
-                'billingAddress.city' => 'required|string|max:255',
-                'billingAddress.state' => 'nullable|string|max:255',
-                'billingAddress.postcode' => 'nullable|string|max:20',
-                'billingAddress.country_id' => 'required|exists:lunar_countries,id',
-            ]);
-        }
-
-        return $rules;
     }
 
     public function mount()
@@ -107,7 +80,6 @@ class Checkout extends Component
         $defaultCountryId = $pakistan ? $pakistan->id : (Country::first()?->id ?? 168);
 
         $this->shippingAddress['country_id'] = $defaultCountryId;
-        $this->billingAddress['country_id'] = $defaultCountryId;
 
         // Eager load relationships for tracking to prevent N+1 issues
         $cart->load(['lines.purchasable.prices.currency', 'lines.purchasable.product']);
@@ -344,8 +316,8 @@ class Checkout extends Component
         $firstName = $parts[0];
         $lastName = isset($parts[1]) ? $parts[1] : '.';
 
-        // 1. Save addresses
-        $cart->setShippingAddress([
+        // 1. Save shipping and billing addresses
+        $addressData = [
             'first_name' => $firstName,
             'last_name' => $lastName,
             'company_name' => '',
@@ -357,41 +329,10 @@ class Checkout extends Component
             'country_id' => $this->shippingAddress['country_id'],
             'contact_email' => $this->shippingAddress['contact_email'] ?? '',
             'contact_phone' => $this->shippingAddress['contact_phone'] ?? '',
-        ]);
+        ];
 
-        if ($this->sameAsShipping) {
-            $cart->setBillingAddress([
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'company_name' => '',
-                'line_one' => $this->shippingAddress['line_one'],
-                'line_two' => '',
-                'city' => $this->shippingAddress['city'],
-                'state' => $this->shippingAddress['state'],
-                'postcode' => $this->shippingAddress['postcode'],
-                'country_id' => $this->shippingAddress['country_id'],
-                'contact_email' => $this->shippingAddress['contact_email'] ?? '',
-                'contact_phone' => $this->shippingAddress['contact_phone'] ?? '',
-            ]);
-        } else {
-            $bParts = explode(' ', trim($this->billingAddress['first_name']), 2);
-            $bFirstName = $bParts[0];
-            $bLastName = isset($bParts[1]) ? $bParts[1] : '.';
-
-            $cart->setBillingAddress([
-                'first_name' => $bFirstName,
-                'last_name' => $bLastName,
-                'company_name' => '',
-                'line_one' => $this->billingAddress['line_one'],
-                'line_two' => '',
-                'city' => $this->billingAddress['city'],
-                'state' => $this->billingAddress['state'],
-                'postcode' => $this->billingAddress['postcode'],
-                'country_id' => $this->billingAddress['country_id'],
-                'contact_email' => $this->shippingAddress['contact_email'] ?? '', 
-                'contact_phone' => $this->shippingAddress['contact_phone'] ?? '', 
-            ]);
-        }
+        $cart->setShippingAddress($addressData);
+        $cart->setBillingAddress($addressData);
 
         // 2. Select shipping option
         $shippingOption = $this->shippingOptions->first(fn($opt) => $opt->identifier === $this->shippingOptionHandle)
@@ -433,7 +374,7 @@ class Checkout extends Component
 
     public function updated($name, $value)
     {
-        if (str_starts_with($name, 'shippingAddress') || str_starts_with($name, 'billingAddress') || $name === 'shippingOptionHandle') {
+        if (str_starts_with($name, 'shippingAddress') || $name === 'shippingOptionHandle') {
             $this->capturePartialOrder();
         }
     }

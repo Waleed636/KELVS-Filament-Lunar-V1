@@ -65,7 +65,7 @@
                         <!-- Full Name -->
                         <div>
                             <label for="buy-now-name" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Full Name</label>
-                            <input type="text" id="buy-now-name" wire:model.live.debounce.500ms="shippingAddress.first_name" placeholder="e.g. Waleed Ahmed" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                            <input type="text" id="buy-now-name" name="name" autocomplete="shipping name" wire:model.live.debounce.500ms="shippingAddress.first_name" placeholder="e.g. Waleed Ahmed" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                             @error('shippingAddress.first_name') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                         </div>
  
@@ -73,14 +73,14 @@
                             <!-- Phone Number -->
                             <div>
                                 <label for="buy-now-phone" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Phone Number</label>
-                                <input type="text" id="buy-now-phone" wire:model.live.debounce.500ms="shippingAddress.contact_phone" placeholder="e.g. 03001234567" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="tel" id="buy-now-phone" name="tel" autocomplete="shipping tel" wire:model.live.debounce.500ms="shippingAddress.contact_phone" placeholder="e.g. 03001234567" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('shippingAddress.contact_phone') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
  
                             <!-- Email Address -->
                             <div>
                                 <label for="buy-now-email" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Email Address</label>
-                                <input type="email" id="buy-now-email" wire:model.live.debounce.500ms="shippingAddress.contact_email" placeholder="e.g. name@domain.com" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="email" id="buy-now-email" name="email" autocomplete="shipping email" wire:model.live.debounce.500ms="shippingAddress.contact_email" placeholder="e.g. name@domain.com" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('shippingAddress.contact_email') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                         <!-- Shipping Address -->
                         <div>
                             <label for="buy-now-address" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Delivery Address</label>
-                            <input type="text" id="buy-now-address" wire:model.live.debounce.500ms="shippingAddress.line_one" placeholder="House number, street address, area name" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                            <input type="text" id="buy-now-address" name="address" autocomplete="shipping address-line1" wire:model.live.debounce.500ms="shippingAddress.line_one" placeholder="House number, street address, area name" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                             @error('shippingAddress.line_one') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                         </div>
  
@@ -96,21 +96,21 @@
                             <!-- City -->
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="buy-now-city" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">City</label>
-                                <input type="text" id="buy-now-city" wire:model.live.debounce.500ms="shippingAddress.city" placeholder="e.g. Lahore" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="text" id="buy-now-city" name="city" autocomplete="shipping address-level2" wire:model.live.debounce.500ms="shippingAddress.city" placeholder="e.g. Lahore" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('shippingAddress.city') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
  
                             <!-- Province -->
                             <div>
                                 <label for="buy-now-state" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Province</label>
-                                <input type="text" id="buy-now-state" wire:model.live.debounce.500ms="shippingAddress.state" placeholder="e.g. Punjab" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="text" id="buy-now-state" name="state" autocomplete="shipping address-level1" wire:model.live.debounce.500ms="shippingAddress.state" placeholder="e.g. Punjab" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('shippingAddress.state') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
  
                             <!-- Postcode -->
                             <div>
                                 <label for="buy-now-postcode" class="block text-[10px] font-bold text-gray-450 uppercase tracking-wider mb-1.5">Postal Code (Optional)</label>
-                                <input type="text" id="buy-now-postcode" wire:model.live.debounce.500ms="shippingAddress.postcode" placeholder="e.g. 54000" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="text" id="buy-now-postcode" name="postal-code" autocomplete="shipping postal-code" wire:model.live.debounce.500ms="shippingAddress.postcode" placeholder="e.g. 54000" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('shippingAddress.postcode') <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                             </div>
                         </div>
