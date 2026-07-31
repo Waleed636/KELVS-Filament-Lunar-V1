@@ -141,9 +141,17 @@ class GenerateMetaCatalog extends Command
 
             $productLink = $baseUrl . '/products/' . $slug;
 
-            // Main Media / Image
+            // Main Media / Image (Ensure JPEG format for Meta Catalog compatibility)
             $mainMedia = $product->media->first();
-            $imageLink = $mainMedia ? $mainMedia->getUrl() : '';
+            $imageLink = '';
+            if ($mainMedia) {
+                self::ensureJpgImageExists($mainMedia);
+                $imageLink = $mainMedia->getUrl();
+                if (preg_match('/\.webp$/i', $imageLink)) {
+                    $imageLink = preg_replace('/\.webp$/i', '.jpg', $imageLink);
+                }
+            }
+
             if (str_starts_with($imageLink, 'http://localhost:8000') || str_starts_with($imageLink, 'http://localhost')) {
                 $imageLink = preg_replace('/^http:\/\/localhost(:8000)?/', $baseUrl, $imageLink);
             } elseif (str_starts_with($imageLink, '/')) {
@@ -228,5 +236,41 @@ class GenerateMetaCatalog extends Command
         fclose($stream);
 
         return $csvContent;
+    }
+
+    /**
+     * Helper to ensure a JPEG version of the Spatie Media item exists on disk.
+     */
+    protected static function ensureJpgImageExists($media): void
+    {
+        try {
+            $path = method_exists($media, 'getPath') ? $media->getPath() : null;
+            if (!$path || !file_exists($path)) {
+                return;
+            }
+
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            if ($ext === 'webp') {
+                $jpgPath = preg_replace('/\.webp$/i', '.jpg', $path);
+                if (!file_exists($jpgPath)) {
+                    @ini_set('memory_limit', '512M');
+                    $img = @imagecreatefromwebp($path);
+                    if ($img) {
+                        $width = imagesx($img);
+                        $height = imagesy($img);
+                        $bg = imagecreatetruecolor($width, $height);
+                        $white = imagecolorallocate($bg, 255, 255, 255);
+                        imagefill($bg, 0, 0, $white);
+                        imagecopy($bg, $img, 0, 0, 0, 0, $width, $height);
+
+                        imagejpeg($bg, $jpgPath, 92);
+                        imagedestroy($img);
+                        imagedestroy($bg);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ignore image conversion failures gracefully
+        }
     }
 }
