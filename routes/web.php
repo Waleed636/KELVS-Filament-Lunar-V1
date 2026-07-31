@@ -51,65 +51,9 @@ Route::get('/shop/{slug}', function ($slug) {
 // Redirect legacy /about-us URL to /about
 Route::redirect('/about-us', '/about', 301);
 
-// Dynamic Meta Catalog Feed Routes (Live feed for Meta / Facebook Commerce Manager)
-Route::get('/meta-catalog.csv', function (\Illuminate\Http\Request $request) {
-    try {
-        $baseUrl = $request->schemeAndHttpHost();
-        if ($baseUrl === 'http://localhost:8000' || $baseUrl === 'http://localhost') {
-            $baseUrl = 'https://kelvsint.com';
-        }
-        $csvContent = \App\Console\Commands\GenerateMetaCatalog::generateCsvContent($baseUrl);
-        
-        // Update static file backup on disk
-        @file_put_contents(public_path('meta-catalog.csv'), $csvContent);
-
-        return response($csvContent, 200, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'inline; filename="meta-catalog.csv"',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
-        ]);
-    } catch (\Throwable $e) {
-        logger()->error('Meta Catalog feed generation failed: ' . $e->getMessage());
-        $csvPath = public_path('meta-catalog.csv');
-        if (file_exists($csvPath)) {
-            return response()->file($csvPath, ['Content-Type' => 'text/csv; charset=UTF-8']);
-        }
-        return response('Error generating catalog feed', 500);
-    }
-});
-
-Route::get('/catalog_products.csv', function (\Illuminate\Http\Request $request) {
-    try {
-        $baseUrl = $request->schemeAndHttpHost();
-        if ($baseUrl === 'http://localhost:8000' || $baseUrl === 'http://localhost') {
-            $baseUrl = 'https://kelvsint.com';
-        }
-        $csvContent = \App\Console\Commands\GenerateMetaCatalog::generateCsvContent($baseUrl);
-        
-        @file_put_contents(base_path('catalog_products.csv'), $csvContent);
-
-        return response($csvContent, 200, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'inline; filename="catalog_products.csv"',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
-        ]);
-    } catch (\Throwable $e) {
-        logger()->error('Catalog products feed generation failed: ' . $e->getMessage());
-        $csvPath = base_path('catalog_products.csv');
-        if (file_exists($csvPath)) {
-            return response()->file($csvPath, ['Content-Type' => 'text/csv; charset=UTF-8']);
-        }
-        return response('Error generating catalog feed', 500);
-    }
-});
-
 // Dynamic CMS Page Route (Policy pages & backend created pages)
 Route::get('/{slug}', \App\Livewire\Storefront\PageShow::class)
-    ->where('slug', '^(?!admin|blog|shop|products|cart|checkout|about|sitemap\.xml|meta-catalog\.csv|catalog_products\.csv)[a-z0-9\-]+$');
+    ->where('slug', '^(?!admin|blog|shop|products|cart|checkout|about|sitemap\.xml)[a-z0-9\-]+$');
 
 
 // Dynamic XML Sitemap for SEO
