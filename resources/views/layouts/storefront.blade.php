@@ -344,7 +344,7 @@
         
         <!-- Drawer Header -->
         <div class="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
-            <a href="/" wire:navigate @click="mobileMenuOpen = false" class="flex items-center space-x-2.5">
+            <a href="/" @click="mobileMenuOpen = false" class="flex items-center space-x-2.5">
                 <span class="text-xl font-bold tracking-widest text-[#111111]">KELVS</span>
             </a>
             <button @click="mobileMenuOpen = false" class="p-2 -mr-2 text-gray-500 hover:text-[#111111] focus:outline-none" aria-label="Close Menu">
@@ -356,12 +356,12 @@
 
         <!-- Drawer Links -->
         <nav class="flex-grow px-6 py-8 flex flex-col space-y-6 text-sm font-semibold tracking-wide uppercase">
-            <a href="/" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('/') || request()->is('') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Home</a>
-            <a href="/about" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('about') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">About</a>
-            <a href="/blog" wire:navigate @click="mobileMenuOpen = false" class="{{ request()->is('blog*') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Blog</a>
+            <a href="/" @click="mobileMenuOpen = false" class="{{ request()->is('/') || request()->is('') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Home</a>
+            <a href="/about" @click="mobileMenuOpen = false" class="{{ request()->is('about') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">About</a>
+            <a href="/blog" @click="mobileMenuOpen = false" class="{{ request()->is('blog*') ? 'text-[#111111] border-l-2 border-[#111111] pl-3' : 'text-gray-500 hover:text-[#111111] pl-3' }} transition">Blog</a>
             
             <div class="pt-6 border-t border-gray-100">
-                <a href="/shop" wire:navigate @click="mobileMenuOpen = false" class="block w-full text-center py-3 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">
+                <a href="/shop" @click="mobileMenuOpen = false" class="block w-full text-center py-3 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">
                     Shop
                 </a>
             </div>
@@ -380,7 +380,7 @@
         <livewire:storefront.promotional-bar />
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Logo -->
-            <a href="/" wire:navigate class="flex items-center space-x-2.5 group">
+            <a href="/" class="flex items-center space-x-2.5 group">
                 <span class="text-2xl font-bold tracking-widest text-[#111111] group-hover:opacity-80 transition duration-300">
                     KELVS
                 </span>
@@ -388,10 +388,10 @@
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold tracking-wide uppercase">
-                <a href="/" wire:navigate class="{{ request()->is('/') || request()->is('') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Home</a>
-                <a href="/about" wire:navigate class="{{ request()->is('about') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">About</a>
-                <a href="/blog" wire:navigate class="{{ request()->is('blog*') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Blog</a>
-                <a href="/shop" wire:navigate class="px-4 py-1.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">Shop</a>
+                <a href="/" class="{{ request()->is('/') || request()->is('') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Home</a>
+                <a href="/about" class="{{ request()->is('about') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">About</a>
+                <a href="/blog" class="{{ request()->is('blog*') ? 'text-[#111111]' : 'text-gray-500 hover:text-[#111111]' }} transition">Blog</a>
+                <a href="/shop" class="px-4 py-1.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[4px] tracking-wide transition duration-200">Shop</a>
             </nav>
 
             <!-- User Actions -->
@@ -439,8 +439,8 @@
                 <div>
                     <h3 class="text-xs uppercase font-bold text-[#111111] tracking-widest mb-4">Shop</h3>
                     <ul class="space-y-2.5">
-                        <li><a href="/shop" wire:navigate class="hover:text-[#111111] transition">All Products</a></li>
-                        <li><a href="/cart" wire:navigate class="hover:text-[#111111] transition">View Cart</a></li>
+                        <li><a href="/shop" class="hover:text-[#111111] transition">All Products</a></li>
+                        <li><a href="/cart" class="hover:text-[#111111] transition">View Cart</a></li>
                     </ul>
                 </div>
 
@@ -448,8 +448,8 @@
                 <div>
                     <h3 class="text-xs uppercase font-bold text-[#111111] tracking-widest mb-4">Content</h3>
                     <ul class="space-y-2.5">
-                        <li><a href="/about" wire:navigate class="hover:text-[#111111] transition">About KELVS</a></li>
-                        <li><a href="/blog" wire:navigate class="hover:text-[#111111] transition">Blog & Guides</a></li>
+                        <li><a href="/about" class="hover:text-[#111111] transition">About KELVS</a></li>
+                        <li><a href="/blog" class="hover:text-[#111111] transition">Blog & Guides</a></li>
                     </ul>
                 </div>
 
@@ -480,7 +480,7 @@
                                     : $fPolicy->title;
                             @endphp
                             <li>
-                                <a href="/{{ $fPolicy->slug }}" wire:navigate class="hover:text-[#111111] transition">
+                                <a href="/{{ $fPolicy->slug }}" class="hover:text-[#111111] transition">
                                     {{ $fTitle }}
                                 </a>
                             </li>

@@ -170,7 +170,7 @@
                         <div class="group flex flex-col bg-white border border-gray-150 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition duration-300">
                             
                             <!-- Image Container -->
-                            <a href="/products/{{ $product->urls->first()?->slug }}" wire:navigate
+                            <a href="/products/{{ $product->urls->first()?->slug }}"
                                data-track-select-item
                                data-item-id="{{ $variant?->sku }}"
                                data-item-name="{{ $product->attr('name') }}"
@@ -204,7 +204,7 @@
                                 <div class="space-y-2">
                                     <span class="text-[10px] uppercase font-extrabold tracking-widest text-gray-400 block">{{ $benefit }}</span>
                                     <h3 class="text-base font-bold text-[#111111] hover:opacity-85 transition line-clamp-1">
-                                        <a href="/products/{{ $product->urls->first()?->slug }}" wire:navigate>
+                                        <a href="/products/{{ $product->urls->first()?->slug }}">
                                             {{ $product->attr('name') }}
                                         </a>
                                     </h3>
@@ -399,7 +399,7 @@
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Step 01:  Hydrate</span>
-                        <a href="/products/kelvs-gentle-gel-cleanser" wire:navigate class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
+                        <a href="/products/kelvs-gentle-gel-cleanser" class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
                             <!-- <span>View Product</span>
                             <span>&rarr;</span> -->
                         </a>
@@ -418,7 +418,7 @@
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Step 02:  Sleep</span>
-                        <a href="/products/kelvs-niacinamide-zinc-serum" wire:navigate class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
+                        <a href="/products/kelvs-niacinamide-zinc-serum" class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
                             <!-- <span>View Product</span>
                             <span>&rarr;</span> -->
                         </a>
@@ -436,7 +436,7 @@
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Step 03:  Excercise</span>
-                        <a href="/products/kelvs-matte-sun-shield-spf-50" wire:navigate class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
+                        <a href="/products/kelvs-matte-sun-shield-spf-50" class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
                             <!-- <span>View Product</span>
                             <span>&rarr;</span> -->
                         </a>

@@ -66,7 +66,7 @@
     <!-- Breadcrumbs -->
     <nav class="flex text-[10px] text-gray-400 uppercase tracking-widest mb-10" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-2">
-            <li><a href="/" wire:navigate class="hover:text-[#111111] transition">Home</a></li>
+            <li><a href="/" class="hover:text-[#111111] transition">Home</a></li>
             <li><span class="text-gray-300">/</span></li>
             <li class="text-[#111111] truncate max-w-xs font-semibold">{{ $product->attr('name') }}</li>
         </ol>

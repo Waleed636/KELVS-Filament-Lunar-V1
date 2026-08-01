@@ -10,7 +10,7 @@
             <h2 class="text-xl font-bold text-[#111111]">Your cart is empty</h2>
             <p class="text-sm text-gray-505 mt-2 max-w-sm mx-auto">Fill it with premium products from our catalog to start your skincare routine.</p>
             <div class="mt-8">
-                <a href="/" wire:navigate class="px-8 py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-xs uppercase font-extrabold tracking-wider rounded-md transition shadow-sm">
+                <a href="/" class="px-8 py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-xs uppercase font-extrabold tracking-wider rounded-md transition shadow-sm">
                     Continue Shopping
                 </a>
             </div>
@@ -63,7 +63,7 @@
                                 <div class="space-y-1">
                                     <span class="text-[9px] uppercase font-extrabold tracking-wider text-gray-400 block">{{ $benefit }}</span>
                                     <h3 class="text-sm font-bold text-[#111111] hover:opacity-80 transition">
-                                        <a href="/products/{{ $product->urls->first()?->slug }}" wire:navigate>
+                                        <a href="/products/{{ $product->urls->first()?->slug }}">
                                             {{ $product->attr('name') }}
                                         </a>
                                     </h3>
@@ -130,10 +130,10 @@
                 </div>
 
                 <div class="pt-4">
-                    <a href="/checkout" wire:navigate class="block w-full py-4 text-center bg-[#111111] hover:bg-[#222222] text-white text-xs uppercase font-extrabold tracking-wider rounded-md shadow-sm transition duration-300">
+                    <a href="/checkout" class="block w-full py-4 text-center bg-[#111111] hover:bg-[#222222] text-white text-xs uppercase font-extrabold tracking-wider rounded-md shadow-sm transition duration-300">
                         Proceed to Checkout
                     </a>
-                    <a href="/" wire:navigate class="block text-center text-xs font-bold text-gray-505 hover:text-[#111111] transition mt-4">
+                    <a href="/" class="block text-center text-xs font-bold text-gray-505 hover:text-[#111111] transition mt-4">
                         &larr; Continue Shopping
                     </a>
                 </div>

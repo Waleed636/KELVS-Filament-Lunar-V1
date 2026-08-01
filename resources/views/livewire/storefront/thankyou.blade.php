@@ -103,7 +103,7 @@
             </div>
 
             <div class="pt-4">
-                <a href="/shop" wire:navigate class="w-full py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[6px] tracking-wide uppercase transition duration-300 flex items-center justify-center">
+                <a href="/shop" class="w-full py-3.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold rounded-[6px] tracking-wide uppercase transition duration-300 flex items-center justify-center">
                     Continue Shopping
                 </a>
             </div>

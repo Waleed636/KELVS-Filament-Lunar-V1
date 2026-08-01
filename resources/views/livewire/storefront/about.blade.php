@@ -175,7 +175,7 @@
             <p class="text-gray-600 mb-8 leading-relaxed">
                 Explore our curated collection of science-led skincare and find the perfect products for your skin.
             </p>
-            <a href="/shop" wire:navigate
+            <a href="/shop"
                class="inline-flex items-center gap-2 bg-[#111111] text-white font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#333] transition duration-300">
                 Shop the Collection
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

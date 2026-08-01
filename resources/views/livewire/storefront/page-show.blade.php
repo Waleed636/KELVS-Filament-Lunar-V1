@@ -22,7 +22,7 @@
         <!-- Breadcrumbs & Trust Badge Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-200/80">
             <nav class="flex items-center text-xs font-medium text-gray-500 space-x-2" aria-label="Breadcrumb">
-                <a href="/" wire:navigate class="hover:text-[#111111] transition-colors flex items-center gap-1">
+                <a href="/" class="hover:text-[#111111] transition-colors flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
@@ -75,7 +75,6 @@
                                 @endphp
                                 <li x-show="searchQuery === '' || '{{ strtolower($itemTitle) }}'.includes(searchQuery.toLowerCase())">
                                     <a href="/{{ $item->slug }}"
-                                       wire:navigate
                                        class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ $isActive ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-[#111111]' }}">
                                         <span class="truncate">{{ $itemTitle }}</span>
                                         @if($isActive)
