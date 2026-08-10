@@ -2,7 +2,7 @@
 
 namespace App\Lunar\Extensions;
 
-use App\Filament\Resources\ProductResource\Pages\ManageProductFaqs;
+use App\Lunar\Pages\ManageProductFaqs;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Lunar\Admin\Support\Extending\ResourceExtension;

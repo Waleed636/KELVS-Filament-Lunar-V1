@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProductResource\Pages;
+namespace App\Lunar\Pages;
 
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Filament\Forms;
