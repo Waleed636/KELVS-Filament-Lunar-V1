@@ -454,23 +454,133 @@
 
     </div>
 
-    <!-- ── Full Description — below the product grid ──────────────────── -->
-    @if($product->attr('description'))
-    <div class="mt-40 pt-20 border-t border-gray-100 max-w-4xl">
-        <h2 class="text-sm font-extrabold uppercase tracking-widest text-gray-400 mb-5 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
-            </svg>
-            Product Description
-        </h2>
-        <div class="rounded-xl border border-gray-100 bg-[#fafafa] px-7 py-6">
-            <div class="text-base text-gray-600 leading-7 font-normal space-y-4 prose prose-base max-w-none">
-                {!! $product->attr('description') !!}
+    <!-- ── Product Details & In-Depth Information Accordions ─────────── -->
+    @if(!empty($this->descriptionSections))
+    <div class="mt-20 sm:mt-28 pt-12 sm:pt-16 border-t border-gray-150 max-w-5xl">
+        <!-- Section Header -->
+        <div class="mb-8">
+            <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold uppercase tracking-wider mb-2.5">
+                <svg class="w-3.5 h-3.5 text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Product Science & Formulation</span>
             </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-[#111111] tracking-tight">Everything You Need to Know</h2>
+            <p class="text-xs sm:text-sm text-gray-500 mt-1">Key actives, clinical targets, application routine, and frequently asked questions.</p>
+        </div>
+
+        <!-- Interactive Accordion Stack -->
+        <div x-data="{ 
+                openSections: { 0: true }, 
+                toggle(idx) { 
+                    this.openSections[idx] = !this.openSections[idx]; 
+                } 
+             }" 
+             class="space-y-3.5">
+            @foreach($this->descriptionSections as $idx => $section)
+                <div class="rounded-2xl border border-gray-200 bg-[#fbfbfa] overflow-hidden transition-all duration-200 hover:border-gray-300 shadow-xs">
+                    <!-- Accordion Trigger Button -->
+                    <button type="button" 
+                            @click="toggle({{ $idx }})" 
+                            class="w-full px-5 sm:px-6 py-4.5 sm:py-5 flex items-center justify-between gap-4 text-left transition focus:outline-none bg-white hover:bg-gray-50/70">
+                        <div class="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                            <!-- Section Icon -->
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gray-100/80 border border-gray-200/60 flex items-center justify-center shrink-0 text-[#111111]">
+                                @if($section['type'] === 'overview')
+                                    <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                    </svg>
+                                @elseif($section['type'] === 'usage')
+                                    <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                @elseif($section['type'] === 'ingredients')
+                                    <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                    </svg>
+                                @elseif($section['type'] === 'faq')
+                                    <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                @else
+                                    <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                @endif
+                            </div>
+
+                            <!-- Title & Subtitle -->
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2.5 flex-wrap">
+                                    <span class="text-sm sm:text-base font-extrabold text-[#111111] tracking-tight">{{ $section['title'] }}</span>
+                                    @if(!empty($section['badge']))
+                                        <span class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            {{ $section['badge'] }}
+                                        </span>
+                                    @endif
+                                </div>
+                                @if(!empty($section['subtitle']))
+                                    <p class="text-[11px] sm:text-xs text-gray-400 font-medium truncate mt-0.5">{{ $section['subtitle'] }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Toggle Icon -->
+                        <div class="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 transition-transform duration-200"
+                             :class="openSections[{{ $idx }}] ? 'rotate-180 bg-black text-white border-black' : 'text-gray-500'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </button>
+
+                    <!-- Accordion Content Panel -->
+                    <div x-show="openSections[{{ $idx }}]" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 -translate-y-1"
+                         class="border-t border-gray-150 bg-[#fafafa] px-5 sm:px-7 py-5 sm:py-6">
+                        
+                        @if($section['type'] === 'faq' && !empty($section['faq_items']))
+                            <!-- Interactive Nested FAQ Accordions -->
+                            <div x-data="{ openFaq: null }" class="space-y-2.5">
+                                @foreach($section['faq_items'] as $qIdx => $faq)
+                                    <div class="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-2xs">
+                                        <button type="button" 
+                                                @click="openFaq = (openFaq === {{ $qIdx }} ? null : {{ $qIdx }})"
+                                                class="w-full p-3.5 sm:p-4 flex items-center justify-between gap-3 text-left focus:outline-none hover:bg-gray-50/80 transition">
+                                            <span class="text-xs sm:text-sm font-bold text-[#111111] flex items-center gap-2">
+                                                <span class="w-5 h-5 rounded-full bg-[#111111] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">Q</span>
+                                                <span>{{ $faq['question'] }}</span>
+                                            </span>
+                                            <span class="w-6 h-6 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 text-xs font-bold text-gray-600 transition"
+                                                  :class="openFaq === {{ $qIdx }} ? 'rotate-45 bg-[#111111] text-white border-black' : ''">
+                                                +
+                                            </span>
+                                        </button>
+                                        <div x-show="openFaq === {{ $qIdx }}" 
+                                             x-transition
+                                             class="px-4 sm:px-5 pb-4 pt-1 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 bg-[#fbfbfa]">
+                                            <div class="prose prose-sm max-w-none">
+                                                {!! $faq['answer'] !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <!-- Rich HTML Content for Overview, Usage, Ingredients -->
+                            <div class="text-sm sm:text-base text-gray-600 leading-relaxed space-y-3 prose prose-sm sm:prose-base max-w-none prose-headings:text-[#111111] prose-headings:font-extrabold prose-strong:text-[#111111] prose-strong:font-bold prose-ul:my-2 prose-li:my-0.5">
+                                {!! $section['content'] !!}
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
     @endif
@@ -484,7 +594,7 @@
             scrollLeft() { $refs.carousel.scrollBy({ left: -300, behavior: 'smooth' }) },
             scrollRight() { $refs.carousel.scrollBy({ left: 300, behavior: 'smooth' }) }
          }" 
-         class="mt-28 sm:mt-36 pt-16 sm:pt-20 border-t border-gray-150 w-full max-w-7xl mx-auto px-4 sm:px-6">
+         class="mt-24 sm:mt-32 pt-16 sm:pt-20 border-t border-gray-150 w-full max-w-7xl mx-auto px-4 sm:px-6">
         
         <!-- Section Header -->
         <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
@@ -608,56 +718,100 @@
     @endif
 
     <!-- ── Customer Reviews Section ──────────────────────────────────── -->
-    <div id="reviews-section" class="mt-20 pt-10 border-t border-gray-150 max-w-7xl">
-        <h2 class="text-sm font-extrabold uppercase tracking-widest text-[#111111] mb-8 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            Customer Reviews
-        </h2>
+    <div id="reviews-section" class="mt-20 sm:mt-28 pt-12 sm:pt-16 border-t border-gray-150 max-w-7xl">
+        <!-- Section Header with Total Badge & Write Review CTA -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+                <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold uppercase tracking-wider mb-2.5">
+                    <svg class="w-3.5 h-3.5 text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                    </svg>
+                    <span>Verified Customer Ratings</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#111111] tracking-tight flex items-center gap-3">
+                    <span>Customer Reviews</span>
+                    <span class="text-xs sm:text-sm font-bold bg-[#111111] text-white px-2.5 py-0.5 rounded-full">{{ $this->reviews->count() }}</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">Real feedback from genuine verified buyers across Pakistan.</p>
+            </div>
+
+            <!-- Write Review CTA Button (Quick Trigger) -->
+            <button type="button" 
+                    wire:click="toggleReviewForm"
+                    class="self-start sm:self-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 text-[#111111] text-xs font-extrabold uppercase tracking-wider shadow-xs transition duration-200">
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                <span>{{ $showReviewForm ? 'Close Form' : 'Write a Review' }}</span>
+            </button>
+        </div>
 
         <!-- Reviews Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
-            <!-- Left Side: Summary Stats & Form -->
-            <div class="lg:col-span-4 space-y-8">
-                <!-- Stats Summary -->
-                <div class="rounded-xl border border-gray-150 bg-[#fafafa] p-6 space-y-5">
-                    <div>
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-4xl font-extrabold tracking-tight">{{ $this->averageRating }}</span>
-                            <span class="text-sm font-bold text-gray-400 uppercase">out of 5</span>
+            <!-- Left Side: Summary Stats & Optional Collapsible Form -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Stats Summary Card -->
+                <div class="rounded-2xl border border-gray-200 bg-[#fafafa] p-6 space-y-6 shadow-xs">
+                    <!-- Big Score & Stars -->
+                    <div class="text-center sm:text-left">
+                        <div class="flex items-baseline justify-center sm:justify-start gap-2">
+                            <span class="text-4xl sm:text-5xl font-extrabold text-[#111111] tracking-tight">{{ $this->averageRating }}</span>
+                            <span class="text-xs font-bold text-gray-400 uppercase">out of 5.0</span>
                         </div>
-                        <div class="flex items-center text-amber-400 mt-1">
+                        <div class="flex items-center justify-center sm:justify-start text-amber-400 mt-2">
                             @for($i = 0; $i < 5; $i++)
                                 <svg class="w-5 h-5 {{ $i < floor($this->averageRating) ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                 </svg>
                             @endfor
                         </div>
-                        <p class="text-xs text-gray-400 mt-1">Based on {{ $this->reviews->count() }} {{ \Illuminate\Support\Str::plural('review', $this->reviews->count()) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Based on {{ $this->reviews->count() }} verified {{ \Illuminate\Support\Str::plural('rating', $this->reviews->count()) }}</p>
                     </div>
 
-                    <!-- Distribution -->
-                    <div class="space-y-2.5">
+                    <!-- Interactive Click-to-Filter Rating Distribution Bars -->
+                    <div class="space-y-2 border-t border-gray-200/70 pt-5">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Filter by Star Rating</p>
                         @foreach($this->ratingDistribution as $stars => $percentage)
-                            <div class="flex items-center text-xs">
-                                <span class="w-12 text-gray-500 font-semibold">{{ $stars }} {{ \Illuminate\Support\Str::plural('star', $stars) }}</span>
-                                <div class="flex-1 h-2 bg-gray-200 rounded-full mx-3 overflow-hidden">
-                                    <div class="h-full bg-amber-400 rounded-full" style="width: {{ $percentage }}%"></div>
+                            @php
+                                $starCount = $this->ratingCounts[$stars] ?? 0;
+                                $isActive = $selectedRating === $stars;
+                            @endphp
+                            <button type="button" 
+                                    wire:click="filterByRating({{ $stars }})" 
+                                    class="w-full flex items-center text-xs group py-1.5 px-2 rounded-lg transition {{ $isActive ? 'bg-[#111111] text-white shadow-xs' : 'hover:bg-gray-100 text-gray-600' }}">
+                                <span class="w-12 text-left font-bold {{ $isActive ? 'text-white' : 'text-gray-700' }}">{{ $stars }} ★</span>
+                                <div class="flex-1 h-2.5 bg-gray-200 rounded-full mx-2.5 overflow-hidden">
+                                    <div class="h-full bg-amber-400 rounded-full transition-all duration-300" style="width: {{ $percentage }}%"></div>
                                 </div>
-                                <span class="w-8 text-right text-gray-400 font-semibold">{{ $percentage }}%</span>
-                            </div>
+                                <span class="w-10 text-right font-semibold text-[11px] {{ $isActive ? 'text-gray-200' : 'text-gray-400' }}">
+                                    {{ $starCount }}
+                                </span>
+                            </button>
                         @endforeach
                     </div>
+
+                    @if($selectedRating)
+                    <div class="pt-2">
+                        <button type="button" 
+                                wire:click="clearRatingFilter" 
+                                class="w-full text-center text-xs font-bold text-gray-600 hover:text-black py-2 border border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition bg-white">
+                            ✕ Clear Star Filter (Showing {{ $selectedRating }}★ only)
+                        </button>
+                    </div>
+                    @endif
                 </div>
 
-                <!-- Write a Review Form -->
-                <div class="rounded-xl border border-gray-150 bg-[#fafafa] p-6 space-y-4">
-                    <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#111111] mb-2">Write a Review</h3>
+                <!-- Collapsible Write a Review Form -->
+                @if($showReviewForm)
+                <div class="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-gray-150 pb-3">
+                        <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#111111]">Write a Review</h3>
+                        <button type="button" wire:click="toggleReviewForm" class="text-gray-400 hover:text-black text-xl leading-none font-bold">&times;</button>
+                    </div>
                     
                     @if(session()->has('review_message'))
-                        <div class="p-4 text-xs text-emerald-800 bg-emerald-50 rounded-lg border border-emerald-100 font-semibold">
+                        <div class="p-4 text-xs text-emerald-800 bg-emerald-50 rounded-xl border border-emerald-100 font-semibold">
                             {{ session('review_message') }}
                         </div>
                     @else
@@ -665,19 +819,19 @@
                             <!-- Name -->
                             <div>
                                 <label for="newName" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Your Name</label>
-                                <input type="text" id="newName" wire:model.live="newName" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="text" id="newName" wire:model.live="newName" placeholder="e.g. Ayesha Khan" class="w-full bg-[#fbfbfa] border border-gray-200 rounded-lg text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('newName') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Rating -->
                             <div>
                                 <label for="newRating" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Rating</label>
-                                <select id="newRating" wire:model.live="newRating" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
-                                    <option value="5">5 Stars - Excellent</option>
-                                    <option value="4">4 Stars - Very Good</option>
-                                    <option value="3">3 Stars - Average</option>
-                                    <option value="2">2 Stars - Below Average</option>
-                                    <option value="1">1 Star - Poor</option>
+                                <select id="newRating" wire:model.live="newRating" class="w-full bg-[#fbfbfa] border border-gray-200 rounded-lg text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                    <option value="5">★★★★★ (5 Stars - Excellent)</option>
+                                    <option value="4">★★★★☆ (4 Stars - Very Good)</option>
+                                    <option value="3">★★★☆☆ (3 Stars - Average)</option>
+                                    <option value="2">★★☆☆☆ (2 Stars - Below Average)</option>
+                                    <option value="1">★☆☆☆☆ (1 Star - Poor)</option>
                                 </select>
                                 @error('newRating') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
@@ -685,73 +839,162 @@
                             <!-- Title -->
                             <div>
                                 <label for="newTitle" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Review Title (Optional)</label>
-                                <input type="text" id="newTitle" wire:model.live="newTitle" placeholder="e.g. Highly recommend!" class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
+                                <input type="text" id="newTitle" wire:model.live="newTitle" placeholder="e.g. Cleared my dark spots in 3 weeks!" class="w-full bg-[#fbfbfa] border border-gray-200 rounded-lg text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]">
                                 @error('newTitle') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Comment -->
                             <div>
-                                <label for="newComment" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Comment</label>
-                                <textarea id="newComment" wire:model.live="newComment" rows="4" placeholder="Write your review comments here..." class="w-full bg-white border border-gray-200 rounded-md text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]"></textarea>
+                                <label for="newComment" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Your Experience / Comment</label>
+                                <textarea id="newComment" wire:model.live="newComment" rows="4" placeholder="How did this product work for your skin type? How long did it take to see results?" class="w-full bg-[#fbfbfa] border border-gray-200 rounded-lg text-sm px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#111111]"></textarea>
                                 @error('newComment') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Submit -->
-                            <button type="submit" class="w-full h-11 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-[10px] transition duration-300 flex items-center justify-center shadow-sm">
+                            <button type="submit" class="w-full h-11 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-lg tracking-wider uppercase text-[10px] transition duration-300 flex items-center justify-center shadow-sm">
                                 Submit Review
                             </button>
                         </form>
                     @endif
                 </div>
+                @endif
             </div>
 
-            <!-- Right Side: Individual Reviews List -->
+            <!-- Right Side: Interactive Filter Toolbar & Individual Reviews List -->
             <div class="lg:col-span-8 space-y-6">
-                @if($this->reviews->isEmpty())
-                    <div class="rounded-xl border border-dashed border-gray-200 py-16 text-center text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Filter Pills & Sorting Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-gray-150">
+                    <!-- Rating Pills -->
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button type="button" 
+                                wire:click="clearRatingFilter" 
+                                class="px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ is_null($selectedRating) ? 'bg-[#111111] text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                            All ({{ $this->reviews->count() }})
+                        </button>
+                        @foreach([5, 4, 3, 2, 1] as $stars)
+                            @if(($this->ratingCounts[$stars] ?? 0) > 0)
+                                <button type="button" 
+                                        wire:click="filterByRating({{ $stars }})" 
+                                        class="px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ $selectedRating === $stars ? 'bg-[#111111] text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                                    {{ $stars }} ★ ({{ $this->ratingCounts[$stars] }})
+                                </button>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    <!-- Sort Selector -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Sort:</span>
+                        <select wire:model.live="sortReviewsBy" class="bg-white border border-gray-200 rounded-lg text-xs font-bold py-1.5 pl-2.5 pr-8 focus:outline-none focus:ring-1 focus:ring-[#111111] cursor-pointer">
+                            <option value="latest">Newest First</option>
+                            <option value="highest">Highest Rating</option>
+                            <option value="lowest">Lowest Rating</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reviews Feed -->
+                @if($this->filteredReviews->isEmpty())
+                    <div class="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400 bg-[#fafafa]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 opacity-50 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
-                        <p class="font-bold text-sm">No reviews yet for this product</p>
-                        <p class="text-xs mt-1">Be the first to share your experience!</p>
+                        <p class="font-bold text-sm text-[#111111]">No reviews found matching this filter</p>
+                        <p class="text-xs mt-1 text-gray-400">Try selecting another star rating or clear the filter.</p>
+                        @if($selectedRating)
+                            <button type="button" wire:click="clearRatingFilter" class="mt-4 inline-flex items-center px-4 py-2 bg-[#111111] text-white text-xs font-bold rounded-lg hover:bg-gray-800 transition shadow-xs">
+                                View All Reviews
+                            </button>
+                        @endif
                     </div>
                 @else
-                    <div class="divide-y divide-gray-150">
-                        @foreach($this->reviews as $review)
-                            <div class="py-6 first:pt-0 last:pb-0 space-y-3">
-                                <!-- Top Row: Name, Verification, Date -->
-                                <div class="flex items-center justify-between text-xs">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="font-bold text-[#111111]">{{ $review->customer_name }}</span>
-                                        <span class="flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"/>
-                                            </svg>
-                                            Verified Buyer
-                                        </span>
+                    <div class="space-y-4">
+                        @foreach($this->filteredReviews as $review)
+                            <div class="rounded-2xl border border-gray-200/90 bg-[#fbfbfa] p-5 sm:p-6 space-y-3.5 shadow-2xs hover:border-gray-300 transition">
+                                <!-- Top Row: Initial Avatar, Name, Verification, Date -->
+                                <div class="flex items-center justify-between text-xs gap-3">
+                                    <div class="flex items-center gap-3">
+                                        <!-- Avatar with Customer Initial -->
+                                        <div class="w-8 h-8 rounded-full bg-[#111111] text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-xs">
+                                            {{ strtoupper(substr($review->customer_name ?? 'C', 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="font-bold text-sm text-[#111111]">{{ $review->customer_name }}</span>
+                                                <span class="flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                    </svg>
+                                                    Verified Buyer
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span class="text-gray-400 font-semibold">{{ $review->created_at->format('M d, Y') }}</span>
+                                    <span class="text-gray-400 font-semibold text-[11px] shrink-0">{{ $review->created_at?->format('M d, Y') ?? 'Recent' }}</span>
                                 </div>
 
-                                <!-- Middle Row: Stars & Title -->
-                                <div class="flex items-center space-x-2">
-                                    <div class="flex items-center text-amber-400">
-                                        @for($i = 0; $i < 5; $i++)
-                                            <svg class="w-3.5 h-3.5 {{ $i < $review->rating ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                            </svg>
-                                        @endfor
+                                <!-- Middle Row: Star Rating & Title -->
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex items-center text-amber-400">
+                                            @for($i = 0; $i < 5; $i++)
+                                                <svg class="w-4 h-4 {{ $i < $review->rating ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                            @endfor
+                                        </div>
+                                        @if($review->title)
+                                            <span class="font-extrabold text-[#111111] text-sm tracking-tight">{{ $review->title }}</span>
+                                        @endif
                                     </div>
-                                    @if($review->title)
-                                        <span class="font-extrabold text-[#111111] text-sm">{{ $review->title }}</span>
-                                    @endif
                                 </div>
 
-                                <!-- Review Body -->
-                                <p class="text-sm text-gray-600 leading-relaxed max-w-3xl whitespace-pre-line">{{ $review->comment }}</p>
+                                <!-- Review Body with Expand/Collapse toggle for long text -->
+                                @php
+                                    $commentText = $review->comment ?? '';
+                                    $isLong = mb_strlen($commentText) > 220;
+                                @endphp
+                                @if($isLong)
+                                    <div x-data="{ expanded: false }">
+                                        <p x-show="!expanded" class="text-sm text-gray-600 leading-relaxed">
+                                            {{ mb_substr($commentText, 0, 220) }}…
+                                            <button type="button" @click="expanded = true" class="text-xs font-bold text-[#111111] hover:underline ml-1">
+                                                Read more &rarr;
+                                            </button>
+                                        </p>
+                                        <p x-show="expanded" class="text-sm text-gray-600 leading-relaxed whitespace-pre-line" style="display: none;">
+                                            {{ $commentText }}
+                                            <button type="button" @click="expanded = false" class="block text-xs font-bold text-[#111111] hover:underline mt-1.5">
+                                                Show less &larr;
+                                            </button>
+                                        </p>
+                                    </div>
+                                @else
+                                    <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ $commentText }}</p>
+                                @endif
                             </div>
                         @endforeach
                     </div>
+
+                    <!-- Progressive Disclosure / Load More Button -->
+                    @if($this->hasMoreReviews)
+                        <div class="text-center pt-4">
+                            <button type="button" 
+                                    wire:click="loadMoreReviews"
+                                    class="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-gray-300 hover:border-black text-[#111111] text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-xs hover:shadow-md transition duration-200">
+                                <span wire:loading.remove wire:target="loadMoreReviews">
+                                    Load More Reviews ({{ $this->remainingReviewsCount }} remaining)
+                                </span>
+                                <span wire:loading wire:target="loadMoreReviews" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                    </svg>
+                                    Loading reviews...
+                                </span>
+                            </button>
+                        </div>
+                    @endif
                 @endif
             </div>
 

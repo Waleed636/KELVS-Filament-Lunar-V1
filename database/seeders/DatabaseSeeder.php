@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             PromotionalBarSeeder::class,
             PolicyPagesSeeder::class,
             WhatsappFeedbackSeeder::class,
+            ProductFaqSeeder::class,
         ]);
     }
 }

@@ -25,6 +25,12 @@ class ProductShow extends Component
     public $newTitle = '';
     public $newComment = '';
 
+    // Review Filtering, Sorting & Progressive Disclosure State
+    public $selectedRating = null;
+    public $sortReviewsBy = 'latest';
+    public $reviewsPerPage = 6;
+    public $showReviewForm = false;
+
     public function mount($slug)
     {
         $this->slug = $slug;
@@ -87,12 +93,102 @@ class ProductShow extends Component
     }
 
     #[Computed]
+    public function descriptionSections()
+    {
+        return \App\Services\ProductDescriptionParser::parseForProduct($this->product);
+    }
+
+    #[Computed]
     public function reviews()
     {
         return Review::where('product_id', $this->product->id)
             ->where('is_approved', true)
-            ->latest()
+            ->latest('id')
             ->get();
+    }
+
+    #[Computed]
+    public function filteredReviewsQuery()
+    {
+        $query = Review::where('product_id', $this->product->id)
+            ->where('is_approved', true);
+
+        if ($this->selectedRating) {
+            $query->where('rating', (int) $this->selectedRating);
+        }
+
+        switch ($this->sortReviewsBy) {
+            case 'highest':
+                $query->orderByDesc('rating')->latest('id');
+                break;
+            case 'lowest':
+                $query->orderBy('rating')->latest('id');
+                break;
+            case 'latest':
+            default:
+                $query->latest('id');
+                break;
+        }
+
+        return $query;
+    }
+
+    #[Computed]
+    public function filteredReviews()
+    {
+        return $this->filteredReviewsQuery->take($this->reviewsPerPage)->get();
+    }
+
+    #[Computed]
+    public function totalFilteredReviewsCount()
+    {
+        return $this->filteredReviewsQuery->count();
+    }
+
+    #[Computed]
+    public function hasMoreReviews()
+    {
+        return $this->totalFilteredReviewsCount > $this->reviewsPerPage;
+    }
+
+    #[Computed]
+    public function remainingReviewsCount()
+    {
+        return max(0, $this->totalFilteredReviewsCount - $this->reviewsPerPage);
+    }
+
+    public function filterByRating($rating)
+    {
+        if ($this->selectedRating === (int) $rating) {
+            $this->selectedRating = null;
+        } else {
+            $this->selectedRating = (int) $rating;
+        }
+        $this->reviewsPerPage = 6;
+    }
+
+    public function clearRatingFilter()
+    {
+        $this->selectedRating = null;
+        $this->reviewsPerPage = 6;
+    }
+
+    public function setSort($sort)
+    {
+        if (in_array($sort, ['latest', 'highest', 'lowest'])) {
+            $this->sortReviewsBy = $sort;
+            $this->reviewsPerPage = 6;
+        }
+    }
+
+    public function loadMoreReviews()
+    {
+        $this->reviewsPerPage += 6;
+    }
+
+    public function toggleReviewForm()
+    {
+        $this->showReviewForm = !$this->showReviewForm;
     }
 
     #[Computed]
@@ -114,6 +210,23 @@ class ProductShow extends Component
             ->avg('rating');
 
         return $avg ? round($avg, 1) : 0;
+    }
+
+    #[Computed]
+    public function ratingCounts()
+    {
+        $counts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        $dbCounts = Review::where('product_id', $this->product->id)
+            ->where('is_approved', true)
+            ->selectRaw('rating, count(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating');
+
+        foreach ($counts as $rating => &$count) {
+            $count = $dbCounts->get($rating, 0);
+        }
+
+        return $counts;
     }
 
     #[Computed]
@@ -165,6 +278,7 @@ class ProductShow extends Component
 
         $this->reset(['newRating', 'newTitle', 'newComment']);
         $this->newRating = 5;
+        $this->showReviewForm = false;
         
         if (auth()->check()) {
             $this->newName = auth()->user()->name;

@@ -33,7 +33,13 @@ class AppServiceProvider extends ServiceProvider
 
         \Lunar\Admin\Support\Facades\LunarPanel::panel(function (\Filament\Panel $panel) {
             return $panel->plugin(new \Lunar\Shipping\ShippingPlugin());
-        })->register();
+        })
+        ->register()
+        ->extensions([
+            \Lunar\Admin\Filament\Resources\ProductResource::class => [
+                \App\Lunar\Extensions\ProductResourceExtension::class,
+            ],
+        ]);
     }
 
     /**
@@ -41,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(\Lunar\Base\ShippingModifiers $shippingModifiers): void
     {
+        // Bind dynamic faqs relationship to Lunar Product model
+        \Lunar\Models\Product::resolveRelationUsing('faqs', function ($product) {
+            return $product->hasMany(\App\Models\ProductFaq::class, 'product_id');
+        });
+
         // Prevent polymorphic loading crashes for Lunar's non-model ShippingOption class
         \Illuminate\Database\Eloquent\Relations\Relation::morphMap([
             'Lunar\DataTypes\ShippingOption' => \App\Models\ShippingOptionModel::class,
