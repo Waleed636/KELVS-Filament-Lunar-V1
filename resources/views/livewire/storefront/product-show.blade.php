@@ -1010,20 +1010,10 @@
 
         </div>
 
-    <!-- Shift WhatsApp button and recent buyer toast to clear the sticky checkout bar on mobile/desktop -->
+    <!-- Shift WhatsApp button to clear the sticky checkout bar on mobile/desktop -->
     <style>
         body .wa-btn-wrap {
             bottom: 80px !important; /* Move WhatsApp button up on the product page */
-        }
-        @media (max-width: 639px) {
-            body .recent-buyer-toast {
-                bottom: 5rem !important; /* Move toast up on mobile screen sizes to match WhatsApp */
-            }
-        }
-        @media (min-width: 640px) {
-            body .recent-buyer-toast {
-                bottom: 5rem !important; /* Keep toast shifted up on desktop viewports to clear bottom bar span */
-            }
         }
     </style>
 
