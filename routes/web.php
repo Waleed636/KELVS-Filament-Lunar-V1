@@ -56,6 +56,12 @@ Route::get('/{slug}', \App\Livewire\Storefront\PageShow::class)
     ->where('slug', '^(?!admin|blog|shop|products|cart|checkout|about|sitemap\.xml)[a-z0-9\-]+$');
 
 
+// Dynamic Meta / Facebook Product Catalog Feeds
+Route::get('/feeds/meta-catalog.csv', [\App\Http\Controllers\MetaCatalogFeedController::class, 'csv'])->name('feeds.meta.csv');
+Route::get('/feeds/meta-catalog.xml', [\App\Http\Controllers\MetaCatalogFeedController::class, 'xml'])->name('feeds.meta.xml');
+Route::get('/feeds/facebook-catalog.csv', [\App\Http\Controllers\MetaCatalogFeedController::class, 'csv']);
+Route::get('/feeds/facebook-catalog.xml', [\App\Http\Controllers\MetaCatalogFeedController::class, 'xml']);
+
 // Dynamic XML Sitemap for SEO
 Route::get('/sitemap.xml', function () {
     $urls = [];

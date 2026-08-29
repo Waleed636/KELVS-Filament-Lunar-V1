@@ -66,6 +66,7 @@ class RedirectUnderscoresToHyphens
             '/_debugbar',
             '/storage',
             '/filament',
+            '/feeds',
         ];
 
         foreach ($excludePrefixes as $prefix) {
@@ -75,7 +76,7 @@ class RedirectUnderscoresToHyphens
         }
 
         // Skip static files/assets
-        if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|otf|map|json|txt|xml|mp4|webm)$/i', $path)) {
+        if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|otf|map|json|txt|xml|csv|mp4|webm)$/i', $path)) {
             return true;
         }
 
