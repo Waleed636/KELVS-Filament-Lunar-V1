@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-white text-[#111111]">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-white text-[#111111]" data-pixel-page="checkout">
     
     <!-- Active Checkout Flow -->
     <div class="flex items-center space-x-2.5 mb-10 border-b border-gray-100 pb-6">
@@ -207,15 +207,16 @@
                 $grandTotalValue = $subTotalVal + $taxVal + $shippingVal;
                 $priceObj = new \Lunar\DataTypes\Price($grandTotalValue, $cart->currency, 1);
                 $formattedGrandTotal = $priceObj->formatted();
+                $rawGrandTotal = number_format($grandTotalValue / (10 ** ($cart->currency->decimal_places ?? 0)), 2, '.', '');
             @endphp
             <div class="flex justify-between items-center text-base font-bold">
                 <span class="text-[#111111] uppercase tracking-wide">Total</span>
-                <span class="text-[#111111] font-extrabold text-lg">{{ $formattedGrandTotal }}</span>
+                <span class="text-[#111111] font-extrabold text-lg" id="checkout-total" data-pixel-value="{{ $rawGrandTotal }}" data-pixel-currency="PKR">{{ $formattedGrandTotal }}</span>
             </div>
 
             <!-- CTA -->
             <div class="pt-4">
-                <button type="button" wire:click="placeOrder" wire:loading.attr="disabled" class="w-full py-4 bg-[#111111] hover:bg-[#222222] text-white font-bold text-xs uppercase tracking-widest rounded-[6px] shadow-sm transition duration-300 flex items-center justify-center space-x-2">
+                <button type="button" wire:click="placeOrder" wire:loading.attr="disabled" id="place-order-btn" data-pixel-event="Purchase" data-pixel-value="{{ $rawGrandTotal }}" data-pixel-currency="PKR" class="w-full py-4 bg-[#111111] hover:bg-[#222222] text-white font-bold text-xs uppercase tracking-widest rounded-[6px] shadow-sm transition duration-300 flex items-center justify-center space-x-2">
                     <span wire:loading.remove wire:target="placeOrder">Place Order</span>
                     <span wire:loading wire:target="placeOrder" class="inline-flex items-center">
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

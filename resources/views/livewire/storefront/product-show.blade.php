@@ -1,4 +1,11 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-[#111111] bg-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-[#111111] bg-white"
+     data-pixel-page="product"
+     data-pixel-product-id="{{ $activeVariant?->sku }}"
+     data-pixel-product-name="{{ $product->attr('name') }}"
+     data-pixel-currency="PKR"
+     data-pixel-product-category="{{ $product->collections->first()?->attr('name') ?? 'Skincare' }}"
+     data-pixel-product-brand="KELVS"
+     data-pixel-content-type="product">
     
     @php
         $sku = $activeVariant?->sku;
@@ -7,6 +14,9 @@
         $price = $priceRecord?->price;
         $comparePrice = $priceRecord?->compare_price;
         $hasDiscount = $comparePrice && $comparePrice->value > $price->value;
+
+        // Raw numeric price for pixel data attributes
+        $rawPrice = $price ? number_format($price->value / (10 ** ($priceRecord?->currency?->decimal_places ?? 0)), 2, '.', '') : '0.00';
         
         // Fetch media items from Spatie Media Library on the Product model
         $mediaItems = $product->getMedia('images');
@@ -158,7 +168,7 @@
             <div class="space-y-6">
                 <!-- Title & Status -->
                 <div class="space-y-2">
-                    <h1 class="text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight leading-tight">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight leading-tight" id="product-name" itemprop="name">
                         {{ $product->attr('name') }}
                     </h1>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -198,7 +208,7 @@
                 <!-- Price -->
                 <div class="flex items-center gap-4">
 
-                    <div class="text-2xl font-extrabold text-[#111111] bg-gray-50 border border-gray-150 px-6 py-3.5 rounded-lg inline-block">
+                    <div class="text-2xl font-extrabold text-[#111111] bg-gray-50 border border-gray-150 px-6 py-3.5 rounded-lg inline-block" id="product-price" data-pixel-value="{{ $rawPrice }}" data-pixel-currency="PKR" itemprop="price" content="{{ $rawPrice }}">
                         {{ $price?->formatted ?? 'N/A' }}
                     </div>
 
@@ -408,14 +418,14 @@
                         <button type="button" class="text-gray-400 hover:text-[#111111] transition font-bold text-lg" wire:click="$set('quantity', {{ max(1, $quantity - 1) }})">
                             &minus;
                         </button>
-                        <input type="number" wire:model.live="quantity" min="1" class="bg-transparent border-0 text-center w-12 text-[#111111] font-bold focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                        <input type="number" wire:model.live="quantity" min="1" id="product-quantity" data-pixel-quantity class="bg-transparent border-0 text-center w-12 text-[#111111] font-bold focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                         <button type="button" class="text-gray-400 hover:text-[#111111] transition font-bold text-lg" wire:click="$set('quantity', {{ $quantity + 1 }})">
                             &plus;
                         </button>
                     </div>
 
                     <!-- Add to Cart Button -->
-                    <button type="button" wire:click="addToCart" class="w-full sm:flex-1 h-14 bg-white border border-[#111111] hover:bg-gray-50 text-[#111111] font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <button type="button" wire:click="addToCart" id="add-to-cart-btn" data-pixel-event="AddToCart" data-pixel-value="{{ $rawPrice }}" data-pixel-content-name="{{ $product->attr('name') }}" data-pixel-content-id="{{ $activeVariant?->sku }}" data-pixel-currency="PKR" class="w-full sm:flex-1 h-14 bg-white border border-[#111111] hover:bg-gray-50 text-[#111111] font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
@@ -423,7 +433,7 @@
                     </button>
 
                     <!-- Buy Now Button -->
-                    <button type="button" wire:click="$dispatch('open-buy-now', { variantId: {{ $variantId }}, quantity: {{ $quantity }} })" class="w-full sm:flex-1 h-14 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <button type="button" wire:click="$dispatch('open-buy-now', { variantId: {{ $variantId }}, quantity: {{ $quantity }} })" id="buy-now-btn" data-pixel-event="InitiateCheckout" data-pixel-value="{{ $rawPrice }}" data-pixel-content-name="{{ $product->attr('name') }}" data-pixel-content-id="{{ $activeVariant?->sku }}" data-pixel-currency="PKR" class="w-full sm:flex-1 h-14 bg-[#111111] hover:bg-[#222222] text-white font-bold rounded-md tracking-wider uppercase text-xs transition duration-300 flex items-center justify-center gap-2 shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>

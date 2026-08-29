@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-[#111111] bg-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-[#111111] bg-white" data-pixel-page="cart">
     <h1 class="text-3xl font-extrabold text-[#111111] tracking-tight mb-8">Your Shopping Cart</h1>
 
     @if(!$cart || $cart->lines->isEmpty())
@@ -54,7 +54,10 @@
                         };
                     @endphp
                     @if($variant && $product)
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 bg-white border border-gray-150 rounded-xl hover:border-gray-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.01)] transition duration-300 gap-6">
+                        @php
+                            $rawLinePrice = $line->subTotal->value / (10 ** ($line->subTotal->currency->decimal_places ?? 0));
+                        @endphp
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 bg-white border border-gray-150 rounded-xl hover:border-gray-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.01)] transition duration-300 gap-6" data-pixel-cart-item data-pixel-product-id="{{ $variant?->sku }}" data-pixel-product-name="{{ $product->attr('name') }}" data-pixel-line-price="{{ number_format($rawLinePrice, 2, '.', '') }}" data-pixel-quantity="{{ $line->quantity }}">
                             <!-- Left section: Thumbnail & Name -->
                             <div class="flex items-center space-x-5 flex-grow">
                                 <div class="w-20 h-20 rounded-lg overflow-hidden bg-[#f6f6f5] flex-shrink-0 flex items-center justify-center border border-gray-100 p-2">
@@ -126,11 +129,11 @@
 
                 <div class="flex justify-between items-center text-lg font-bold">
                     <span class="text-[#111111]">Total</span>
-                    <span class="text-[#111111]">{{ $cart->total->formatted }}</span>
+                    <span class="text-[#111111]" id="cart-total" data-pixel-value="{{ number_format($cart->total->value / (10 ** ($cart->total->currency->decimal_places ?? 0)), 2, '.', '') }}" data-pixel-currency="PKR">{{ $cart->total->formatted }}</span>
                 </div>
 
                 <div class="pt-4">
-                    <a href="/checkout" class="block w-full py-4 text-center bg-[#111111] hover:bg-[#222222] text-white text-xs uppercase font-extrabold tracking-wider rounded-md shadow-sm transition duration-300">
+                    <a href="/checkout" id="checkout-btn" data-pixel-event="InitiateCheckout" data-pixel-value="{{ number_format($cart->total->value / (10 ** ($cart->total->currency->decimal_places ?? 0)), 2, '.', '') }}" data-pixel-currency="PKR" class="block w-full py-4 text-center bg-[#111111] hover:bg-[#222222] text-white text-xs uppercase font-extrabold tracking-wider rounded-md shadow-sm transition duration-300">
                         Proceed to Checkout
                     </a>
                     <a href="/" class="block text-center text-xs font-bold text-gray-505 hover:text-[#111111] transition mt-4">

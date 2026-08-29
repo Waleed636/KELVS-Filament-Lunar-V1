@@ -35,6 +35,8 @@
         
         <!-- Modal Content Box -->
         <div class="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-150 transform transition-all duration-300 flex flex-col lg:flex-row"
+             data-pixel-page="checkout"
+             data-pixel-checkout-type="buy-now"
              x-show="showModal"
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -141,6 +143,10 @@
                             
                             <button type="submit" 
                                     wire:loading.attr="disabled"
+                                    id="buy-now-place-order-btn"
+                                    data-pixel-event="Purchase"
+                                    data-pixel-value="{{ $cart ? number_format($cart->total->value / (10 ** ($cart->total->currency->decimal_places ?? 0)), 2, '.', '') : '0.00' }}"
+                                    data-pixel-currency="PKR"
                                     class="flex-1 py-3.5 bg-[#111111] hover:bg-[#222222] text-white font-extrabold rounded-md text-xs tracking-wider uppercase transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
                                 
                                 <!-- Loading Spinner -->
@@ -266,7 +272,7 @@
                         </div>
                         <div class="flex justify-between items-center text-base font-extrabold pt-2 border-t border-dashed border-gray-200">
                             <span class="text-[#111111]">Total Amount</span>
-                            <span class="text-[#111111] text-lg">{{ $cart->total->formatted }}</span>
+                            <span class="text-[#111111] text-lg" id="buy-now-total" data-pixel-value="{{ number_format($cart->total->value / (10 ** ($cart->total->currency->decimal_places ?? 0)), 2, '.', '') }}" data-pixel-currency="PKR">{{ $cart->total->formatted }}</span>
                         </div>
                     </div>
                 </div>

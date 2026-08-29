@@ -1,4 +1,12 @@
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+@php
+    $rawOrderTotal = number_format($completedOrder->total->value / (10 ** ($completedOrder->total->currency->decimal_places ?? 0)), 2, '.', '');
+@endphp
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20"
+     data-pixel-page="purchase_complete"
+     data-pixel-event="Purchase"
+     data-pixel-transaction-id="{{ $completedOrder->reference }}"
+     data-pixel-value="{{ $rawOrderTotal }}"
+     data-pixel-currency="PKR">
     <div class="text-center space-y-6 max-w-2xl mx-auto mb-16">
         <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#e8dcd2]/40 text-[#111111] border border-[#e8dcd2]">
             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -12,7 +20,7 @@
             <p class="text-sm text-gray-500 leading-relaxed max-w-md mx-auto">
                 We've received your request. Your order is registered and will be prepared shortly for shipment.
             </p>
-            <div class="inline-block bg-[#fbfbfa] border border-gray-150 px-5 py-2.5 rounded-lg font-mono text-xs text-[#111111] font-bold">
+            <div class="inline-block bg-[#fbfbfa] border border-gray-150 px-5 py-2.5 rounded-lg font-mono text-xs text-[#111111] font-bold" id="order-reference" data-pixel-transaction-id="{{ $completedOrder->reference }}">
                 Order Reference: #{{ $completedOrder->reference }}
             </div>
         </div>
@@ -98,7 +106,7 @@
                 
                 <div class="border-t border-gray-200 pt-4 flex justify-between items-center text-base font-bold">
                     <span class="text-[#111111]">Grand Total</span>
-                    <span class="text-[#111111] font-extrabold text-lg">{{ $completedOrder->total->formatted }}</span>
+                    <span class="text-[#111111] font-extrabold text-lg" id="order-total" data-pixel-value="{{ $rawOrderTotal }}" data-pixel-currency="PKR">{{ $completedOrder->total->formatted }}</span>
                 </div>
             </div>
 

@@ -138,6 +138,9 @@
                             $hasDiscount = $comparePrice && $comparePrice->value > $price->value;
                             $formattedPrice = $price ? $price->formatted : 'N/A';
                             $sku = $variant?->sku;
+
+                            // Raw numeric price for pixel data attributes
+                            $rawCardPrice = $price ? number_format($price->value / (10 ** ($priceRecord?->currency?->decimal_places ?? 0)), 2, '.', '') : '0.00';
                             
                             // Fetch media item from Spatie Media Library
                             $media = $product->getMedia('images')->first(fn ($media) => $media->getCustomProperty('primary') === true) 
@@ -167,7 +170,7 @@
                             };
                         @endphp
                         
-                        <div class="group flex flex-col bg-white border border-gray-150 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition duration-300">
+                        <div class="group flex flex-col bg-white border border-gray-150 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition duration-300" data-pixel-product-id="{{ $variant?->sku }}" data-pixel-product-name="{{ $product->attr('name') }}" data-pixel-product-price="{{ $rawCardPrice }}" data-pixel-currency="PKR" data-pixel-product-category="{{ $product->collections->first()?->attr('name') ?? 'Skincare' }}">
                             
                             <!-- Image Container -->
                             <a href="/products/{{ $product->urls->first()?->slug }}"
@@ -215,7 +218,7 @@
 
                                 <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
                                     <div class="flex items-baseline gap-2">
-                                        <span class="text-lg font-extrabold text-[#111111]">{{ $formattedPrice }}</span>
+                                        <span class="text-lg font-extrabold text-[#111111]" data-pixel-value="{{ $rawCardPrice }}" data-pixel-currency="PKR">{{ $formattedPrice }}</span>
                                         @if($hasDiscount)
                                             <span class="line-through text-gray-400 text-xs font-semibold" style="text-decoration: line-through;">
                                                 {{ $comparePrice->formatted }}
@@ -225,10 +228,10 @@
                                     
                                     @if($variant)
                                         <div class="flex items-center gap-1.5">
-                                            <button wire:click="addToCart({{ $variant->id }})" class="px-3 py-2 bg-white border border-[#111111] text-[#111111] hover:bg-gray-50 text-[10px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200" title="Add to Cart">
+                                            <button wire:click="addToCart({{ $variant->id }})" data-pixel-event="AddToCart" data-pixel-content-id="{{ $variant?->sku }}" data-pixel-content-name="{{ $product->attr('name') }}" data-pixel-value="{{ $rawCardPrice }}" data-pixel-currency="PKR" class="px-3 py-2 bg-white border border-[#111111] text-[#111111] hover:bg-gray-50 text-[10px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200" title="Add to Cart">
                                                 Add to Cart
                                             </button>
-                                            <button type="button" wire:click="$dispatch('open-buy-now', { variantId: {{ $variant->id }} })" class="px-3 py-2 bg-[#111111] hover:bg-[#222222] text-white text-[10px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200">
+                                            <button type="button" wire:click="$dispatch('open-buy-now', { variantId: {{ $variant->id }} })" data-pixel-event="InitiateCheckout" data-pixel-content-id="{{ $variant?->sku }}" data-pixel-content-name="{{ $product->attr('name') }}" data-pixel-value="{{ $rawCardPrice }}" data-pixel-currency="PKR" class="px-3 py-2 bg-[#111111] hover:bg-[#222222] text-white text-[10px] uppercase tracking-wider font-extrabold rounded-[4px] transition duration-200">
                                                 Buy Now
                                             </button>
                                         </div>
