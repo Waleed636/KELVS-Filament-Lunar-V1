@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Canonical Host: Redirect www to non-www
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
     # Disable LiteSpeed built-in reCAPTCHA bot protection
     <IfModule LiteSpeed>
         RewriteRule .* - [E=verifycaptcha:off]

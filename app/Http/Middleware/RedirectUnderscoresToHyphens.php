@@ -43,10 +43,24 @@ class RedirectUnderscoresToHyphens
         // 3. Remove consecutive hyphens (e.g. "foo--bar" -> "foo-bar")
         $newPath = preg_replace('/-+/', '-', $newPath);
 
-        // If the path changed, issue a 301 Permanent Redirect
-        if ($newPath !== $path) {
+        // Canonical Domain: Strip 'www.' prefix to consolidate domain authority
+        $host = $request->getHost();
+        $targetHost = $host;
+        if (str_starts_with(strtolower($host), 'www.')) {
+            $targetHost = substr($host, 4);
+        }
+
+        // If the path changed OR host changed, issue a single 301 Permanent Redirect
+        if ($newPath !== $path || $targetHost !== $host) {
             $queryString = $request->getQueryString();
-            $newUrl = $request->getSchemeAndHttpHost() . $newPath . ($queryString ? '?' . $queryString : '');
+            $scheme = ($request->isSecure() || $request->header('X-Forwarded-Proto') === 'https' || app()->isProduction())
+                ? 'https'
+                : $request->getScheme();
+
+            $port = $request->getPort();
+            $portString = ($port && !in_array($port, [80, 443])) ? ':' . $port : '';
+
+            $newUrl = $scheme . '://' . $targetHost . $portString . $newPath . ($queryString ? '?' . $queryString : '');
 
             return redirect()->to($newUrl, 301);
         }

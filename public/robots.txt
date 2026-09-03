@@ -1,12 +1,50 @@
+# Standard Web Crawlers
 User-agent: *
-Disallow: /admin
 Disallow: /admin/
-Disallow: /lunar
+Disallow: /admin
 Disallow: /lunar/
+Disallow: /lunar
 Disallow: /login
 Disallow: /cart
-Disallow: /checkout
 Disallow: /checkout/
+Disallow: /checkout
 Disallow: /livewire/
+
+# Generative AI & Answer Engines (GEO: ChatGPT, Perplexity, Claude, Apple)
+User-agent: GPTBot
+Allow: /products/
+Allow: /blog/
+Allow: /shop
+Allow: /about
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
 
 Sitemap: https://kelvsint.com/sitemap.xml

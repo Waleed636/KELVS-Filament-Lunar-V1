@@ -129,6 +129,11 @@
         $pageSeoKeywords    = $seoKeywords    ?? null;
         $pageCanonicalUrl   = $canonicalUrl   ?? request()->url();
         $pageProductUrl     = $productUrl     ?? request()->url();
+
+        // Ensure canonical and OG URLs never contain 'www.' to prevent indexing split
+        $pageCanonicalUrl   = preg_replace('#^https?://www\.#i', 'https://', (string) $pageCanonicalUrl);
+        $pageProductUrl     = preg_replace('#^https?://www\.#i', 'https://', (string) $pageProductUrl);
+
         $pageProductName    = $productName    ?? null;
         $pageSeoImage       = $seoImage       ?? null;
 
@@ -215,7 +220,9 @@
         "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": "{{ $averageRating }}",
-            "reviewCount": "{{ $reviewCount ?? 0 }}"
+            "reviewCount": "{{ $reviewCount ?? 0 }}",
+            "bestRating": "5",
+            "worstRating": "1"
         },
         @endif
         "offers": {
@@ -223,12 +230,75 @@
             "url": "{{ $pageProductUrl }}",
             "priceCurrency": "PKR",
             "price": "{{ number_format($productPrice ?? 0, 2, '.', '') }}",
+            "priceValidUntil": "{{ date('Y-12-31', strtotime('+1 year')) }}",
+            "itemCondition": "https://schema.org/NewCondition",
             "availability": "https://schema.org/InStock",
             "seller": {
                 "@type": "Organization",
                 "name": "{{ $siteName }}"
+            },
+            "hasMerchantReturnPolicy": {
+                "@type": "MerchantReturnPolicy",
+                "applicableCountry": "PK",
+                "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+                "merchantReturnDays": 7,
+                "returnMethod": "https://schema.org/ReturnByMail",
+                "returnFees": "https://schema.org/FreeReturn"
+            },
+            "shippingDetails": {
+                "@type": "OfferShippingDetails",
+                "shippingRate": {
+                    "@type": "MonetaryAmount",
+                    "value": "0",
+                    "currency": "PKR"
+                },
+                "shippingDestination": {
+                    "@type": "DefinedRegion",
+                    "addressCountry": "PK"
+                },
+                "deliveryTime": {
+                    "@type": "ShippingDeliveryTime",
+                    "handlingTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 1,
+                        "maxValue": 2,
+                        "unitCode": "DAY"
+                    },
+                    "transitTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 2,
+                        "maxValue": 4,
+                        "unitCode": "DAY"
+                    }
+                }
             }
         }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ preg_replace('#^https?://www\.#i', 'https://', url('/')) }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Shop",
+                "item": "{{ preg_replace('#^https?://www\.#i', 'https://', url('/shop')) }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": {!! json_encode($pageProductName) !!},
+                "item": "{{ $pageProductUrl }}"
+            }
+        ]
     }
     </script>
     @endif

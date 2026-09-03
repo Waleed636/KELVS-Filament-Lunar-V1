@@ -61,6 +61,39 @@
         </p>
         @endif
 
+        @php
+            $rawContent = $post->getContent();
+            $hasInlineProduct = false;
+
+            // Support inline shortcodes: [product:slug] or [product slug="..."]
+            $processedContent = preg_replace_callback('/\[product(?::|\s+slug=["\']?)([^"\'\]\s]+)["\']?\]/i', function($matches) use (&$hasInlineProduct) {
+                $hasInlineProduct = true;
+                return view('components.blog.product-card', ['slug' => trim($matches[1])])->render();
+            }, $rawContent);
+
+            // Contextual product mapping based on post topic
+            $postSlug = strtolower($post->slug ?? '');
+            $contextualSlug = 'kelvs-gentle-cleanser';
+            $contextualBadge = 'Dermatologist-Tested Recommendation';
+
+            if (str_contains($postSlug, 'barrier') || str_contains($postSlug, 'whitening') || str_contains($postSlug, 'formula-cream') || str_contains($postSlug, 'steroid')) {
+                $contextualSlug = 'kelvs-gentle-cleanser';
+                $contextualBadge = 'Essential for Barrier Recovery';
+            } elseif (str_contains($postSlug, 'cleanser') || str_contains($postSlug, 'face-wash') || str_contains($postSlug, 'acne')) {
+                $contextualSlug = 'kelvs-gentle-cleanser';
+                $contextualBadge = 'Non-Comedogenic Acne Solution';
+            } elseif (str_contains($postSlug, 'arbutin') || str_contains($postSlug, 'kojic') || str_contains($postSlug, 'dark-spot') || str_contains($postSlug, 'pigment')) {
+                $contextualSlug = 'kelvs-whitening-serum';
+                $contextualBadge = 'Targeted Dark Spot Correction';
+            } elseif (str_contains($postSlug, 'niacinamide') || str_contains($postSlug, 'aging') || str_contains($postSlug, 'pore')) {
+                $contextualSlug = 'anti-aging-serum';
+                $contextualBadge = 'Pore & Sebum Regulation';
+            } elseif (str_contains($postSlug, 'hair') || str_contains($postSlug, 'keratin') || str_contains($postSlug, 'shampoo') || str_contains($postSlug, 'dandruff')) {
+                $contextualSlug = 'keratin-hair-masque';
+                $contextualBadge = 'Intensive Hair Repair';
+            }
+        @endphp
+
         <!-- Body Content -->
         <div class="prose prose-lg max-w-none
             prose-headings:text-[#111111] prose-headings:font-bold
@@ -68,8 +101,19 @@
             prose-a:text-[#111111] prose-a:underline
             prose-strong:text-[#111111]
             prose-img:rounded-xl">
-            {!! $post->getContent() !!}
+            {!! $processedContent !!}
         </div>
+
+        <!-- Automatic Contextual Product Recommendation -->
+        @if(!$hasInlineProduct)
+        <div class="mt-12 pt-8 border-t border-gray-100">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">Recommended Treatment for this Concern</span>
+            </div>
+            <x-blog.product-card :slug="$contextualSlug" :badge="$contextualBadge" />
+        </div>
+        @endif
     </div>
 
     <!-- Related Posts -->

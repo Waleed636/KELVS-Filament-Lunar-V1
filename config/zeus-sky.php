@@ -62,5 +62,5 @@ return [
      * \LaraZeus\Sky\Editors\MarkdownEditor::class,
      * \LaraZeus\Sky\Editors\RichEditor::class,
      */
-    'editor' => \LaraZeus\Sky\Editors\RichEditor::class,
+    'editor' => \App\Support\Sky\CustomRichEditor::class,
 ];
