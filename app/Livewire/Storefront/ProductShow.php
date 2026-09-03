@@ -405,6 +405,17 @@ class ProductShow extends Component
             $priceVal = $priceRecord->price?->value ? (float) ($priceRecord->price->value / $factor) : 0.00;
         }
 
+        // Resolve FAQs for Structured JSON-LD Data (GEO / AIO / LLM Citations)
+        $productFaqs = [];
+        if (!empty($this->descriptionSections)) {
+            foreach ($this->descriptionSections as $sec) {
+                if (($sec['type'] ?? '') === 'faq' && !empty($sec['faq_items'])) {
+                    $productFaqs = $sec['faq_items'];
+                    break;
+                }
+            }
+        }
+
         return view('livewire.storefront.product-show', [
             'product'        => $product,
             'activeVariant'  => $this->activeVariant,
@@ -422,6 +433,7 @@ class ProductShow extends Component
             'productName'    => $productName,
             'productSku'     => $sku,
             'productPrice'   => $priceVal,
+            'productFaqs'    => $productFaqs,
             'seoImage'       => $seoImage,
             'lcpImageUrl'    => $primaryUrlLarge,
             'averageRating'  => $this->averageRating,

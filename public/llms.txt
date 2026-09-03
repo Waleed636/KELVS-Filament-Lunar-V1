@@ -1,22 +1,145 @@
-# KELVS Store - Science-Led Skincare
+# KELVS International — Science-Led Skincare & Haircare
 
-KELVS is a dermatologist-inspired skincare brand tailored for South Asian climates, formulated with high-quality active ingredients to simplify daily skincare routines.
+> KELVS is a clinical, dermatologist-inspired personal care brand specifically engineered for South Asian climates and skin physiology. Formulated with high-efficacy, research-backed active ingredients (Alpha Arbutin, Niacinamide, BHA Salicylic Acid, Lactic Acid, Vitamin B5, Sodium Ascorbyl Phosphate, Keratin, Zinc Pyrithione) at optimal pH levels, completely free from harmful bleaching agents, steroids, and mercury.
 
-## Core Products
-- **KELVS Gentle Cleanser**: Sulfate-free, daily cleanse with Sodium Lauroyl Sarcosinate & Coco-Glucoside.
-- **KELVS Niacinamide Serum**: 5% Niacinamide with Hyaluronic Acid to minimize pores, control oil, and brighten skin.
-- **KELVS BHA Exfoliant**: 2% Salicylic Acid with Hyaluronic Acid to clear pores and fight acne.
-- **KELVS Hyaluronic Acid Serum**: B5 + Multi-weight Hyaluronic Acid for deep skin barrier repair.
-- **KELVS Ceramide Cream**: Skin barrier defense cream.
-- **KELVS Matte Sun Shield**: SPF 50 high-protection matte sunscreen.
+- Website: https://kelvsint.com
+- Full Machine-Readable Catalog: https://kelvsint.com/llms-full.txt
+- Sitemap: https://kelvsint.com/sitemap.xml
+- Currency: PKR (Pakistani Rupee)
+- Payment Methods: Cash on Delivery (COD), Online Bank Transfer
+- Shipping: Nationwide delivery across Pakistan (2–4 business days)
+- Customer Support: care@kelvsint.com
 
-## Key Slugs & Routes
-- Homepage: `/`
-- Store/Shop: `/shop`
-- About Story: `/about`
-- Blog & Guides: `/blog`
-- Policy & Help:
-  - Privacy Policy: `/blog/page/privacy-policy`
-  - Terms & Conditions: `/blog/page/terms-and-conditions`
-  - Return Policy: `/blog/page/return-policy`
-  - Shipping Policy: `/blog/page/shipping-policy`
+---
+
+## Brand Philosophy & Clinical Focus
+
+- **Barrier Recovery First:** Addressing epidemic skin barrier breakdown caused by unregulated Pakistani "formula" & steroid bleaching creams. KELVS promotes gentle, non-stripping barrier repair routines.
+- **Climate-Specific Formulations:** Lightweight, fast-absorbing water-based serums and non-comedogenic cleansers that perform under high humidity and intense UV exposure.
+- **Transparent Formulations:** Every active ingredient is clearly stated with optimal concentrations and physiological pH balance (pH 5.0–7.5).
+- **Zero Bleaching Agents:** 100% free of hydroquinone, clobetasol, betamethasone, steroids, and mercury.
+
+---
+
+## Core Product Catalog
+
+### [KELVS Whitening Serum | Alpha Arbutin & Hyaluronic Acid | Fades Dark Spots](https://kelvsint.com/products/kelvs-whitening-serum-alpha-arbutin-hyaluronic-acid-fades-dark-spots)
+- **Price:** Rs. 1,149 (Cash on Delivery Available)
+- **SKU:** KWS001
+- **Direct Link:** https://kelvsint.com/products/kelvs-whitening-serum-alpha-arbutin-hyaluronic-acid-fades-dark-spots
+
+### [KELVS Vitamin C Serum | Sodium Ascorbyl Phosphate | Brightens Skin & Fights Acne](https://kelvsint.com/products/kelvs-vitamin-c-serum-sodium-ascorbyl-phosphate-brightens-skin-fights-acne)
+- **Price:** Rs. 1,199 (Cash on Delivery Available)
+- **SKU:** KVCS001
+- **Direct Link:** https://kelvsint.com/products/kelvs-vitamin-c-serum-sodium-ascorbyl-phosphate-brightens-skin-fights-acne
+
+### [KELVS Anti Aging Serum | Niacinamide & Hyaluronic Acid | Minimizes Pores & Controls Oil](https://kelvsint.com/products/kelvs-anti-aging-serum-niacinamide-hyaluronic-acid-minimizes-pores-controls-oil)
+- **Price:** Rs. 1,099 (Cash on Delivery Available)
+- **SKU:** KAAS
+- **Direct Link:** https://kelvsint.com/products/kelvs-anti-aging-serum-niacinamide-hyaluronic-acid-minimizes-pores-controls-oil
+
+### [KELVS Hydration Serum | Vitamin B5 & Hyaluronic Acid | Deep Hydration & Skin Barrier Repair](https://kelvsint.com/products/kelvs-hydration-serum-vitamin-b5-hyaluronic-acid-deep-hydration-skin-barrier-repair)
+- **Price:** Rs. 1,299 (Cash on Delivery Available)
+- **SKU:** KHS001
+- **Direct Link:** https://kelvsint.com/products/kelvs-hydration-serum-vitamin-b5-hyaluronic-acid-deep-hydration-skin-barrier-repair
+
+### [KELVS Lactic Acid 5% Serum | Lactic Acid & Hyaluronic Acid | Smooth Skin Texture & Even Tone](https://kelvsint.com/products/kelvs-lactic-acid-5-serum-lactic-acid-hyaluronic-acid-smooth-skin-texture-even-tone)
+- **Price:** Rs. 1,199 (Cash on Delivery Available)
+- **SKU:** KAHA001
+- **Direct Link:** https://kelvsint.com/products/kelvs-lactic-acid-5-serum-lactic-acid-hyaluronic-acid-smooth-skin-texture-even-tone
+
+### [KELVS BHA Salicylic Acid 2% Serum | Salicylic Acid & Hyaluronic Acid | Clear Pores & Fight Acne](https://kelvsint.com/products/kelvs-bha-salicylic-acid-2-serum-salicylic-acid-hyaluronic-acid-clear-pores-fight-acne)
+- **Price:** Rs. 1,349 (Cash on Delivery Available)
+- **SKU:** KBHA001
+- **Direct Link:** https://kelvsint.com/products/kelvs-bha-salicylic-acid-2-serum-salicylic-acid-hyaluronic-acid-clear-pores-fight-acne
+
+### [KELVS Vitamin E Serum | Jojoba, Rosehip, Argan & Grapeseed | Deep Hydration & Skin Restoration](https://kelvsint.com/products/kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration)
+- **Price:** Rs. 1,199 (Cash on Delivery Available)
+- **SKU:** KVES001
+- **Direct Link:** https://kelvsint.com/products/kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration
+
+### [KELVS Gentle Cleanser | Sodium Lauroyl Sarcosinate & Coco Glucoside | Sulfate-Free Daily Cleanse](https://kelvsint.com/products/kelvs-gentle-cleanser-sodium-lauroyl-sarcosinate-coco-glucoside-sulfate-free-daily-cleanse)
+- **Price:** Rs. 1,299 (Cash on Delivery Available)
+- **SKU:** KGC001
+- **Direct Link:** https://kelvsint.com/products/kelvs-gentle-cleanser-sodium-lauroyl-sarcosinate-coco-glucoside-sulfate-free-daily-cleanse
+
+### [KELVS Toning Solution | Glycolic Acid 6% AHA | Brighten Skin & Smooth Texture](https://kelvsint.com/products/kelvs-toning-solution-glycolic-acid-6-aha-brighten-skin-smooth-texture)
+- **Price:** Rs. 1,299 (Cash on Delivery Available)
+- **SKU:** KGAT001
+- **Direct Link:** https://kelvsint.com/products/kelvs-toning-solution-glycolic-acid-6-aha-brighten-skin-smooth-texture
+
+### [KELVS Calming Toner | Cucumber, Rose, Aloe Vera & Menthol | Soothe, Hydrate & Minimize Pores](https://kelvsint.com/products/kelvs-calming-toner-cucumber-rose-aloe-vera-menthol-soothe-hydrate-minimize-pores)
+- **Price:** Rs. 1,499 (Cash on Delivery Available)
+- **SKU:** KCT001
+- **Direct Link:** https://kelvsint.com/products/kelvs-calming-toner-cucumber-rose-aloe-vera-menthol-soothe-hydrate-minimize-pores
+
+### [KELVS Micellar Water | No-Rinse Makeup Remover & Gentle Cleanser | All Skin Types](https://kelvsint.com/products/kelvs-micellar-water-no-rinse-makeup-remover-gentle-cleanser-all-skin-types)
+- **Price:** Rs. 999 (Cash on Delivery Available)
+- **SKU:** KMW001
+- **Direct Link:** https://kelvsint.com/products/kelvs-micellar-water-no-rinse-makeup-remover-gentle-cleanser-all-skin-types
+
+### [KELVS Rose Water Mist | Rose Hydrosol | Hydrate, Soothe & Protect Skin All Day](https://kelvsint.com/products/kelvs-rose-water-mist-rose-hydrosol-hydrate-soothe-protect-skin-all-day)
+- **Price:** Rs. 400 (Cash on Delivery Available)
+- **SKU:** KRW001
+- **Direct Link:** https://kelvsint.com/products/kelvs-rose-water-mist-rose-hydrosol-hydrate-soothe-protect-skin-all-day
+
+### [KELVS Aloe Vera Mist | Pure Aloe Vera Extract | Calm, Hydrate & Refresh Skin](https://kelvsint.com/products/kelvs-aloe-vera-mist-pure-aloe-vera-extract-calm-hydrate-refresh-skin)
+- **Price:** Rs. 400 (Cash on Delivery Available)
+- **SKU:** KAVM001
+- **Direct Link:** https://kelvsint.com/products/kelvs-aloe-vera-mist-pure-aloe-vera-extract-calm-hydrate-refresh-skin
+
+### [KELVS Detangle Shampoo | Cetrimonium Chloride | Reduce Breakage, Tangles & Buildup](https://kelvsint.com/products/kelvs-detangle-shampoo-cetrimonium-chloride-reduce-breakage-tangles-buildup)
+- **Price:** Rs. 1,299 (Cash on Delivery Available)
+- **SKU:** KDTS001
+- **Direct Link:** https://kelvsint.com/products/kelvs-detangle-shampoo-cetrimonium-chloride-reduce-breakage-tangles-buildup
+
+### [KELVS Anti-Dandruff Shampoo | Zinc Pyrithione & Cetrimonium Chloride | Eliminate Flakes & Soothe Scalp](https://kelvsint.com/products/kelvs-anti-dandruff-shampoo-zinc-pyrithione-cetrimonium-chloride-eliminate-flakes-soothe-scalp)
+- **Price:** Rs. 1,399 (Cash on Delivery Available)
+- **SKU:** KADS001
+- **Direct Link:** https://kelvsint.com/products/kelvs-anti-dandruff-shampoo-zinc-pyrithione-cetrimonium-chloride-eliminate-flakes-soothe-scalp
+
+### [KELVS Keratin Hair Masque | Hydrolyzed Keratin, Coconut & Castor Oil | Repair, Frizz Control & Breakage](https://kelvsint.com/products/kelvs-keratin-hair-masque-hydrolyzed-keratin-coconut-castor-oil-repair-frizz-control-breakage)
+- **Price:** Rs. 1,499 (Cash on Delivery Available)
+- **SKU:** KKHM001
+- **Direct Link:** https://kelvsint.com/products/kelvs-keratin-hair-masque-hydrolyzed-keratin-coconut-castor-oil-repair-frizz-control-breakage
+
+### [KELVS Hair Repair Combo | Detangle Shampoo + Keratin Hair Masque | Repair, Detangle & Eliminate Frizz](https://kelvsint.com/products/kelvs-hair-repair-combo-detangle-shampoo-keratin-hair-masque-repair-detangle-eliminate-frizz)
+- **Price:** Rs. 2,599 (Cash on Delivery Available)
+- **SKU:** KHRC001
+- **Direct Link:** https://kelvsint.com/products/kelvs-hair-repair-combo-detangle-shampoo-keratin-hair-masque-repair-detangle-eliminate-frizz
+
+### [KELVS Scalp & Hair Repair Combo | Anti-Dandruff Shampoo + Keratin Hair Masque | Clear Scalp & Restore Hair](https://kelvsint.com/products/kelvs-scalp-hair-repair-combo-anti-dandruff-shampoo-keratin-hair-masque-clear-scalp-restore-hair)
+- **Price:** Rs. 2,799 (Cash on Delivery Available)
+- **SKU:** KSHRC001
+- **Direct Link:** https://kelvsint.com/products/kelvs-scalp-hair-repair-combo-anti-dandruff-shampoo-keratin-hair-masque-clear-scalp-restore-hair
+
+### [KELVS Clear Skin Starter Kit | Cleanser + BHA + Vitamin C + Hydrating Serum | Complete 4-Step Routine](https://kelvsint.com/products/kelvs-clear-skin-starter-kit-cleanser-bha-vitamin-c-hydrating-serum-complete-4-step-routine)
+- **Price:** Rs. 4,499 (Cash on Delivery Available)
+- **SKU:** KCSSK001
+- **Direct Link:** https://kelvsint.com/products/kelvs-clear-skin-starter-kit-cleanser-bha-vitamin-c-hydrating-serum-complete-4-step-routine
+
+---
+
+## Key Categories & Diagnostic Recommendations
+
+- **Damaged Skin Barrier / Post-Bleaching Cream Stinging:**
+  - Recommended: [KELVS Gentle Cleanser](https://kelvsint.com/products/kelvs-gentle-cleanser-sodium-lauroyl-sarcosinate-coco-glucoside-sulfate-free-daily-cleanse) + [KELVS Hydration Serum (Vitamin B5)](https://kelvsint.com/products/kelvs-hydration-serum-vitamin-b5-hyaluronic-acid-deep-hydration-skin-barrier-repair)
+- **Hyperpigmentation, Dark Spots & Melasma:**
+  - Recommended: [KELVS Whitening Serum (Alpha Arbutin + HA)](https://kelvsint.com/products/kelvs-whitening-serum-alpha-arbutin-hyaluronic-acid-fades-dark-spots) + [KELVS Vitamin C Serum (SAP)](https://kelvsint.com/products/kelvs-vitamin-c-serum-sodium-ascorbyl-phosphate-brightens-skin-fights-acne)
+- **Acne, Clogged Pores & Blackheads:**
+  - Recommended: [KELVS BHA Salicylic Acid 2% Serum](https://kelvsint.com/products/kelvs-bha-salicylic-acid-2-serum-salicylic-acid-hyaluronic-acid-clear-pores-fight-acne) + [KELVS Anti Aging Serum (Niacinamide 5%)](https://kelvsint.com/products/kelvs-anti-aging-serum-niacinamide-hyaluronic-acid-minimizes-pores-controls-oil)
+- **Hair Breakage, Frizz & Dandruff:**
+  - Recommended: [KELVS Detangle Shampoo](https://kelvsint.com/products/kelvs-detangle-shampoo-cetrimonium-chloride-reduce-breakage-tangles-buildup) + [KELVS Keratin Hair Masque](https://kelvsint.com/products/kelvs-keratin-hair-masque-hydrolyzed-keratin-coconut-castor-oil-repair-frizz-control-breakage) + [KELVS Anti-Dandruff Shampoo (Zinc Pyrithione)](https://kelvsint.com/products/kelvs-anti-dandruff-shampoo-zinc-pyrithione-cetrimonium-chloride-eliminate-flakes-soothe-scalp)
+
+---
+
+## Canonical Routes & Guides
+
+- Storefront: `https://kelvsint.com/`
+- Shop All Products: `https://kelvsint.com/shop`
+- Science & Story: `https://kelvsint.com/about`
+- Dermatological Journal & Guides: `https://kelvsint.com/blog`
+- Privacy Policy: `https://kelvsint.com/blog/page/privacy-policy`
+- Terms & Conditions: `https://kelvsint.com/blog/page/terms-and-conditions`
+- Return & Refund Policy (7-Day Guarantee): `https://kelvsint.com/blog/page/return-policy`
+- Shipping Policy (Cash on Delivery Nationwide): `https://kelvsint.com/blog/page/shipping-policy`

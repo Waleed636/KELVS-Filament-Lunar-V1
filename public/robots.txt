@@ -9,31 +9,50 @@ Disallow: /cart
 Disallow: /checkout/
 Disallow: /checkout
 Disallow: /livewire/
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /sitemap.xml
 
-# Generative AI & Answer Engines (GEO: ChatGPT, Perplexity, Claude, Apple)
-User-agent: GPTBot
-Allow: /products/
-Allow: /blog/
-Allow: /shop
-Allow: /about
+# OpenAI - ChatGPT Search & Conversational Shopping
+User-agent: OAI-SearchBot
+Allow: /
 Disallow: /admin/
 Disallow: /cart
 Disallow: /checkout/
+Disallow: /livewire/
 
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+Disallow: /livewire/
+
+# Perplexity AI (Direct Answer Engine & Product Citations)
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin/
 Disallow: /cart
 Disallow: /checkout/
+Disallow: /livewire/
 
+# Anthropic Claude (Claude Search & Document Fetch)
 User-agent: ClaudeBot
 Allow: /
 Disallow: /admin/
 Disallow: /cart
 Disallow: /checkout/
+Disallow: /livewire/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+Disallow: /livewire/
 
 User-agent: anthropic-ai
 Allow: /
@@ -41,10 +60,24 @@ Disallow: /admin/
 Disallow: /cart
 Disallow: /checkout/
 
+# Google Gemini, Vertex & AI Overviews
 User-agent: Google-Extended
 Allow: /
 
+User-agent: GoogleOther
+Allow: /
+
+# Apple Intelligence
 User-agent: Applebot-Extended
 Allow: /
 
+# Microsoft Bing & Copilot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout/
+
+# Sitemaps & LLM Context Documents
 Sitemap: https://kelvsint.com/sitemap.xml
+

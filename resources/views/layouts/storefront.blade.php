@@ -182,6 +182,8 @@
         <meta name="keywords" content="{{ $pageSeoKeywords }}">
     @endif
     <link rel="canonical" href="{{ $pageCanonicalUrl }}">
+    <link rel="alternate" type="text/markdown" title="LLM Context Summary" href="{{ url('/llms.txt') }}">
+    <link rel="alternate" type="text/markdown" title="LLM Full Catalog Knowledge Base" href="{{ url('/llms-full.txt') }}">
     <meta name="robots" content="{{ $seoRobots ?? 'index, follow' }}">
 
     {{-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ─────────────────── --}}
@@ -301,6 +303,26 @@
         ]
     }
     </script>
+    @if(!empty($productFaqs))
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            @foreach($productFaqs as $index => $faq)
+            {
+                "@type": "Question",
+                "name": {!! json_encode($faq['question'] ?? '') !!},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {!! json_encode(strip_tags($faq['answer'] ?? '')) !!}
+                }
+            }@if(!$loop->last),@endif
+            @endforeach
+        ]
+    }
+    </script>
+    @endif
     @endif
 
     {{-- ── Structured Data: Blog Posting (JSON-LD) ────────────────────── --}}
