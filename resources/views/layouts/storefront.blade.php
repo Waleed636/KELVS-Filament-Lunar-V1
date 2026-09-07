@@ -130,9 +130,9 @@
         $pageCanonicalUrl   = $canonicalUrl   ?? request()->url();
         $pageProductUrl     = $productUrl     ?? request()->url();
 
-        // Ensure canonical and OG URLs never contain 'www.' to prevent indexing split
-        $pageCanonicalUrl   = preg_replace('#^https?://www\.#i', 'https://', (string) $pageCanonicalUrl);
-        $pageProductUrl     = preg_replace('#^https?://www\.#i', 'https://', (string) $pageProductUrl);
+        // Ensure canonical and OG URLs always use canonical https:// and never contain 'www.'
+        $pageCanonicalUrl   = preg_replace('#^https?://(www\.)?#i', 'https://', (string) $pageCanonicalUrl);
+        $pageProductUrl     = preg_replace('#^https?://(www\.)?#i', 'https://', (string) $pageProductUrl);
 
         $pageProductName    = $productName    ?? null;
         $pageSeoImage       = $seoImage       ?? null;
@@ -165,6 +165,10 @@
 
         $isProductPage = isset($seoTitle) && !isset($post);
 
+        // Auto-noindex utility & transactional pages (cart, checkout, thankyou)
+        $isNoindexPage = request()->is('cart*') || request()->is('checkout*') || request()->is('login*') || request()->is('admin*');
+        $resolvedRobots = $seoRobots ?? ($isNoindexPage ? 'noindex, follow' : 'index, follow');
+
         // Resolve social preview image
         if (empty($pageSeoImage)) {
             $pageSeoImage = asset('images/hero_lifestyle.png');
@@ -184,7 +188,7 @@
     <link rel="canonical" href="{{ $pageCanonicalUrl }}">
     <link rel="alternate" type="text/markdown" title="LLM Context Summary" href="{{ url('/llms.txt') }}">
     <link rel="alternate" type="text/markdown" title="LLM Full Catalog Knowledge Base" href="{{ url('/llms-full.txt') }}">
-    <meta name="robots" content="{{ $seoRobots ?? 'index, follow' }}">
+    <meta name="robots" content="{{ $resolvedRobots }}">
 
     {{-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ─────────────────── --}}
     <meta property="og:type"        content="{{ $isProductPage ? 'product' : 'website' }}">

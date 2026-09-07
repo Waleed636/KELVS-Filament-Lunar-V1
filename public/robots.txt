@@ -5,7 +5,6 @@ Disallow: /admin
 Disallow: /lunar/
 Disallow: /lunar
 Disallow: /login
-Disallow: /cart
 Disallow: /checkout/
 Disallow: /checkout
 Disallow: /livewire/
@@ -17,7 +16,6 @@ Allow: /sitemap.xml
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 Disallow: /livewire/
 
@@ -27,7 +25,6 @@ Allow: /
 User-agent: GPTBot
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 Disallow: /livewire/
 
@@ -35,7 +32,6 @@ Disallow: /livewire/
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 Disallow: /livewire/
 
@@ -43,21 +39,18 @@ Disallow: /livewire/
 User-agent: ClaudeBot
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 Disallow: /livewire/
 
 User-agent: Claude-Web
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 Disallow: /livewire/
 
 User-agent: anthropic-ai
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 
 # Google Gemini, Vertex & AI Overviews
@@ -75,7 +68,6 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 Disallow: /admin/
-Disallow: /cart
 Disallow: /checkout/
 
 # Sitemaps & LLM Context Documents

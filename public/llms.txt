@@ -139,7 +139,7 @@
 - Shop All Products: `https://kelvsint.com/shop`
 - Science & Story: `https://kelvsint.com/about`
 - Dermatological Journal & Guides: `https://kelvsint.com/blog`
-- Privacy Policy: `https://kelvsint.com/blog/page/privacy-policy`
-- Terms & Conditions: `https://kelvsint.com/blog/page/terms-and-conditions`
-- Return & Refund Policy (7-Day Guarantee): `https://kelvsint.com/blog/page/return-policy`
-- Shipping Policy (Cash on Delivery Nationwide): `https://kelvsint.com/blog/page/shipping-policy`
+- Privacy Policy: `https://kelvsint.com/privacy-policy`
+- Terms & Conditions: `https://kelvsint.com/terms-and-conditions`
+- Return & Refund Policy (7-Day Guarantee): `https://kelvsint.com/return-policy`
+- Shipping Policy (Cash on Delivery Nationwide): `https://kelvsint.com/shipping-policy`
