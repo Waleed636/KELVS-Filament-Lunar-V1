@@ -235,16 +235,16 @@
 
     @script
     <script>
-        @if($checkoutEventData)
+        @if(!empty($checkoutEventData['eventName']))
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ ecommerce: null });
             window.dataLayer.push({
                 event: '{{ $checkoutEventData['eventName'] }}',
-                event_id: '{{ $checkoutEventData['eventId'] }}',
+                event_id: '{{ $checkoutEventData['eventId'] ?? '' }}',
                 @if(!empty($checkoutEventData['userData']))
                     user_data: @json($checkoutEventData['userData']),
                 @endif
-                ecommerce: @json($checkoutEventData['ecommerceData'])
+                ecommerce: @json($checkoutEventData['ecommerceData'] ?? [])
             });
         @endif
     </script>

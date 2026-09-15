@@ -596,7 +596,7 @@
     @livewireScripts
 
 
-    @if(session()->has('dataLayerEvent'))
+    @if(session()->has('dataLayerEvent') && is_array(session('dataLayerEvent')) && !empty(session('dataLayerEvent')['eventName']))
         @php
             $sessionEvent = session('dataLayerEvent');
         @endphp
@@ -608,8 +608,8 @@
             (function() {
                 var payload = {
                     eventName:     '{{ $sessionEvent['eventName'] }}',
-                    eventId:       '{{ $sessionEvent['eventId'] }}',
-                    ecommerceData: @json($sessionEvent['ecommerceData']),
+                    eventId:       '{{ $sessionEvent['eventId'] ?? '' }}',
+                    ecommerceData: @json($sessionEvent['ecommerceData'] ?? []),
                     userData:      @json($sessionEvent['userData'] ?? [])
                 };
 

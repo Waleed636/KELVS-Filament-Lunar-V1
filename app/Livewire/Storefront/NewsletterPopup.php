@@ -3,14 +3,17 @@
 namespace App\Livewire\Storefront;
 
 use App\Models\EmailSubscriber;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class NewsletterPopup extends Component
 {
-    public $email = '';
-    public $phone = '';
-    public $submitted = false;
-    public $discountCode = 'WELCOME10';
+    public string $email = '';
+    public string $phone = '';
+    public bool $submitted = false;
+
+    #[Locked]
+    public string $discountCode = 'WELCOME10';
 
     public function submit()
     {

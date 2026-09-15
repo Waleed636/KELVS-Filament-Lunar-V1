@@ -146,13 +146,13 @@
 
     @script
     <script>
-        @if($dataLayerPayload)
+        @if(!empty($dataLayerPayload['eventName']))
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ ecommerce: null });
             window.dataLayer.push({
                 event: '{{ $dataLayerPayload['eventName'] }}',
-                event_id: '{{ $dataLayerPayload['eventId'] }}',
-                ecommerce: @json($dataLayerPayload['ecommerceData'])
+                event_id: '{{ $dataLayerPayload['eventId'] ?? '' }}',
+                ecommerce: @json($dataLayerPayload['ecommerceData'] ?? [])
             });
         @endif
     </script>

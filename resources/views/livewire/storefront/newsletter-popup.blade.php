@@ -14,7 +14,7 @@
             localStorage.setItem('kelvs_newsletter_dismissed', 'true');
         },
         copyToClipboard() {
-            navigator.clipboard.writeText('{{ $discountCode }}').then(() => {
+            navigator.clipboard.writeText('{{ is_string($discountCode) ? $discountCode : 'WELCOME10' }}').then(() => {
                 this.copied = true;
                 setTimeout(() => this.copied = false, 2000);
             });
@@ -153,7 +153,7 @@
                     <!-- Coupon Display Box -->
                     <div class="relative bg-gray-50 border border-dashed border-gray-300 rounded p-4 mb-6 group">
                         <div class="text-2xl font-mono font-bold tracking-widest text-[#111111] select-all">
-                            {{ $discountCode }}
+                            {{ is_string($discountCode) ? $discountCode : 'WELCOME10' }}
                         </div>
                         <p class="text-[10px] text-gray-400 mt-1 uppercase font-semibold">Click to copy code</p>
                         
