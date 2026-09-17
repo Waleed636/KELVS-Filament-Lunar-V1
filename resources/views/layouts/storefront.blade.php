@@ -139,6 +139,7 @@
 
         // Auto-extract SEO meta details if viewing a blog post from Lara-Zeus Sky
         if (isset($post) && $post instanceof \LaraZeus\Sky\Models\Post) {
+            $pageCanonicalUrl = 'https://kelvsint.com/blog/post/' . $post->slug;
             $pageSeoTitle = $post->title . ' | Journal | ' . $siteName;
             
             // Clean description and constrain to 160 characters
@@ -354,7 +355,7 @@
         },
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "{{ request()->url() }}"
+            "@id": "{{ $pageCanonicalUrl }}"
         }
     }
     </script>

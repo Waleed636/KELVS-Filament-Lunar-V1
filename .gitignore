@@ -25,3 +25,5 @@ yarn-error.log
 *.zip
 /kelvsint.com-Coverage-*
 google_questions_*.txt
+*gsc-key*.json
+/.agents/

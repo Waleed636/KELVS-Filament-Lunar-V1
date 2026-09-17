@@ -15,6 +15,7 @@ Route::redirect('/login', '/admin/login')->name('login');
 // ── Policy & Legacy Content 1-Hop Rescue Redirects ───────────────────────────
 Route::redirect('/about-us', '/about', 301);
 Route::redirect('/refund-policy', '/return-policy', 301);
+Route::redirect('/products/kelvsint-com-products-kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration', '/products/kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration', 301);
 
 $policyList = [
     'privacy-policy',

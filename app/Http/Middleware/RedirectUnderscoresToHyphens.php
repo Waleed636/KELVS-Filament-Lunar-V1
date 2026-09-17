@@ -47,6 +47,7 @@ class RedirectUnderscoresToHyphens
             '/blog/page/refund-policy'         => '/return-policy',
             '/refund-policy'                   => '/return-policy',
             '/about-us'                        => '/about',
+            '/products/kelvsint-com-products-kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration' => '/products/kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration',
         ];
 
         if (array_key_exists($normalizedPath, $policyMap)) {
