@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Storefront;
 
+use App\Mail\NewsletterWelcomeMail;
 use App\Models\EmailSubscriber;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -50,6 +53,19 @@ class NewsletterPopup extends Component
             'discount_code' => $this->discountCode,
             'subscribed_at' => now(),
         ]);
+
+        // Send instant welcome email with the coupon code if email provided
+        $cleanEmail = !empty($this->email) ? trim($this->email) : null;
+        if ($cleanEmail && filter_var($cleanEmail, FILTER_VALIDATE_EMAIL)) {
+            try {
+                Mail::to($cleanEmail)->queue(new NewsletterWelcomeMail($cleanEmail, $this->discountCode));
+                Log::info("Newsletter: Queued welcome email for {$cleanEmail}");
+            } catch (\Throwable $e) {
+                Log::error("Newsletter: Failed to queue welcome email for {$cleanEmail}: " . $e->getMessage(), [
+                    'exception' => $e,
+                ]);
+            }
+        }
 
         $this->submitted = true;
     }

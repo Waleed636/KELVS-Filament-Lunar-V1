@@ -307,28 +307,21 @@ class ManageOrder extends BaseManageOrder
                 }
 
                 $postExService = app(PostExService::class);
-                $response = $postExService->trackOrder($trackingNumber);
+                $result = $postExService->syncOrderShipment($this->record);
 
-                if (($response['statusCode'] ?? null) == '200' && isset($response['dist'])) {
-                    $dist = $response['dist'];
-                    $status = $dist['transactionStatus'] ?? null;
+                if (in_array($result['status'] ?? '', ['updated', 'synced'])) {
+                    $status = $result['new'] ?? $result['current'] ?? 'Synced';
+                    Notification::make()
+                        ->title('PostEx Status Synced')
+                        ->body("Current Status: {$status}")
+                        ->success()
+                        ->send();
 
-                    if ($status) {
-                        $meta['postex_status'] = $status;
-
-                        $this->record->update(['meta' => $meta]);
-
-                        Notification::make()
-                            ->title('PostEx Status Synced')
-                            ->body("Current Status: {$status}")
-                            ->success()
-                            ->send();
-
-                        $this->dispatchActivityUpdated();
-                    }
+                    $this->dispatchActivityUpdated();
                 } else {
                     Notification::make()
                         ->title('Failed to Sync Status from PostEx')
+                        ->body($result['message'] ?? 'Could not retrieve tracking details.')
                         ->danger()
                         ->send();
                 }

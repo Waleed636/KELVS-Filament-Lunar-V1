@@ -2,10 +2,64 @@
 
 namespace App\DiscountTypes;
 
+use Filament\Forms;
+use Lunar\Admin\Base\LunarPanelDiscountInterface;
+use Lunar\Admin\Filament\Resources\DiscountResource;
 use Lunar\Models\Contracts\Cart as CartContract;
 
-class BuyXGetY extends \Lunar\DiscountTypes\BuyXGetY
+class BuyXGetY extends \Lunar\DiscountTypes\BuyXGetY implements LunarPanelDiscountInterface
 {
+    /**
+     * Return the schema to use in the Lunar admin panel
+     */
+    public function lunarPanelSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('data.min_qty')
+                ->label(
+                    __('lunarpanel::discount.form.min_qty.label')
+                )->helperText(
+                    __('lunarpanel::discount.form.min_qty.helper_text')
+                )->numeric(),
+            Forms\Components\Group::make([
+                Forms\Components\TextInput::make('data.reward_qty')
+                    ->label(
+                        __('lunarpanel::discount.form.reward_qty.label')
+                    )->helperText(
+                        __('lunarpanel::discount.form.reward_qty.helper_text')
+                    )->numeric(),
+                Forms\Components\TextInput::make('data.max_reward_qty')
+                    ->label(
+                        __('lunarpanel::discount.form.max_reward_qty.label')
+                    )->helperText(
+                        __('lunarpanel::discount.form.max_reward_qty.helper_text')
+                    )->numeric(),
+            ])->columns(2),
+            Forms\Components\Toggle::make('data.automatically_add_rewards')
+                ->label(
+                    __('lunarpanel::discount.form.automatic_rewards.label')
+                )->helperText(
+                    __('lunarpanel::discount.form.automatic_rewards.helper_text')
+                ),
+        ];
+    }
+
+    public function lunarPanelOnFill(array $data): array
+    {
+        return $data;
+    }
+
+    public function lunarPanelOnSave(array $data): array
+    {
+        return $data;
+    }
+
+    public function lunarPanelRelationManagers(): array
+    {
+        return [
+            DiscountResource\RelationManagers\ProductRewardRelationManager::class,
+        ];
+    }
     /**
      * Check if discount's conditions met.
      */

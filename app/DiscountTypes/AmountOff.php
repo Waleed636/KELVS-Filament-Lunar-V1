@@ -2,10 +2,68 @@
 
 namespace App\DiscountTypes;
 
+use Filament\Forms;
+use Lunar\Admin\Base\LunarPanelDiscountInterface;
 use Lunar\Models\Contracts\Cart as CartContract;
+use Lunar\Models\Currency;
 
-class AmountOff extends \Lunar\DiscountTypes\AmountOff
+class AmountOff extends \Lunar\DiscountTypes\AmountOff implements LunarPanelDiscountInterface
 {
+    /**
+     * Return the schema to use in the Lunar admin panel
+     */
+    public function lunarPanelSchema(): array
+    {
+        $currencies = Currency::get();
+
+        $currencyInputs = [];
+
+        foreach ($currencies as $currency) {
+            $currencyInputs[] = Forms\Components\TextInput::make(
+                'data.fixed_values.'.$currency->code
+            )->label(
+                $currency->code
+            )->afterStateHydrated(function (Forms\Components\TextInput $component, $state) {
+                $currencyCode = last(explode('.', $component->getStatePath()));
+                $currency = Currency::whereCode($currencyCode)->first();
+
+                if ($currency) {
+                    $component->state($state / $currency->factor);
+                }
+            });
+        }
+
+        return [
+            Forms\Components\Toggle::make('data.fixed_value')
+                ->label(__('lunarpanel::discount.form.fixed_value.label'))
+                ->live(),
+            Forms\Components\TextInput::make('data.percentage')
+                ->label(__('lunarpanel::discount.form.percentage.label'))
+                ->visible(
+                    fn (Forms\Get $get) => ! $get('data.fixed_value')
+                )->numeric(),
+            Forms\Components\Group::make(
+                $currencyInputs
+            )->visible(
+                fn (Forms\Get $get) => (bool) $get('data.fixed_value')
+            )->columns(3),
+        ];
+    }
+
+    public function lunarPanelOnFill(array $data): array
+    {
+        return $data;
+    }
+
+    public function lunarPanelOnSave(array $data): array
+    {
+        return $data;
+    }
+
+    public function lunarPanelRelationManagers(): array
+    {
+        return [];
+    }
     /**
      * Check if discount's conditions met.
      */

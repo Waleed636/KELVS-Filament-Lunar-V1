@@ -20,4 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
         $schedule->command('postex:sync-statuses')->hourly();
+        $schedule->command('carts:send-recovery-emails')->hourly();
+        $schedule->command('customers:send-winback-emails')->dailyAt('14:00');
     })->create();

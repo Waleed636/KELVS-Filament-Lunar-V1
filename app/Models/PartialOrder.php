@@ -17,10 +17,14 @@ class PartialOrder extends Model
         'postalcode',
         'cart_contents',
         'cart_total',
+        'recovery_email_count',
+        'last_recovery_email_sent_at',
     ];
 
     protected $casts = [
         'cart_contents' => 'array',
         'cart_total' => 'decimal:2',
+        'recovery_email_count' => 'integer',
+        'last_recovery_email_sent_at' => 'datetime',
     ];
 }

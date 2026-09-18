@@ -5,6 +5,10 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Lunar\Models\Order;
+use App\Mail\OrderShippedMail;
+use App\Mail\OrderDeliveredMail;
 
 class PostExService
 {
@@ -309,5 +313,135 @@ class PostExService
         }
 
         return ['statusCode' => '500', 'statusMessage' => 'Request Failed'];
+    }
+
+    /**
+     * Synchronize shipment status for a single order and trigger automated notifications.
+     */
+    public function syncOrderShipment(Order $order): array
+    {
+        $meta = (array) ($order->meta ?? []);
+        $trackingNumber = $meta['postex_tracking_number'] ?? null;
+        $oldStatus = $meta['postex_status'] ?? 'UnBooked';
+
+        if (!$trackingNumber || strtoupper((string) $trackingNumber) === 'NULL') {
+            return ['status' => 'skipped', 'message' => 'No tracking number found'];
+        }
+
+        $response = $this->trackOrder($trackingNumber);
+
+        if (($response['statusCode'] ?? null) == '200' && isset($response['dist'])) {
+            $dist = $response['dist'];
+            $newStatus = $dist['transactionStatus'] ?? null;
+
+            if ($newStatus) {
+                $statusChanged = ($newStatus !== $oldStatus);
+                $meta['postex_status'] = $newStatus;
+
+                $updateData = ['meta' => $meta];
+
+                if ($newStatus === 'Delivered') {
+                    $updateData['status'] = 'payment-received';
+                } elseif ($newStatus === 'Returned') {
+                    $updateData['status'] = 'returned';
+                }
+
+                // Resolve customer recipient email safely
+                $shippingAddress = $order->shippingAddress ?: $order->addresses()->where('type', 'shipping')->first();
+                $billingAddress = $order->billingAddress ?: $order->addresses()->where('type', 'billing')->first();
+                $recipientEmail = $billingAddress?->contact_email ?? $shippingAddress?->contact_email;
+
+                // 1. Trigger OrderShippedMail if parcel is dispatched/active and email not yet sent
+                // Note: 'Booked' is excluded as it means registered but not yet picked up/dispatched.
+                $activeShippingStatuses = ['In-Transit', 'Arrived at Station', 'Out for Delivery', 'Dispatched'];
+                $trackingSentAt = $meta['tracking_email_sent_at'] ?? null;
+
+                if (empty($trackingSentAt) && in_array($newStatus, $activeShippingStatuses)) {
+                    if ($recipientEmail && filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+                        try {
+                            Mail::to($recipientEmail)->queue(new OrderShippedMail($order, (string) $trackingNumber));
+                            $meta['tracking_email_sent_at'] = now()->toIso8601String();
+                            $updateData['meta'] = $meta;
+                            Log::info("PostEx Status Sync: Queued OrderShippedMail for Order #{$order->id} to {$recipientEmail}");
+                        } catch (\Throwable $e) {
+                            Log::error("PostEx Status Sync: Failed to queue OrderShippedMail for Order #{$order->id}: " . $e->getMessage(), [
+                                'exception' => $e,
+                            ]);
+                        }
+                    }
+                }
+
+                // 2. Trigger OrderDeliveredMail if delivered and email not yet sent
+                $deliveredSentAt = $meta['delivered_email_sent_at'] ?? null;
+                if (empty($deliveredSentAt) && $newStatus === 'Delivered') {
+                    if ($recipientEmail && filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+                        try {
+                            Mail::to($recipientEmail)->queue(new OrderDeliveredMail($order));
+                            $meta['delivered_email_sent_at'] = now()->toIso8601String();
+                            $updateData['meta'] = $meta;
+                            Log::info("PostEx Status Sync: Queued OrderDeliveredMail for Order #{$order->id} to {$recipientEmail}");
+                        } catch (\Throwable $e) {
+                            Log::error("PostEx Status Sync: Failed to queue OrderDeliveredMail for Order #{$order->id}: " . $e->getMessage(), [
+                                'exception' => $e,
+                            ]);
+                        }
+                    }
+                }
+
+                $order->update($updateData);
+
+                if ($statusChanged) {
+                    Log::info("PostEx Status Sync: Order #{$order->id} status updated from '{$oldStatus}' to '{$newStatus}'");
+                    return ['status' => 'updated', 'old' => $oldStatus, 'new' => $newStatus];
+                }
+
+                return ['status' => 'synced', 'current' => $newStatus];
+            }
+        }
+
+        return ['status' => 'failed', 'message' => $response['statusMessage'] ?? 'Failed to fetch tracking data'];
+    }
+
+    /**
+     * Batch synchronize all active shipments from PostEx.
+     */
+    public function syncAllActiveShipments(): array
+    {
+        $orders = Order::all()->filter(function ($order) {
+            $meta = (array) ($order->meta ?? []);
+            $tracking = $meta['postex_tracking_number'] ?? null;
+            $status = $meta['postex_status'] ?? '';
+
+            return !empty($tracking) &&
+                   strtoupper((string) $tracking) !== 'NULL' &&
+                   !in_array($status, ['Delivered', 'Returned', 'Cancelled']);
+        });
+
+        $results = [
+            'total' => $orders->count(),
+            'updated' => 0,
+            'synced' => 0,
+            'failed' => 0,
+        ];
+
+        foreach ($orders as $order) {
+            try {
+                $res = $this->syncOrderShipment($order);
+                if ($res['status'] === 'updated') {
+                    $results['updated']++;
+                } elseif ($res['status'] === 'synced') {
+                    $results['synced']++;
+                } else {
+                    $results['failed']++;
+                }
+            } catch (\Throwable $e) {
+                $results['failed']++;
+                Log::error("PostEx Batch Sync Exception on Order #{$order->id}: " . $e->getMessage(), [
+                    'exception' => $e,
+                ]);
+            }
+        }
+
+        return $results;
     }
 }
