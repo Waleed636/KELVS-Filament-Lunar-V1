@@ -10,6 +10,7 @@ use Lunar\Models\Country;
 use Lunar\Models\ProductVariant;
 use Lunar\Models\TaxClass;
 use Lunar\DataTypes\ShippingOption;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Models\PartialOrder;
 
 class BuyNowModal extends Component
@@ -173,13 +174,27 @@ class BuyNowModal extends Component
         $stashed = session()->pull('stashed_cart_lines', []);
         if (!empty($stashed)) {
             foreach ($stashed as $item) {
-                $purchasableModel = $item['purchasable_type']::find($item['purchasable_id']);
-                if ($purchasableModel) {
-                    CartSession::manager()->add(
-                        purchasable: $purchasableModel,
-                        quantity: $item['quantity'],
-                        meta: $item['meta']
-                    );
+                $purchasableType = $item['purchasable_type'] ?? null;
+                $purchasableId = $item['purchasable_id'] ?? null;
+
+                if (!$purchasableType || !$purchasableId) {
+                    continue;
+                }
+
+                $modelClass = Relation::getMorphedModel($purchasableType) ?? $purchasableType;
+                if ($modelClass === 'product_variant' || !class_exists($modelClass)) {
+                    $modelClass = ProductVariant::class;
+                }
+
+                if (class_exists($modelClass)) {
+                    $purchasableModel = $modelClass::find($purchasableId);
+                    if ($purchasableModel) {
+                        CartSession::manager()->add(
+                            purchasable: $purchasableModel,
+                            quantity: $item['quantity'],
+                            meta: $item['meta'] ?? []
+                        );
+                    }
                 }
             }
         }
