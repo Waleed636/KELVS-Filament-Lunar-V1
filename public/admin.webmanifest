@@ -1,0 +1,38 @@
+{
+  "id": "/lunar",
+  "name": "KELVS Admin",
+  "short_name": "Kelvs Admin",
+  "description": "KELVS Store Backend & Order Management",
+  "icons": [
+    {
+      "src": "/images/pwa/kelvs-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/pwa/kelvs-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/pwa/kelvs-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/pwa/kelvs-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "start_url": "/lunar",
+  "scope": "/"
+}

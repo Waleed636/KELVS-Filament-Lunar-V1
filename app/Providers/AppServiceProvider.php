@@ -32,7 +32,15 @@ class AppServiceProvider extends ServiceProvider
         }
 
         \Lunar\Admin\Support\Facades\LunarPanel::panel(function (\Filament\Panel $panel) {
-            return $panel->plugin(new \Lunar\Shipping\ShippingPlugin());
+            return $panel
+                ->plugin(new \Lunar\Shipping\ShippingPlugin())
+                ->navigationItems([
+                    \Filament\Navigation\NavigationItem::make('Reviews & Marketing (Admin)')
+                        ->url('/admin', shouldOpenInNewTab: false)
+                        ->icon('heroicon-o-squares-2x2')
+                        ->group('Store Switcher')
+                        ->sort(-100),
+                ]);
         })
         ->register()
         ->extensions([
@@ -62,6 +70,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         \Lunar\Facades\Telemetry::optOut();
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::HEAD_END,
+            fn (): string => view('filament.pwa-head')->render()
+        );
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::HEAD_END,

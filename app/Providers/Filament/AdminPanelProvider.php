@@ -19,6 +19,8 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 
 use Filament\Pages;
 use Filament\Widgets;
+use Filament\View\PanelsRenderHook;
+use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,6 +33,13 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Orders & Catalog (Lunar)')
+                    ->url('/lunar', shouldOpenInNewTab: false)
+                    ->icon('heroicon-o-shopping-bag')
+                    ->group('Store Switcher')
+                    ->sort(-100),
             ])
             ->plugins([
                 \Filament\SpatieLaravelTranslatablePlugin::make()
