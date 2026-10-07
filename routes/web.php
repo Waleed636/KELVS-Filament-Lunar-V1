@@ -48,7 +48,7 @@ Route::get('/blog/{slug}', function ($slug) {
     }
 
     return redirect()->to('/blog/post/' . $cleanSlug, 301);
-});
+})->where('slug', '^(?!category|tag|faq|library|post|page)[a-zA-Z0-9_\-]+$');
 
 // Redirect legacy /shop/{slug} URLs directly to new /products/{new_slug} structure in 1 single hop
 Route::get('/shop/{slug}', function ($slug) {

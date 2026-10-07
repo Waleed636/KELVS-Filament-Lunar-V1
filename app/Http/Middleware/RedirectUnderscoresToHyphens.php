@@ -45,13 +45,18 @@ class RedirectUnderscoresToHyphens
             '/blog/page/terms-and-conditions'  => '/terms-and-conditions',
             '/blog/page/shipping-policy'       => '/shipping-policy',
             '/blog/page/refund-policy'         => '/return-policy',
+            '/blog/privacy-policy'             => '/privacy-policy',
+            '/blog/return-policy'              => '/return-policy',
+            '/blog/terms-and-conditions'       => '/terms-and-conditions',
+            '/blog/shipping-policy'            => '/shipping-policy',
+            '/blog/refund-policy'              => '/return-policy',
             '/refund-policy'                   => '/return-policy',
             '/about-us'                        => '/about',
             '/products/kelvsint-com-products-kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration' => '/products/kelvs-vitamin-e-serum-jojoba-rosehip-argan-grapeseed-deep-hydration-skin-restoration',
         ];
 
         if (array_key_exists($normalizedPath, $policyMap)) {
-            return redirect()->to($canonicalDomain . $policyMap[$normalizedPath], 301);
+            return new \Illuminate\Http\RedirectResponse($canonicalDomain . $policyMap[$normalizedPath], 301);
         }
 
 
@@ -91,14 +96,29 @@ class RedirectUnderscoresToHyphens
             $shopSlug = substr($normalizedPath, 6);
             $cleanShopSlug = str_replace('_', '-', $shopSlug);
             $targetSlug = $legacyShopMap[$cleanShopSlug] ?? $cleanShopSlug;
-            return redirect()->to($canonicalDomain . '/products/' . $targetSlug, 301);
+            return new \Illuminate\Http\RedirectResponse($canonicalDomain . '/products/' . $targetSlug, 301);
         }
 
         // ── 3. LEGACY /blog/{slug} 1-HOP RESOLUTION ──────────────────────────
+        // Only redirect single-segment blog slugs to /blog/post/{slug}.
+        // Explicitly exempt Lara-Zeus Sky system routes: /blog/category/*, /blog/tag/*, /blog/faq, /blog/library, /blog/page/*
         if (str_starts_with($normalizedPath, '/blog/') && !str_starts_with($normalizedPath, '/blog/post/')) {
-            $blogSlug = substr($normalizedPath, 6);
-            $cleanBlogSlug = str_replace('_', '-', $blogSlug);
-            return redirect()->to($canonicalDomain . '/blog/post/' . $cleanBlogSlug, 301);
+            $blogSubPath = substr($normalizedPath, 6); // strips '/blog/'
+            
+            $skySystemPrefixes = ['category/', 'tag/', 'faq', 'library', 'page/'];
+            $isSkySystemRoute = false;
+            foreach ($skySystemPrefixes as $prefix) {
+                if (str_starts_with($blogSubPath, $prefix)) {
+                    $isSkySystemRoute = true;
+                    break;
+                }
+            }
+
+            // Only redirect if it's not a Zeus Sky system route and is a single-segment slug (no nested slashes)
+            if (!$isSkySystemRoute && !empty($blogSubPath) && !str_contains($blogSubPath, '/')) {
+                $cleanBlogSlug = str_replace('_', '-', $blogSubPath);
+                return new \Illuminate\Http\RedirectResponse($canonicalDomain . '/blog/post/' . $cleanBlogSlug, 301);
+            }
         }
 
         // ── 4. GENERAL NORMALIZATION (Underscores, Casing, WWW removal) ───────
@@ -132,7 +152,7 @@ class RedirectUnderscoresToHyphens
 
             $newUrl = $scheme . '://' . $targetHost . $portString . $newPath . ($queryString ? '?' . $queryString : '');
 
-            return redirect()->to($newUrl, 301);
+            return new \Illuminate\Http\RedirectResponse($newUrl, 301);
         }
 
         return $next($request);
