@@ -121,13 +121,15 @@ class NormalizeBlogCanonicalLinksCommand extends Command
                     $totalReplacements += $postReplacements;
                     $this->line(" - Post #{$post->id} [{$post->slug}]: {$postReplacements} links normalized.");
 
+                    $wrappedContent = json_encode(['en' => $content], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
                     if (!$isDryRun) {
                         DB::table('posts')->where('id', $post->id)->update([
-                            'content' => $content,
+                            'content' => $wrappedContent,
                         ]);
                     }
 
-                    $escapedContent = addcslashes($content, "'\\");
+                    $escapedContent = addcslashes($wrappedContent, "'\\");
                     $sqlStatements[] = "UPDATE `posts` SET `content` = '{$escapedContent}' WHERE `id` = {$post->id};";
                 }
             }

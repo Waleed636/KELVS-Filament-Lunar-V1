@@ -21,6 +21,7 @@ yarn-error.log
 /.vscode
 /.zed
 /*.sql
+/database/sql/local_backup_*.sql
 /gsc-report
 *.zip
 /kelvsint.com-Coverage-*
