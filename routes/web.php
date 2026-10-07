@@ -103,6 +103,8 @@ Route::get('/feeds/facebook-catalog.csv', [\App\Http\Controllers\MetaCatalogFeed
 Route::get('/feeds/facebook-catalog.xml', [\App\Http\Controllers\MetaCatalogFeedController::class, 'xml']);
 
 // Dynamic XML Sitemap for SEO (Consolidated & Canonical)
+Route::redirect('/sitemap_index.xml', '/sitemap.xml', 301);
+Route::redirect('/sitemap-index.xml', '/sitemap.xml', 301);
 Route::get('/sitemap.xml', function () {
     $urls = [];
     $baseUrl = 'https://kelvsint.com';

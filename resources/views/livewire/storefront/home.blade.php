@@ -402,10 +402,6 @@
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Step 01:  Hydrate</span>
-                        <a href="/products/kelvs-gentle-gel-cleanser" class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
-                            <!-- <span>View Product</span>
-                            <span>&rarr;</span> -->
-                        </a>
                     </div>
                 </div>
 
@@ -421,10 +417,6 @@
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Step 02:  Sleep</span>
-                        <a href="/products/kelvs-niacinamide-zinc-serum" class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
-                            <!-- <span>View Product</span>
-                            <span>&rarr;</span> -->
-                        </a>
                     </div>
                 </div>
 
@@ -438,11 +430,7 @@
                         </p>
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-gray-400 uppercase">Step 03:  Excercise</span>
-                        <a href="/products/kelvs-matte-sun-shield-spf-50" class="text-xs font-bold text-[#111111] hover:opacity-75 flex items-center space-x-1">
-                            <!-- <span>View Product</span>
-                            <span>&rarr;</span> -->
-                        </a>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Step 03:  Exercise</span>
                     </div>
                 </div>
 
