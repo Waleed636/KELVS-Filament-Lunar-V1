@@ -1,6 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
+// ── www → non-www canonical redirect (LiteSpeed/Hostinger safe) ──────────────
+// This runs at the application level, so it works even when .htaccess mod_rewrite
+// doesn't fire (e.g. on LiteSpeed shared hosting with Hostinger).
+if (isset($_SERVER['HTTP_HOST']) && str_starts_with($_SERVER['HTTP_HOST'], 'www.')) {
+    $nonWwwUrl = 'https://' . substr($_SERVER['HTTP_HOST'], 4) . ($_SERVER['REQUEST_URI'] ?? '/');
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: ' . $nonWwwUrl);
+    exit;
+}
+
 
 Route::get('/', \App\Livewire\Storefront\Home::class);
 Route::get('/shop', \App\Livewire\Storefront\Shop::class);

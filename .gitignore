@@ -28,3 +28,7 @@ yarn-error.log
 google_questions_*.txt
 *gsc-key*.json
 /.agents/
+
+# SEO research workspace — Semrush exports, article drafts, strategy docs
+# Articles live in DB once published; none of this belongs in version control
+/storage/seo/
